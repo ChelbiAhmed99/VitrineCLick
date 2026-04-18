@@ -4,17 +4,18 @@ VitrineClick is a high-end, AI-driven SaaS platform designed to transform user p
 
 ##  Key Features
 
-- **AI-Driven Personalization:** Generates contextually relevant text, product catalogs, and themes using the Hugging Face Inference API.
-- **Interactive Live Preview:** Watch your website being built in real-time with our sophisticated frontend wizard.
-- **Professional Theme System:** Automatically selects color palettes and typography based on the industry sector.
-- **SEO Optimized:** Every site comes with AI-generated Meta Titles and Descriptions for search visibility.
-- **Dynamic Site Viewer:** A premium standalone component that renders generated sites with sleek animations and responsive layouts.
+- **Multi-Page AI Synthesis:** Automatically generates Home, About, and Contact pages with cohesive brand storytelling.
+- **Enterprise-Grade AI:** Powered by **Qwen2.5-Coder-32B** (Hugging Face) for superior logic and complex JSON structures.
+- **E-commerce Ready:** Integrated shopping cart system with real-time subtotal calculation and premium slide-over UI.
+- **Interactive Live Customizer:** Tweak brand colors and hero layouts (Bento vs Standard) instantly without re-generation.
+- **SEO Optimized:** Automated generation of Meta Titles, Descriptions, and semantic HTML5 structures.
+- **Advanced Layouts:** Supports modern "Bento Grid" designs and sophisticated glassmorphism effects.
 
 ##  Technology Stack
 
 - **Frontend:** Angular 21, TailwindCSS.
 - **Backend:** Spring Boot (Java 21), Spring Data JPA, H2/MySQL.
-- **AI Service:** Flask (Python 3.10+), Hugging Face Inference API (Qwen2.5-72B).
+- **AI Service:** Flask (Python 3.10+), Hugging Face Inference API.
 
 ---
 

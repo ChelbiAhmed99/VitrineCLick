@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI LogoWorks | Generate Your Vision</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="background-glow"></div>
+    <div class="container">
+        <header>
+            <div class="logo-text">LOGOWORKS <span>AI</span></div>
+            <nav>
+                <a href="#" class="active">Generator</a>
+                <a href="#">Showcase</a>
+                <a href="#">Support</a>
+            </nav>
+        </header>
+
+        <main>
+            <section class="generator-panel glass">
+                <h2>Create Your Logo</h2>
+                <div class="input-group">
+                    <label for="prompt">Logo Prompt</label>
+                    <textarea id="prompt"
+                        placeholder="e.g., A minimalist tech brand with a focus on speed and innovation..."
+                        rows="3"></textarea>
+                </div>
+
+                <div class="options-grid">
+                    <div class="input-group">
+                        <label for="color">Color Palette</label>
+                        <select id="color">
+                            <option value="">Default (AI Choice)</option>
+                            <option value="Modern Blue & White">Modern Blue & White</option>
+                            <option value="Neon Purple & Cyan">Neon Purple & Cyan</option>
+                            <option value="Deep Forest Green">Deep Forest Green</option>
+                            <option value="Midnight Black & Gold">Midnight Black & Gold</option>
+                            <option value="Vibrant Sunset Gradient">Vibrant Sunset Gradient</option>
+                            <option value="Minimalist Grayscale">Minimalist Grayscale</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="style">Typography Style</label>
+                        <select id="style">
+                            <option value="">Default (AI Choice)</option>
+                            <option value="Geometric Sans-Serif">Geometric Sans-Serif</option>
+                            <option value="Elegant Script">Elegant Script</option>
+                            <option value="Bold Modern Serif">Bold Modern Serif</option>
+                            <option value="Futuristic Cyberpunk">Futuristic Cyberpunk</option>
+                            <option value="Vintage Classic">Vintage Classic</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="batchSize">Number of Logos</label>
+                        <select id="batchSize">
+                            <option value="1">1 Logo</option>
+                            <option value="2">2 Logos</option>
+                            <option value="3">3 Logos</option>
+                            <option value="4">4 Logos</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button id="generateBtn" class="primary-btn">
+                        <span class="btn-text">GENERATE LOGO</span>
+                        <div class="loader-dots" style="display: none;">
+                            <span></span><span></span><span></span>
+                        </div>
+                    </button>
+                    <label class="simulate-toggle">
+                        <input type="checkbox" id="simulateFlag">
+                        <span>Simulation Mode</span>
+                    </label>
+                </div>
+            </section>
+
+            <section class="preview-panel glass">
+                <div id="previewContainer" class="preview-content">
+                    <div class="placeholder-text"> Your Generated Logos Will Appear Here </div>
+                    <div id="logoGrid" class="logo-grid" style="display: none;"></div>
+                </div>
+                <div id="resultActions" class="result-actions" style="display: none;">
+                    <button id="resetBtn" class="outline-btn">Create New Batch</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+
+</html>

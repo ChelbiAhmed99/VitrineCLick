@@ -1,0 +1,29 @@
+# Node.js
+**/node_modules/
+**/dist/
+**/npm-debug.log*
+
+# Java / Gradle
+**/build/
+**/.gradle/
+**/bin/
+out/
+compile_error.txt
+build.log
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+**/.env
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

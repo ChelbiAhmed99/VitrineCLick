@@ -21,124 +21,125 @@ import { Title, Meta } from '@angular/platform-browser';
       </div>
     </div>
 
-    <!-- MAIN SITE TEMPLATE -->    <div *ngIf="site && !loading" class="min-h-screen font-sans antialiased text-slate-900 overflow-x-hidden" [ngStyle]="containerStyle">
+    <!-- MAIN SITE TEMPLATE -->
+    <div *ngIf="site && !loading" [ngStyle]="containerStyle" class="min-h-screen transition-all duration-700 bg-[var(--section-bg)] text-slate-900 selection:bg-[var(--accent-color)] selection:text-white">
       
-      <!-- Premium Overlay Gradients -->
-      <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--accent-color)] opacity-[0.03] blur-[120px]"></div>
-        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-[var(--hero-text)] opacity-[0.02] blur-[120px]"></div>
-      </div>
-
-      <!-- Navbar -->
-      <nav class="fixed top-0 left-0 right-0 z-[100] transition-all duration-500 border-b" 
-           [style.background]="scrolled ? 'rgba(255,255,255,0.85)' : 'transparent'"
-           [style.backdrop-blur]="scrolled ? '20px' : '0'"
-           [style.border-color]="scrolled ? 'rgba(0,0,0,0.05)' : 'transparent'">
-        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div class="flex items-center gap-4 group cursor-pointer">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 overflow-hidden" [style.background-color]="'var(--accent-color)'">
-              <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-full h-full object-cover p-1">
-              <span *ngIf="!site.logoUrl" class="text-white font-black text-xl">{{site.companyName.charAt(0)}}</span>
+      <!-- Premium Multi-Page Navigation -->
+      <nav class="fixed top-0 left-0 right-0 z-[100] transition-all duration-500" 
+           [class.bg-[var(--nav-bg)]]="scrolled" [class.backdrop-blur-xl]="scrolled" [class.py-4]="scrolled" [class.py-8]="!scrolled"
+           [class.shadow-[0_20px_50px_rgba(0,0,0,0.05)]]="scrolled">
+        <div class="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
+          <div class="flex items-center gap-2 group cursor-pointer" (click)="navigateTo('home')">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[var(--accent-color)] to-slate-900 flex items-center justify-center text-white font-black text-xl shadow-lg group-hover:rotate-12 transition-transform">
+              {{site?.companyName?.charAt(0) || 'V'}}
             </div>
-            <span class="text-xl font-black tracking-tighter text-slate-800">{{site.companyName}}</span>
+            <span class="text-2xl font-black text-slate-900 tracking-tighter">{{site?.companyName || 'VitrineClick'}}</span>
           </div>
-          <div class="hidden md:flex items-center gap-10 font-bold text-[13px] uppercase tracking-widest text-slate-500">
-            <a href="#services" class="hover:text-slate-900 transition-colors">Services</a>
-            <a href="#products" *ngIf="aiContent?.products" class="hover:text-slate-900 transition-colors">Catalogue</a>
-            <a href="#about" class="hover:text-slate-900 transition-colors">Vision</a>
-            <a href="#contact" class="px-6 py-3 rounded-xl shadow-xl hover:-translate-y-1 transition-all active:scale-95" 
-               [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">Contact</a>
+          
+          <div class="hidden md:flex items-center gap-10">
+            <a (click)="navigateTo('home')" class="text-sm font-bold uppercase tracking-widest cursor-pointer transition-all border-b-2" [class.text-[var(--accent-color)]]="currentPage==='home'" [class.border-[var(--accent-color)]]="currentPage==='home'" [class.border-transparent]="currentPage!=='home'">Accueil</a>
+            <a (click)="navigateTo('about')" class="text-sm font-bold uppercase tracking-widest cursor-pointer transition-all border-b-2" [class.text-[var(--accent-color)]]="currentPage==='about'" [class.border-[var(--accent-color)]]="currentPage==='about'" [class.border-transparent]="currentPage!=='about'">À Propos</a>
+            <a (click)="navigateTo('contact')" class="text-sm font-bold uppercase tracking-widest cursor-pointer transition-all border-b-2" [class.text-[var(--accent-color)]]="currentPage==='contact'" [class.border-[var(--accent-color)]]="currentPage==='contact'" [class.border-transparent]="currentPage!=='contact'">Contact</a>
+          </div>
+
+          <div class="flex items-center gap-4">
+             <button (click)="cartOpen = !cartOpen" class="relative p-2 text-slate-800 hover:text-[var(--accent-color)] transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span *ngIf="cart.length > 0" class="absolute -top-1 -right-1 bg-[var(--accent-color)] text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-bounce">
+                   {{cart.length}}
+                </span>
+             </button>
+             <button (click)="customizerOpen = true" class="p-2 text-slate-800 hover:rotate-90 transition-transform">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+             </button>
+             <a class="bg-slate-900 text-white px-6 py-3 rounded-xl font-bold text-sm hover:scale-105 active:scale-95 transition-all shadow-xl">Rejoindre</a>
           </div>
         </div>
       </nav>
 
-      <!-- HERO SECTION (Dynamic Layout) -->
-      <section class="relative pt-48 pb-32 flex flex-col items-center px-6 overflow-hidden min-h-[70vh] justify-center">
-        
-        <!-- Standard Centered Hero -->
-        <div *ngIf="aiContent?.layout?.heroType !== 'split'" class="max-w-4xl mx-auto z-10 text-center animate-fade-in">
-          <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-black/5 bg-white/40 backdrop-blur-md mb-8 shadow-sm">
-            <span class="w-2 h-2 rounded-full animate-pulse" [style.background-color]="'var(--accent-color)'"></span>
-            <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{{site.category}} Haute Couture</span>
-          </div>
-          <h1 class="text-6xl md:text-8xl font-black tracking-tight mb-8 leading-[0.95] text-slate-900">
-            {{aiContent?.heroText || site.companyName}}
-          </h1>
-          <p class="text-xl md:text-2xl text-slate-500 max-w-2xl mx-auto mb-12 font-medium leading-relaxed">
-            {{aiContent?.heroSubtext || site.description}}
-          </p>
-          <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <a href="#products" class="px-10 py-5 rounded-2xl font-black text-sm uppercase tracking-widest shadow-2xl hover:-translate-y-1 transition-all" 
-               [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">
-               Explorer la Collection
-            </a>
-            <a href="#services" class="px-10 py-5 rounded-2xl bg-white/50 backdrop-blur-md border border-slate-200 font-black text-sm uppercase tracking-widest hover:bg-white transition-all">
-               Notre Expertise
-            </a>
-          </div>
-        </div>
-
-        <!-- Split Hero (Modern SaaS Style) -->
-        <div *ngIf="aiContent?.layout?.heroType === 'split'" class="max-w-7xl mx-auto z-10 grid md:grid-cols-2 gap-20 items-center text-left animate-slide-up">
-           <div class="space-y-8">
-              <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-color)]/10 text-[var(--accent-color)] text-[10px] font-black uppercase tracking-widest">
-                 {{site.category}} Strategic Partner
-              </div>
-              <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none text-slate-900">
-                 {{aiContent?.heroText}}
+      <!-- PAGE CONTENT WRAPPER -->
+      <div *ngIf="currentPage === 'home'">
+        <!-- Hero Section -->
+        <header class="relative pt-40 pb-32 overflow-hidden px-6">
+          <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-20">
+            <div class="flex-1 text-center md:text-left animate-slide-up" [class.md:text-center]="aiContent?.layout?.heroType === 'centered'" [class.md:max-w-4xl]="aiContent?.layout?.heroType === 'centered'" [class.mx-auto]="aiContent?.layout?.heroType === 'centered'">
+              <span class="inline-block px-4 py-2 rounded-full bg-[var(--accent-color)]/10 text-[var(--accent-color)] text-xs font-black uppercase tracking-widest mb-6">Expert en {{site?.category}}</span>
+              <h1 class="text-6xl md:text-8xl font-black text-slate-900 leading-[0.9] tracking-tighter mb-8 italic">
+                {{aiContent?.heroText}}
               </h1>
-              <p class="text-xl text-slate-500 leading-relaxed font-medium">
-                 {{aiContent?.heroSubtext}}
+              <p class="text-xl md:text-2xl text-slate-500 font-medium mb-12 max-w-2xl" [class.mx-auto]="aiContent?.layout?.heroType === 'centered'">
+                {{aiContent?.heroSubtext}}
               </p>
-              <div class="flex items-center gap-4">
-                 <a href="#products" class="h-14 px-8 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-widest shadow-xl" [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">Démarrer</a>
-                 <a href="#about" class="h-14 px-8 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-widest border border-slate-200 bg-white">Vision Pro</a>
+              <div class="flex flex-wrap items-center gap-4" [class.justify-center]="aiContent?.layout?.heroType === 'centered'">
+                <button (click)="navigateTo('contact')" class="bg-[var(--accent-color)] text-white px-10 py-5 rounded-2xl font-black text-lg transition-all hover:shadow-[0_20px_40px_rgba(0,0,0,0.1)] hover:-translate-y-1">Démarrer</button>
+                <button (click)="navigateTo('about')" class="bg-white text-slate-900 border border-slate-200 px-10 py-5 rounded-2xl font-black text-lg hover:bg-slate-50 transition-all">En savoir plus</button>
               </div>
-           </div>
-           <div class="relative">
-              <div class="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
-                 <img [src]="aiContent.products?.[0]?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover">
-              </div>
-              <div class="absolute -bottom-10 -left-10 p-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-2xl animate-bounce-slow">
-                 <p class="text-4xl font-black text-[var(--accent-color)]">99%</p>
-                 <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Satisfaction Client</p>
-              </div>
-           </div>
-        </div>
-        
-        <!-- Decoration orbs -->
-        <div class="absolute right-[-10%] top-[20%] w-[35%] h-[50%] rounded-full opacity-[0.04] blur-[120px]" [style.background-color]="'var(--accent-color)'"></div>
-      </section>
-      <!-- PRODUCTS SECTION (Grid vs Horizontal) -->
-      <section *ngIf="aiContent?.products?.length" id="products" class="py-32 bg-white relative z-10">
-        <div class="max-w-7xl mx-auto px-6">
-          <div class="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6">
-             <div>
-               <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">L'Art de l'Excellence</h2>
-               <div class="w-20 h-2 rounded-full" [style.background-color]="'var(--accent-color)'"></div>
-             </div>
-             <p class="text-slate-400 font-medium max-w-md">Chaque détail est pensé pour refléter l'identité unique de {{site.companyName}} sur le marché mondial.</p>
-          </div>
-
-          <!-- Standard Grid -->
-          <div *ngIf="aiContent?.layout?.featureLayout !== 'bento'" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div *ngFor="let prod of aiContent.products" class="group relative bg-slate-50 p-3 transition-all duration-500 hover:bg-white hover:shadow-[0_30px_60px_rgba(0,0,0,0.05)] border border-transparent hover:border-slate-100"
-                 [style.border-radius]="'var(--border-radius)'">
-              <div class="relative aspect-square overflow-hidden mb-6 shadow-sm" [style.border-radius]="'calc(var(--border-radius) / 2)'">
-                <img [src]="prod.image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
-                <div class="absolute top-4 right-4 h-8 w-8 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
-                   <svg class="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                </div>
-              </div>
-              <div class="px-2">
-                 <h3 class="text-lg font-black text-slate-800 mb-1">{{prod.name}}</h3>
-                 <div class="flex items-center justify-between">
-                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Premium</span>
-                    <span class="text-lg font-black" [style.color]="'var(--accent-color)'">{{prod.price}}</span>
-                 </div>
+            </div>
+            <div *ngIf="aiContent?.layout?.heroType !== 'centered'" class="flex-1 w-full relative group animate-fade-in shadow-2xl rounded-[3rem] overflow-hidden rotate-2 translate-x-10">
+              <img [src]="aiContent?.products?.[0]?.image" class="w-full aspect-[4/5] object-cover transition-transform duration-[2s] group-hover:scale-110">
+              <div class="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+              <div class="absolute bottom-10 left-10 text-white">
+                 <p class="text-xs font-black uppercase tracking-widest opacity-80 mb-2">Signature Series</p>
+                 <h2 class="text-4xl font-black italic">{{aiContent?.products?.[0]?.name}}</h2>
               </div>
             </div>
           </div>
+        </header>
+
+        <!-- Product/Store Section -->
+        <section class="py-32 px-6">
+          <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row items-end justify-between mb-20 gap-8">
+              <div class="max-w-2xl">
+                <span class="text-[var(--accent-color)] font-black text-sm uppercase tracking-widest mb-4 inline-block">Boutique Exclusive</span>
+                <h2 class="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-none italic uppercase">L'Art de l'Excellence</h2>
+              </div>
+              <p class="text-slate-500 font-bold max-w-xs text-right border-r-4 border-slate-100 pr-6">Designé avec soin pour refléter l'identité unique de {{site?.companyName}} sur le marché mondial.</p>
+            </div>
+
+            <!-- Bento Grid Layout -->
+            <div *ngIf="aiContent?.layout?.featureLayout === 'bento'" class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 min-h-[700px]">
+               <div class="md:col-span-2 md:row-span-2 bg-slate-100 p-12 relative overflow-hidden group shadow-xl" [style.border-radius]="'var(--border-radius)'">
+                  <img [src]="aiContent.products?.[0]?.image" class="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105">
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                  <div class="relative h-full flex flex-col justify-end text-white">
+                     <h3 class="text-5xl font-black mb-4 leading-none uppercase italic">{{aiContent.products?.[0]?.name}}</h3>
+                     <p class="text-white/70 max-w-xs mb-8 text-sm font-medium leading-relaxed">{{aiContent.products?.[0]?.desc}}</p>
+                     <div class="flex items-center gap-6">
+                        <span class="text-4xl font-black text-[var(--accent-color)]">{{aiContent.products?.[0]?.price}}</span>
+                        <button (click)="addToCart(aiContent.products[0])" class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-slate-900 transition-all">Acheter</button>
+                     </div>
+                  </div>
+               </div>
+               <div *ngFor="let p of aiContent.products?.slice(1, 4)" class="md:col-span-1 bg-white border border-slate-100 p-8 flex flex-col items-center text-center group transition-all" [style.border-radius]="'var(--border-radius)'">
+                  <div class="w-full aspect-square overflow-hidden mb-8 shadow-sm group-hover:-translate-y-2 transition-transform" [style.border-radius]="'calc(var(--border-radius) / 2)'">
+                     <img [src]="p.image" class="w-full h-full object-cover">
+                  </div>
+                  <h4 class="font-black text-slate-800 text-xl mb-2 tracking-tight uppercase italic">{{p.name}}</h4>
+                  <div class="flex items-center gap-4 mt-auto">
+                     <span class="font-black" [style.color]="'var(--accent-color)'">{{p.price}}</span>
+                     <button (click)="addToCart(p)" class="w-10 h-10 rounded-full border border-slate-100 flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all">+ </button>
+                  </div>
+               </div>
+            </div>
+            
+            <!-- Standard Grid -->
+            <div *ngIf="aiContent?.layout?.featureLayout !== 'bento'" class="grid grid-cols-1 md:grid-cols-3 gap-12">
+               <div *for="let p of aiContent.products" class="group bg-white p-4" [style.border-radius]="'var(--border-radius)'">
+                  <div class="aspect-[3/4] overflow-hidden mb-6 relative" [style.border-radius]="'calc(var(--border-radius) / 2)'">
+                     <img [src]="p.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
+                     <button (click)="addToCart(p)" class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                     </button>
+                  </div>
+                  <h3 class="text-2xl font-black mb-1 italic tracking-tighter uppercase">{{p.name}}</h3>
+                  <p class="text-slate-400 text-sm font-medium mb-4 line-clamp-2">{{p.desc}}</p>
+                  <span class="text-xl font-black" [style.color]="'var(--accent-color)'">{{p.price}}</span>
+               </div>
+            </div>
+          </div>
+        </section>
+      </div>
 
           <!-- Bento Grid Layout (Modern Trend) -->
           <div *ngIf="aiContent?.layout?.featureLayout === 'bento'" class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 min-h-[600px]">
@@ -160,74 +161,136 @@ import { Title, Meta } from '@angular/platform-browser';
                 <span class="font-black text-xl" [style.color]="'var(--accent-color)'">{{p.price}}</span>
              </div>
           </div>
-        </div>
-      </section>>
+                </section>
+      </div>
 
-      <!-- Benefits / Features Section -->
-      <section *ngIf="aiContent?.features?.length" id="services" class="py-32 relative overflow-hidden" [style.background-color]="'var(--section-bg)'">
-          <div class="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-20 items-center">
-            <div>
-              <h2 class="text-4xl md:text-6xl font-black mb-10 tracking-tight leading-none">Pourquoi Nous <br> Choisir ?</h2>
-              <div class="space-y-10">
-                <div *ngFor="let feat of aiContent.features; let i = index" class="flex gap-6">
-                  <div class="w-16 h-16 rounded-2xl flex-shrink-0 flex items-center justify-center font-black text-2xl shadow-lg" 
-                       [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">
-                    0{{i+1}}
-                  </div>
-                  <div>
-                    <h4 class="text-xl font-black mb-2">{{feat.title}}</h4>
-                    <p class="text-slate-500 leading-relaxed font-medium">{{feat.desc}}</p>
-                  </div>
-                </div>
-              </div>
+      <!-- ABOUT PAGE CONTENT -->
+      <div *ngIf="currentPage === 'about'" class="pt-40 pb-32 px-6 animate-fade-in">
+         <div class="max-w-4xl mx-auto">
+            <span class="text-[var(--accent-color)] font-black uppercase tracking-widest text-sm mb-6 inline-block">Notre Histoire</span>
+            <h1 class="text-7xl md:text-9xl font-black text-slate-900 tracking-tighter italic mb-12 uppercase leading-none">
+               Au-delà du <span class="text-transparent border-slate-900" style="-webkit-text-stroke: 2px #0f172a">possible</span>
+            </h1>
+            <div class="prose prose-2xl text-slate-600 font-medium leading-relaxed mb-20 whitespace-pre-line">
+               {{aiContent?.story}}
             </div>
-            <div class="relative">
-               <div class="aspect-square bg-white rounded-[3rem] shadow-2xl relative overflow-hidden group">
-                  <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=1000&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000">
-                  <div class="absolute inset-0 bg-[var(--accent-color)] opacity-20 mix-blend-overlay"></div>
-                  <div class="absolute bottom-10 left-10 p-10 bg-white/70 backdrop-blur-xl rounded-[2rem] border border-white/40 max-w-sm">
-                    <p class="text-2xl font-black italic">"{{aiContent?.testimonials?.[0]?.quote || 'Innover chaque jour.'}}"</p>
-                    <p class="mt-4 text-xs font-black uppercase tracking-widest">— {{aiContent?.testimonials?.[0]?.name || site.companyName}}</p>
-                  </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-20 py-20 border-t border-slate-100">
+               <div>
+                  <h2 class="text-4xl font-black mb-6 uppercase italic">Mission</h2>
+                  <p class="text-lg text-slate-500 font-medium leading-relaxed">{{aiContent?.mission}}</p>
+               </div>
+               <div class="bg-[var(--accent-color)]/5 p-12" [style.border-radius]="'var(--border-radius)'">
+                  <h2 class="text-2xl font-black mb-4 uppercase text-[var(--accent-color)]">Culture Pro</h2>
+                  <p class="text-slate-600 italic">"Nous croyons que chaque détail compte. C'est pourquoi nous repoussons sans cesse les limites du design et de la technologie pour {{site?.companyName}}."</p>
                </div>
             </div>
-          </div>
-      </section>
-
-      <!-- About / Vision -->
-      <section id="about" class="py-40 bg-slate-900 relative overflow-hidden">
-        <div class="absolute top-[20%] left-[-10%] w-[60%] h-[60%] rounded-full bg-[var(--accent-color)] opacity-[0.05] blur-[150px]"></div>
-        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <h2 class="text-white text-5xl md:text-7xl font-black mb-12 tracking-tighter">Notre Vision</h2>
-          <p class="text-slate-400 text-2xl leading-relaxed italic font-light">
-             {{aiContent?.aboutText || site.description}}
-          </p>
-        </div>
-      </section>
-
-      <!-- Contact Area -->
-      <section id="contact" class="py-32 bg-white flex flex-col items-center">
-         <div class="max-w-4xl w-full px-6 text-center">
-            <h2 class="text-4xl md:text-6xl font-black mb-16 tracking-tight">Commençons Votre Voyage</h2>
-            <div class="flex flex-wrap justify-center gap-10 mb-20 text-lg font-bold">
-               <div *ngIf="site.email" class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-                  </div>
-                  {{site.email}}
-               </div>
-               <div *ngIf="site.phone" class="flex items-center gap-3">
-                  <div class="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center text-slate-400">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-                  </div>
-                  {{site.phone}}
-               </div>
-            </div>
-            <a *ngIf="site.email" [href]="'mailto:' + site.email" class="inline-block px-12 py-6 rounded-2xl text-lg font-black uppercase tracking-[0.2em] shadow-2xl transition-all hover:scale-105" [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">
-               Nous Contacter Exclusivement
-            </a>
          </div>
-      </section>
+      </div>
+
+      <!-- CONTACT PAGE CONTENT -->
+      <div *ngIf="currentPage === 'contact'" class="pt-40 pb-32 px-6 animate-fade-in">
+         <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-32">
+            <div>
+               <h1 class="text-7xl font-black text-slate-900 tracking-tighter italic mb-8 uppercase leading-none">Collaborons</h1>
+               <p class="text-2xl text-slate-500 font-medium mb-12">{{aiContent?.message}}</p>
+               
+               <div class="space-y-12">
+                  <div class="flex items-start gap-6">
+                     <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-[var(--accent-color)] shadow-sm">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                     </div>
+                     <div>
+                        <h4 class="font-black text-xl uppercase tracking-tighter mb-2">Bureau Global</h4>
+                        <p class="text-slate-500 font-medium">{{aiContent?.address}}</p>
+                     </div>
+                  </div>
+                  <div class="flex items-start gap-6">
+                     <div class="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center text-[var(--accent-color)] shadow-sm">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                     </div>
+                     <div>
+                        <h4 class="font-black text-xl uppercase tracking-tighter mb-2">Horaires</h4>
+                        <p class="text-slate-500 font-medium">{{aiContent?.hours}}</p>
+                     </div>
+                  </div>
+               </div>
+            </div>
+            
+            <div class="bg-white p-12 shadow-2xl" [style.border-radius]="'var(--border-radius)'">
+               <h3 class="text-3xl font-black mb-10 uppercase italic">Envoyer un message</h3>
+               <form class="space-y-6">
+                  <div class="grid grid-cols-2 gap-6">
+                     <input type="text" placeholder="Nom" class="w-full bg-slate-50 border-none p-5 rounded-xl font-bold focus:ring-2 ring-[var(--accent-color)]">
+                     <input type="email" placeholder="Email" class="w-full bg-slate-50 border-none p-5 rounded-xl font-bold focus:ring-2 ring-[var(--accent-color)]">
+                  </div>
+                  <textarea rows="5" placeholder="Votre projet..." class="w-full bg-slate-50 border-none p-5 rounded-xl font-bold focus:ring-2 ring-[var(--accent-color)]"></textarea>
+                  <button type="button" class="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg transition-all hover:bg-slate-800">Envoyer l'inflexion</button>
+               </form>
+            </div>
+         </div>
+      </div>
+
+      <!-- Shopping Cart Sidebar -->
+      <div *ngIf="cartOpen" class="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[200] flex justify-end">
+         <div class="w-full max-w-md bg-white h-full shadow-2xl p-10 flex flex-col">
+            <div class="flex items-center justify-between mb-12">
+               <h2 class="text-4xl font-black italic uppercase tracking-tighter">Votre Panier</h2>
+               <button (click)="cartOpen = false" class="text-slate-400 hover:text-slate-900 transition-colors">
+                  <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"/></svg>
+               </button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto space-y-8 pr-4">
+               <div *ngIf="cart.length === 0" class="text-center py-20 text-slate-300">
+                  <p class="font-bold uppercase tracking-widest">Vide</p>
+               </div>
+               <div *ngFor="let item of cart; let idx = index" class="flex items-center gap-6 group">
+                  <div class="w-24 h-24 bg-slate-50 rounded-2xl overflow-hidden flex-shrink-0 shadow-sm">
+                     <img [src]="item.image" class="w-full h-full object-cover">
+                  </div>
+                  <div class="flex-1">
+                     <h4 class="font-black italic uppercase tracking-tighter text-lg">{{item.name}}</h4>
+                     <p class="text-[var(--accent-color)] font-black text-xl">{{item.price}}</p>
+                  </div>
+                  <button (click)="cart.splice(idx, 1)" class="opacity-0 group-hover:opacity-100 text-red-500 transition-opacity">Supprimer</button>
+               </div>
+            </div>
+            
+            <div class="mt-12 pt-12 border-t-4 border-slate-50">
+               <div class="flex items-center justify-between mb-8">
+                  <span class="text-slate-400 font-bold uppercase tracking-widest">Sous-total</span>
+                  <span class="text-4xl font-black italic" [style.color]="'var(--accent-color)'">{{cartTotal}}€</span>
+               </div>
+               <button class="w-full bg-slate-900 text-white py-6 rounded-3xl font-black text-xl shadow-2xl hover:scale-105 active:scale-95 transition-all">Commander</button>
+            </div>
+         </div>
+      </div>
+
+      <!-- Live Customizer Sidebar -->
+      <div *ngIf="customizerOpen" class="fixed left-0 top-0 bottom-0 w-80 bg-white/10 backdrop-blur-2xl z-[150] shadow-2xl p-8 flex flex-col border-r border-white/20">
+         <div class="flex items-center justify-between mb-12 text-slate-900">
+            <h3 class="text-xl font-black italic tracking-widest uppercase">Customizer</h3>
+            <button (click)="customizerOpen = false" class="text-slate-400">X</button>
+         </div>
+         <div class="space-y-12">
+            <div>
+               <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Couleur Accent</label>
+               <div class="grid grid-cols-5 gap-3">
+                  <div *ngFor="let c of ['#FF6B2C', '#2B3970', '#E11D48', '#10B981', '#F59E0B']" 
+                       (click)="updatePrimaryColor(c)" 
+                       [style.background-color]="c" 
+                       class="aspect-square rounded-full cursor-pointer hover:scale-125 transition-transform shadow-md"
+                       [class.ring-4]="site.primaryColor === c"
+                       [class.ring-slate-100]="site.primaryColor === c"></div>
+               </div>
+            </div>
+            <div>
+               <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">Structure Hero</label>
+               <button (click)="aiContent.layout.heroType = 'centered'" class="w-full py-4 px-6 mb-4 rounded-2xl bg-slate-50 font-bold hover:bg-slate-100 transition-colors text-slate-900" [class.ring-2]="aiContent.layout.heroType === 'centered'">Centré</button>
+               <button (click)="aiContent.layout.heroType = 'split'" class="w-full py-4 px-6 rounded-2xl bg-slate-50 font-bold hover:bg-slate-100 transition-colors text-slate-900" [class.ring-2]="aiContent.layout.heroType === 'split'">Split</button>
+            </div>
+         </div>
+      </div>
 
       <!-- Detailed Footer -->
       <footer class="py-32 bg-slate-900 border-t border-white/5 relative overflow-hidden">
@@ -235,31 +298,14 @@ import { Title, Meta } from '@angular/platform-browser';
           <div class="col-span-2">
             <h3 class="text-white text-3xl font-black mb-6 tracking-tight">{{site.companyName}}</h3>
             <p class="text-slate-500 max-w-sm leading-relaxed mb-8 font-medium">L'élégance et la performance au service de votre identité digitale. Une expérience conçue par l'intelligence Identify Gen™.</p>
-            <div class="flex gap-4">
-               <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center hover:bg-[var(--accent-color)] transition-colors cursor-pointer">
-                  <svg class="w-5 h-5 text-white/40" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-               </div>
-               <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center hover:bg-[var(--accent-color)] transition-colors cursor-pointer">
-                  <svg class="w-5 h-5 text-white/40" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z"/></svg>
-               </div>
-            </div>
           </div>
           <div>
             <h4 class="text-white font-black mb-6 uppercase tracking-widest text-xs">Navigation</h4>
             <ul class="space-y-4 text-slate-500 font-bold text-sm">
-              <li><a href="#services" class="hover:text-white transition-colors">Services</a></li>
-              <li><a href="#products" class="hover:text-white transition-colors">Catalogue</a></li>
-              <li><a href="#about" class="hover:text-white transition-colors">À Propos</a></li>
-              <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
+              <li><a (click)="navigateTo('home')" class="hover:text-white transition-colors cursor-pointer">Accueil</a></li>
+              <li><a (click)="navigateTo('about')" class="hover:text-white transition-colors cursor-pointer">À Propos</a></li>
+              <li><a (click)="navigateTo('contact')" class="hover:text-white transition-colors cursor-pointer">Contact</a></li>
             </ul>
-          </div>
-          <div>
-             <h4 class="text-white font-black mb-6 uppercase tracking-widest text-xs">Légal</h4>
-             <ul class="space-y-4 text-slate-500 font-bold text-sm">
-                <li>Mentions Légales</li>
-                <li>Confidentialité</li>
-                <li>CGV / CGU</li>
-             </ul>
           </div>
         </div>
         <div class="max-w-7xl mx-auto px-6 mt-32 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between text-slate-700 text-[10px] font-black uppercase tracking-[0.2em] relative z-10">
@@ -290,12 +336,19 @@ import { Title, Meta } from '@angular/platform-browser';
 export class SiteViewerComponent implements OnInit {
   subdomain: string = '';
   site: any = null;
-  aiContent: any = null;
+  fullAiContent: any = null;
+  aiContent: any = null; // Current active page content
   templateConfig: any = null;
   loading: boolean = true;
   error: string = '';
   scrolled: boolean = false;
   currentYear = new Date().getFullYear();
+  
+  // Multi-Page & Cart State
+  currentPage: string = 'home';
+  cart: any[] = [];
+  cartOpen: boolean = false;
+  customizerOpen: boolean = false;
 
   constructor(
     private route: ActivatedRoute, 
@@ -372,7 +425,8 @@ export class SiteViewerComponent implements OnInit {
         // Parse generated visuals (which contains our AI content)
         if (this.site.generatedVisuals) {
           try {
-            this.aiContent = JSON.parse(this.site.generatedVisuals);
+            this.fullAiContent = JSON.parse(this.site.generatedVisuals);
+            this.syncPageContent();
           } catch(e) {
             console.error("Could not parse AI content", e);
           }
@@ -398,5 +452,46 @@ export class SiteViewerComponent implements OnInit {
         }
       }
     });
+  }
+
+  syncPageContent() {
+    if (!this.fullAiContent?.pages) {
+      this.aiContent = this.fullAiContent; // Fallback to flat structure
+      return;
+    }
+    
+    // Merge global context with page-specific ones
+    const pageData = this.fullAiContent.pages[this.currentPage] || this.fullAiContent.pages['home'];
+    this.aiContent = {
+      ...this.fullAiContent,
+      ...pageData,
+      layout: this.fullAiContent.layout,
+      theme: this.fullAiContent.theme
+    };
+    
+    // Scroll to top on page change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  navigateTo(page: string) {
+    this.currentPage = page;
+    this.syncPageContent();
+  }
+
+  addToCart(product: any) {
+    this.cart.push(product);
+    this.cartOpen = true;
+    setTimeout(() => this.cartOpen = false, 3000); // Visual cue
+  }
+
+  get cartTotal() {
+    return this.cart.reduce((total, item) => {
+      const price = parseFloat(item.price.replace(/[^\d.]/g, '')) || 0;
+      return total + price;
+    }, 0);
+  }
+
+  updatePrimaryColor(color: string) {
+    this.site.primaryColor = color;
   }
 }

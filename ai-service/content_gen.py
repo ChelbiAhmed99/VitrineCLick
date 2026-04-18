@@ -17,8 +17,8 @@ headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
 
 def generate_site_content_pro(company_name, description, industry):
     """
-    Generates professional, exhaustive JSON website content using Qwen2.5-Coder-32B.
-    Includes advanced layout hints and style intelligence.
+    Generates professional, multi-page JSON website content.
+    Includes Home, About, and Contact pages with advanced layout hints.
     """
     if not HF_TOKEN:
         print(" [WARNING] HF_TOKEN missing. Using high-quality fallback.")
@@ -26,77 +26,72 @@ def generate_site_content_pro(company_name, description, industry):
 
     prompt = f"""
 Output ONLY a valid raw JSON object. NO markdown, NO text.
-Task: Design an enterprise-grade website structure for '{company_name}' ({industry}).
-Context: {description}
-
-Required exhaustive JSON structure:
+Task: Design an enterprise-grade VITRINE website for '{company_name}' ({industry}).
+Required Structure:
 {{
-  "heroText": "Impactful H1 headline",
-  "heroSubtext": "Compelling sub-headline explaining the value prop",
-  "aboutText": "3-4 professional and engaging sentences about the vision and mission",
-  "layout": {{
-    "heroType": "split" | "centered" | "minimal",
-    "featureLayout": "grid" | "bento" | "list",
-    "style": "premium" | "clean" | "glassmorphism",
-    "borderRadius": "none" | "xl" | "3xl"
+  "theme": {{ "primary": "#hex", "secondary": "#hex", "fontFamily": "Inter" | "Montserrat", "borderRadius": "3xl" | "xl" }},
+  "layout": {{ "heroType": "split" | "centered", "featureLayout": "bento" | "grid", "style": "premium" | "glassmorphism" }},
+  "pages": {{
+    "home": {{
+      "heroText": "Impactful H1",
+      "heroSubtext": "Value prop",
+      "features": [ {{"title": "...", "desc": "..."}}, ... ],
+      "products": [ {{"name": "...", "price": "...", "desc": "...", "image": "unsplash_url"}}, ... ]
+    }},
+    "about": {{
+      "story": "A compelling 3-paragraph company history.",
+      "mission": "Our core values and mission statement.",
+      "team": [ {{"name": "Name", "role": "Role", "bio": "..."}}, ... ]
+    }},
+    "contact": {{
+      "message": "Enthusiastic invitation to reach out.",
+      "address": "Mock professional address",
+      "hours": "Mon-Fri 9am-6pm"
+    }}
   }},
-  "features": [
-    {{"title": "Core Benefit 1", "desc": "Detailed explanation of why this matters"}},
-    {{"title": "Core Benefit 2", "desc": "Detailed explanation"}},
-    {{"title": "Core Benefit 3", "desc": "Detailed explanation"}}
-  ],
-  "products": [
-    {{"name": "Pro Product 1", "price": "99€", "desc": "High-end product description", "image": "unsplash_url_matching_industry"}},
-    {{"name": "Pro Product 2", "price": "149€", "desc": "Description", "image": "unsplash_url"}},
-    {{"name": "Pro Product 3", "price": "199€", "desc": "Description", "image": "unsplash_url"}},
-    {{"name": "Pro Product 4", "price": "299€", "desc": "Description", "image": "unsplash_url"}}
-  ],
-  "testimonials": [
-    {{"name": "Jean Dupont", "role": "CEO of TechCorp", "quote": "Incredible partnership and results."}},
-    {{"name": "Marie Curie", "role": "Founder", "quote": "The most professional solution I've used."}}
-  ],
-  "theme": {{ "primary": "#hex", "secondary": "#hex", "fontFamily": "Inter" | "Montserrat" | "Poppins" }},
-  "seo": {{ "title": "Optimized Page Title", "description": "Compelling meta description" }}
+  "seo": {{ "title": "...", "description": "..." }}
 }}
 """
 
     payload = {
         "inputs": prompt,
-        "parameters": {"max_new_tokens": 1500, "temperature": 0.2}
+        "parameters": {"max_new_tokens": 1800, "temperature": 0.2}
     }
 
     try:
-        print(f" [AI-PRO] Generating exhaustive content for {company_name}...")
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=50)
+        print(f" [AI-SCALE] Generating Multi-Page content for {company_name}...")
+        response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
         
         if response.status_code == 200:
             result = response.json()
             content = result[0].get('generated_text', '') if isinstance(result, list) else result.get('generated_text', '')
-            
-            # Use sophisticated JSON extraction
             import re
             match = re.search(r'\{.*\}', content, re.DOTALL)
             if match:
                 return json.loads(match.group())
         else:
-            print(f" [AI-PRO] Error {response.status_code}: {response.text}")
+            print(f" [AI-SCALE] Error {response.status_code}: {response.text}")
     except Exception as e:
-        print(f" [AI-PRO] Request failed: {e}")
+        print(f" [AI-SCALE] Request failed: {e}")
 
     return get_fallback_content(company_name, description, industry)
 
 def get_fallback_content(company_name, description, industry):
     comp = company_name or "Entreprise"
     return {
-        "heroText": f"L'Excellence avec {comp}",
-        "heroSubtext": f"Solutions innovantes en {industry} pour transformer votre futur.",
-        "aboutText": description or f"Leader certifié en {industry}.",
-        "layout": {"heroType": "centered", "featureLayout": "grid", "style": "premium", "borderRadius": "3xl"},
-        "features": [{"title": "Expertise", "desc": "Reconnue mondialement."}],
-        "products": [],
-        "testimonials": [],
-        "theme": {"primary": "#2B3970", "secondary": "#FF6B2C", "fontFamily": "Inter"},
-        "seo": {"title": f"{comp} | Officiel", "description": "Site professionnel."}
+        "theme": {"primary": "#2B3970", "secondary": "#FF6B2C", "fontFamily": "Inter", "borderRadius": "3xl"},
+        "layout": {"heroType": "centered", "featureLayout": "grid", "style": "premium"},
+        "pages": {
+            "home": {
+                "heroText": f"L'Excellence avec {comp}",
+                "heroSubtext": f"Solutions innovantes en {industry}.",
+                "features": [{"title": "Expertise", "desc": "Savoir-faire reconnu."}],
+                "products": [{"name": "Produit Star", "price": "99€", "desc": "Qualité premium.", "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80"}]
+            },
+            "about": {"story": "Une histoire d'audace.", "mission": "Vivre l'innovation."},
+            "contact": {"message": "Contactez-nous.", "address": "Paris, France"}
+        },
+        "seo": {"title": f"{comp}", "description": "SaaS Website."}
     }
 
 @app.route('/generate', methods=['POST'])

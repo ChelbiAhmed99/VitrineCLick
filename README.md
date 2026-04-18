@@ -2,7 +2,7 @@
 
 VitrineClick is a high-end, AI-driven SaaS platform designed to transform user prompts into professional, fully-functional websites in seconds. Inspired by leading platforms like YouCan, it features a premium design system, context-aware content generation, and a real-time interactive wizard.
 
-## 🚀 Key Features
+##  Key Features
 
 - **AI-Driven Personalization:** Generates contextually relevant text, product catalogs, and themes using the Hugging Face Inference API.
 - **Interactive Live Preview:** Watch your website being built in real-time with our sophisticated frontend wizard.
@@ -10,7 +10,7 @@ VitrineClick is a high-end, AI-driven SaaS platform designed to transform user p
 - **SEO Optimized:** Every site comes with AI-generated Meta Titles and Descriptions for search visibility.
 - **Dynamic Site Viewer:** A premium standalone component that renders generated sites with sleek animations and responsive layouts.
 
-## 🛠️ Technology Stack
+##  Technology Stack
 
 - **Frontend:** Angular 21, TailwindCSS.
 - **Backend:** Spring Boot (Java 21), Spring Data JPA, H2/MySQL.
@@ -80,6 +80,6 @@ Navigate to the `frontend` folder.
 
 ---
 
-## 🏗️ Architecture Note
+##  Architecture Note
 
 VitrineClick uses an **Orchestration Pattern** where the Backend coordinates with the AI Service to generate content based on the user's prompt, which is then stored and served dynamically to the Angular Site Viewer.

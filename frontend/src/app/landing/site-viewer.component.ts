@@ -52,9 +52,11 @@ import { Title, Meta } from '@angular/platform-browser';
         </div>
       </nav>
 
-      <!-- Hero Section (Professional SaaS / Luxury Style) -->
-      <section class="relative pt-48 pb-32 flex flex-col items-center text-center px-6 overflow-hidden">
-        <div class="max-w-4xl mx-auto z-10">
+      <!-- HERO SECTION (Dynamic Layout) -->
+      <section class="relative pt-48 pb-32 flex flex-col items-center px-6 overflow-hidden min-h-[70vh] justify-center">
+        
+        <!-- Standard Centered Hero -->
+        <div *ngIf="aiContent?.layout?.heroType !== 'split'" class="max-w-4xl mx-auto z-10 text-center animate-fade-in">
           <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-black/5 bg-white/40 backdrop-blur-md mb-8 shadow-sm">
             <span class="w-2 h-2 rounded-full animate-pulse" [style.background-color]="'var(--accent-color)'"></span>
             <span class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">{{site.category}} Haute Couture</span>
@@ -75,40 +77,91 @@ import { Title, Meta } from '@angular/platform-browser';
             </a>
           </div>
         </div>
+
+        <!-- Split Hero (Modern SaaS Style) -->
+        <div *ngIf="aiContent?.layout?.heroType === 'split'" class="max-w-7xl mx-auto z-10 grid md:grid-cols-2 gap-20 items-center text-left animate-slide-up">
+           <div class="space-y-8">
+              <div class="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[var(--accent-color)]/10 text-[var(--accent-color)] text-[10px] font-black uppercase tracking-widest">
+                 {{site.category}} Strategic Partner
+              </div>
+              <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-none text-slate-900">
+                 {{aiContent?.heroText}}
+              </h1>
+              <p class="text-xl text-slate-500 leading-relaxed font-medium">
+                 {{aiContent?.heroSubtext}}
+              </p>
+              <div class="flex items-center gap-4">
+                 <a href="#products" class="h-14 px-8 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-widest shadow-xl" [style.background-color]="'var(--accent-color)'" [style.color]="'var(--accent-text)'">Démarrer</a>
+                 <a href="#about" class="h-14 px-8 rounded-xl flex items-center justify-center font-black text-xs uppercase tracking-widest border border-slate-200 bg-white">Vision Pro</a>
+              </div>
+           </div>
+           <div class="relative">
+              <div class="aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-700">
+                 <img [src]="aiContent.products?.[0]?.image || 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover">
+              </div>
+              <div class="absolute -bottom-10 -left-10 p-8 bg-white/80 backdrop-blur-xl rounded-3xl border border-white shadow-2xl animate-bounce-slow">
+                 <p class="text-4xl font-black text-[var(--accent-color)]">99%</p>
+                 <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Satisfaction Client</p>
+              </div>
+           </div>
+        </div>
         
         <!-- Decoration orbs -->
-        <div class="absolute right-[-10%] top-[20%] w-[30%] h-[50%] rounded-full opacity-[0.05] blur-[100px]" [style.background-color]="'var(--accent-color)'"></div>
+        <div class="absolute right-[-10%] top-[20%] w-[35%] h-[50%] rounded-full opacity-[0.04] blur-[120px]" [style.background-color]="'var(--accent-color)'"></div>
       </section>
-
-      <!-- Product Showcase (Horizontal Scroll or Grid) -->
+      <!-- PRODUCTS SECTION (Grid vs Horizontal) -->
       <section *ngIf="aiContent?.products?.length" id="products" class="py-32 bg-white relative z-10">
         <div class="max-w-7xl mx-auto px-6">
-          <div class="mb-20">
-             <h2 class="text-4xl md:text-5xl font-black tracking-tight mb-4">L'Art de l'Excellence</h2>
-             <div class="w-20 h-1.5 rounded-full" [style.background-color]="'var(--accent-color)'"></div>
+          <div class="mb-20 flex flex-col md:flex-row md:items-end justify-between gap-6">
+             <div>
+               <h2 class="text-4xl md:text-6xl font-black tracking-tighter mb-4">L'Art de l'Excellence</h2>
+               <div class="w-20 h-2 rounded-full" [style.background-color]="'var(--accent-color)'"></div>
+             </div>
+             <p class="text-slate-400 font-medium max-w-md">Chaque détail est pensé pour refléter l'identité unique de {{site.companyName}} sur le marché mondial.</p>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div *ngFor="let prod of aiContent.products" class="group relative bg-slate-50 rounded-[2.5rem] p-4 transition-all duration-700 hover:bg-white hover:shadow-[0_40px_100px_rgba(0,0,0,0.08)]">
-              <div class="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-8 shadow-2xl">
+
+          <!-- Standard Grid -->
+          <div *ngIf="aiContent?.layout?.featureLayout !== 'bento'" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div *ngFor="let prod of aiContent.products" class="group relative bg-slate-50 p-3 transition-all duration-500 hover:bg-white hover:shadow-[0_30px_60px_rgba(0,0,0,0.05)] border border-transparent hover:border-slate-100"
+                 [style.border-radius]="'var(--border-radius)'">
+              <div class="relative aspect-square overflow-hidden mb-6 shadow-sm" [style.border-radius]="'calc(var(--border-radius) / 2)'">
                 <img [src]="prod.image" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110">
-                <div class="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/60 to-transparent">
-                  <span class="px-3 py-1 rounded-lg bg-white/20 backdrop-blur-md text-white text-[10px] font-black uppercase tracking-widest">Premium Edition</span>
+                <div class="absolute top-4 right-4 h-8 w-8 bg-white/80 backdrop-blur-md rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                   <svg class="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
                 </div>
               </div>
-              <div class="px-4 pb-4">
-                <div class="flex justify-between items-start mb-2">
-                   <h3 class="text-2xl font-black text-slate-800 tracking-tight">{{prod.name}}</h3>
-                   <span class="text-xl font-black" [style.color]="'var(--accent-color)'">{{prod.price}}</span>
-                </div>
-                <p class="text-slate-500 font-medium mb-8 leading-relaxed line-clamp-2">{{prod.desc}}</p>
-                <button class="w-full py-4 rounded-xl border-2 font-black text-xs uppercase tracking-widest transition-all hover:bg-slate-900 hover:text-white hover:border-slate-900" [style.border-color]="'var(--accent-color)'" [style.color]="'var(--accent-color)'">
-                  Commander Maintenant
-                </button>
+              <div class="px-2">
+                 <h3 class="text-lg font-black text-slate-800 mb-1">{{prod.name}}</h3>
+                 <div class="flex items-center justify-between">
+                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Premium</span>
+                    <span class="text-lg font-black" [style.color]="'var(--accent-color)'">{{prod.price}}</span>
+                 </div>
               </div>
             </div>
           </div>
+
+          <!-- Bento Grid Layout (Modern Trend) -->
+          <div *ngIf="aiContent?.layout?.featureLayout === 'bento'" class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 min-h-[600px]">
+             <div class="md:col-span-2 md:row-span-2 bg-slate-100 p-10 relative overflow-hidden group shadow-xl" [style.border-radius]="'var(--border-radius)'">
+                <img [src]="aiContent.products[0]?.image" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+                <div class="relative h-full flex flex-col justify-end text-white">
+                   <h3 class="text-4xl font-black mb-2 leading-none uppercase tracking-tighter">{{aiContent.products[0]?.name}}</h3>
+                   <p class="text-white/70 max-w-xs mb-6 text-sm font-medium">{{aiContent.products[0]?.desc}}</p>
+                   <span class="text-3xl font-black text-[var(--accent-color)]">{{aiContent.products[0]?.price}}</span>
+                </div>
+             </div>
+             <div *ngFor="let p of aiContent.products.slice(1, 4)" class="md:col-span-1 bg-white border border-slate-100 p-8 flex flex-col items-center text-center group hover:border-[var(--accent-color)] transition-all shadow-sm" [style.border-radius]="'var(--border-radius)'">
+                <div class="w-24 h-24 overflow-hidden mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform" [style.border-radius]="'calc(var(--border-radius) / 3)'">
+                   <img [src]="p.image" class="w-full h-full object-cover">
+                </div>
+                <h4 class="font-black text-slate-800 mb-2 tracking-tight">{{p.name}}</h4>
+                <p class="text-[10px] text-slate-400 mb-4 line-clamp-2 uppercase tracking-widest font-bold">{{p.desc}}</p>
+                <span class="font-black text-xl" [style.color]="'var(--accent-color)'">{{p.price}}</span>
+             </div>
+          </div>
         </div>
-      </section>
+      </section>>
 
       <!-- Benefits / Features Section -->
       <section *ngIf="aiContent?.features?.length" id="services" class="py-32 relative overflow-hidden" [style.background-color]="'var(--section-bg)'">
@@ -215,7 +268,24 @@ import { Title, Meta } from '@angular/platform-browser';
         </div>
       </footer>
     </div>
-  `
+  `,
+  styles: [`
+    @keyframes fade-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slide-up {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .animate-fade-in { animation: fade-in 1s ease-out forwards; }
+    .animate-slide-up { animation: slide-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .animate-bounce-slow { animation: bounce-slow 4s ease-in-out infinite; }
+  `]
 })
 export class SiteViewerComponent implements OnInit {
   subdomain: string = '';
@@ -250,13 +320,15 @@ export class SiteViewerComponent implements OnInit {
     return {
       '--accent-color': this.site?.primaryColor || this.templateConfig.accent || '#FF6B2C',
       '--accent-text': this.templateConfig.accentText || '#fff',
-      '--nav-bg': (this.templateConfig.navBg || '#ffffff') + 'CC', // add transparency
+      '--nav-bg': (this.templateConfig.navBg || '#ffffff') + 'CC',
       '--hero-bg': this.templateConfig.heroBg || 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
       '--hero-text': this.templateConfig.heroText || '#0f172a',
       '--hero-text-light': this.templateConfig.heroTextLight || 'rgba(15,23,42,0.7)',
       '--section-bg': this.templateConfig.sectionBg?.[0] === '#' ? this.templateConfig.sectionBg : '#f8fafc',
       '--card-bg': this.templateConfig.cardBg?.[0] === '#' ? this.templateConfig.cardBg : '#ffffff',
-      '--footer-bg': this.templateConfig.footerBg || '#0f172a'
+      '--footer-bg': this.templateConfig.footerBg || '#0f172a',
+      '--glass-opacity': this.aiContent?.layout?.style === 'premium' ? '0.7' : '0.4',
+      '--border-radius': this.aiContent?.layout?.style === 'clean' ? '1rem' : '2.5rem'
     };
   }
 

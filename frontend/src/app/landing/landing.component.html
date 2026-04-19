@@ -5,7 +5,8 @@
     <div *ngFor="let n of notifications"
       class="pointer-events-auto bg-white border-l-4 border-[#FF6B2C] shadow-2xl rounded-2xl p-5 min-w-[320px] flex items-center justify-between animate-slide-in-right transform transition-all hover:scale-[1.02]">
       <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center text-[#FF6B2C] font-bold">!</div>
+        <div class="w-10 h-10 bg-orange-50 rounded-full flex items-center justify-center text-[#FF6B2C] font-bold">!
+        </div>
         <p class="text-sm font-bold text-[#2B3970]">{{ n.message }}</p>
       </div>
       <button (click)="removeToast(n.id)" class="text-slate-300 hover:text-slate-500 transition-colors font-bold">
@@ -23,14 +24,14 @@
           class="w-14 h-14 bg-white rounded-[22px] flex items-center justify-center shadow-xl overflow-hidden group-hover:scale-105 transition-all duration-500">
           <img src="/d.png" alt="VitrineClick Logo" class="w-full h-full object-contain p-2">
         </div>
-          <span class="text-3xl font-black text-[#2B3970] tracking-tighter leading-none">VitrineClick</span>
-          <span class="text-[9px] font-bold uppercase tracking-[0.4em] text-slate-400 mt-1.5">L'Intelligence au Service du Web</span>
-        </div>
+        <span class="text-3xl font-black text-[#2B3970] tracking-tighter leading-none">VitrineClick</span>
+        <span class="text-[9px] font-bold uppercase tracking-[0.4em] text-slate-400 mt-1.5">L'Intelligence au Service du
+          Web</span>
+      </div>
       <div class="hidden lg:flex items-center gap-12">
         <a href="#how-it-works"
-          class="text-[11px] font-black uppercase tracking-[0.2em] text-[#2B3970]/60 hover:text-[#FF6B2C] transition-colors">Architecture</a>
-        <a href="#templates"
-          class="text-[11px] font-black uppercase tracking-[0.2em] text-[#2B3970]/60 hover:text-[#FF6B2C] transition-colors">Modèles</a>
+          class="text-[11px] font-black uppercase tracking-[0.2em] text-[#2B3970]/60 hover:text-[#FF6B2C] transition-colors">A
+          propos</a>
         <a href="#pricing"
           class="text-[11px] font-black uppercase tracking-[0.2em] text-[#2B3970]/60 hover:text-[#FF6B2C] transition-colors">Tarifs</a>
       </div>
@@ -49,18 +50,21 @@
       class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl aspect-square bg-[radial-gradient(circle_at_center,_#FF6B2C08_0%,_transparent_70%)] pointer-events-none -z-10 animate-pulse">
     </div>
 
-    <section class="max-w-7xl mx-auto px-6 text-center mb-32">      <div
+    <section class="max-w-7xl mx-auto px-6 text-center mb-32">
+      <div
         class="inline-flex items-center gap-3 px-6 py-2 bg-white/50 backdrop-blur-md rounded-full border border-orange-100/50 text-[#FF6B2C] text-[10px] font-bold uppercase tracking-[0.3em] mb-10 animate-fade-in hover:bg-orange-50 transition-all cursor-default shadow-sm text-center mx-auto">
         Solution de Création Digitale Intelligente
       </div>
       <h1
         class="text-6xl md:text-[88px] font-black text-[#2B3970] tracking-tight leading-[1.1] mb-10 animate-fade-in-up">
         Donnez vie à votre <br> <span class="relative inline-block"><span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2C] via-orange-400 to-amber-500">Vision Digitale.</span></span>
+            class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2C] via-orange-400 to-amber-500">Vision
+            Digitale.</span></span>
       </h1>
       <p
         class="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed mb-16 animate-fade-in-up delay-100">
-        VitrineClick réinvente la création de sites web. Un design sur mesure, un contenu captivant et une performance inégalée, le tout propulsé par une IA qui comprend vos besoins.
+        VitrineClick réinvente la création de sites web. Un design sur mesure, un contenu captivant et une performance
+        inégalée, le tout propulsé par une IA qui comprend vos besoins.
       </p>
       <div class="flex flex-wrap justify-center gap-5 animate-fade-in-up delay-200">
         <button (click)="scrollToLogin()"
@@ -106,10 +110,11 @@
     <section id="pricing" class="max-w-7xl mx-auto px-6 mb-40">
       <div class="text-center mb-20 animate-fade-in-up">
         <h2 class="text-5xl md:text-6xl font-black text-[#2B3970] tracking-tight leading-tight mb-6">Investissement
-          <br> <span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2C] to-orange-400">Clair et Sans Surprise.</span>
+          <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2C] to-orange-400">Clair et Sans
+            Surprise.</span>
         </h2>
-        <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">Des tarifs adaptés à chaque étape de votre croissance. Pas de frais cachés, résiliable à tout moment.</p>
+        <p class="text-lg text-slate-500 max-w-2xl mx-auto font-medium leading-relaxed">Des tarifs adaptés à chaque
+          étape de votre croissance. Pas de frais cachés, résiliable à tout moment.</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-8 items-center stagger-in">
@@ -293,8 +298,7 @@
   <!-- FOOTER -->
   <footer class="py-32 bg-white border-t border-slate-100">
     <div class="max-w-7xl mx-auto px-6 text-center">
-      <div
-        class="flex items-center justify-center gap-4 mb-16 opacity-40 hover:opacity-100 transition-all">
+      <div class="flex items-center justify-center gap-4 mb-16 opacity-40 hover:opacity-100 transition-all">
         <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
           <img src="/d.png" alt="VitrineClick Logo" class="w-full h-full object-contain p-1">
         </div>
@@ -370,7 +374,7 @@
           <p class="text-blue-200/60 font-medium text-sm mb-12">Abonnement Mensuel, sans engagement.</p>
 
           <div class="space-y-6">
-              <span class="font-bold text-sm">{{selectedPlan?.isPro ? 'Vitrines IA Illimitées' : '1 Vitrine IA'}}</span>
+            <span class="font-bold text-sm">{{selectedPlan?.isPro ? 'Vitrines IA Illimitées' : '1 Vitrine IA'}}</span>
             <div class="flex items-center gap-4 text-white/90">
               <span class="font-bold text-sm">Hébergement Cyber-Sécurisé</span>
             </div>
@@ -476,4 +480,5 @@
 
       </div>
     </div>
-  </div></div>
+  </div>
+</div>

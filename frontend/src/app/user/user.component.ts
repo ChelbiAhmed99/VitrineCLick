@@ -1697,26 +1697,32 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
     if (this.creationMode === 'ai') {
       this.liveContent = { status: 'thinking' };
-      setTimeout(() => { 
-        this.progressText = "Analyse du secteur " + this.newSite.category + "..."; 
-        this.progressPercent = 25; 
-        this.liveContent = { ...this.liveContent, heroText: 'Analyse en cours...', aboutText: 'Découverte de l\'industrie...' };
-      }, 400);
-      setTimeout(() => { 
-        this.progressText = "Génération du branding & SEO..."; 
-        this.progressPercent = 50; 
-        this.liveContent = { ...this.liveContent, theme: { primary: this.newSite.primaryColor, font: 'Inter' }, seo: { title: this.newSite.companyName + " | Officiel" } };
-      }, 1100);
-      setTimeout(() => { 
-        this.progressText = "Fabrication du catalogue produits IA..."; 
-        this.progressPercent = 75; 
-        this.liveContent = { ...this.liveContent, products: [{}, {}, {}, {}] };
-      }, 2000);
-      setTimeout(() => { 
-        this.progressText = "Déploiement final du Studio..."; 
-        this.progressPercent = 90; 
-      }, 2800);
-      setTimeout(() => executeCreation(), 3400);
+      
+      // Update UI state periodically while the request is in flight
+      const steps = [
+        { text: "Analyse du secteur " + this.newSite.category + "...", pct: 25 },
+        { text: "Génération du branding & SEO...", pct: 50 },
+        { text: "Fabrication du catalogue produits IA...", pct: 75 },
+        { text: "Déploiement final du Studio...", pct: 90 }
+      ];
+      
+      let stepIdx = 0;
+      const interval = setInterval(() => {
+        if (stepIdx < steps.length && this.isGenerating) {
+          this.progressText = steps[stepIdx].text;
+          this.progressPercent = steps[stepIdx].pct;
+          
+          if (stepIdx === 1) this.liveContent = { ...this.liveContent, theme: { primary: this.newSite.primaryColor, font: 'Inter' }, seo: { title: this.newSite.companyName + " | Officiel" } };
+          if (stepIdx === 2) this.liveContent = { ...this.liveContent, products: [{}, {}, {}, {}] };
+          
+          stepIdx++;
+        } else {
+          clearInterval(interval);
+        }
+      }, 1500);
+
+      // Call Backend IMMEDIATELY
+      executeCreation();
     } else {
       executeCreation(); // Instant
     }

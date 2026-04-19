@@ -5,15 +5,31 @@ import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from huggingface_hub import InferenceClient
 
 app = Flask(__name__)
 CORS(app)
-load_dotenv()
+# Robust .env loading
+env_path = os.path.join(os.path.dirname(__file__), '.env')
+load_dotenv(env_path)
 
 # Configuration
 HF_TOKEN = os.getenv("HF_TOKEN")
-API_URL = "https://router.huggingface.co/hf-inference/models/Qwen/Qwen2.5-Coder-32B-Instruct"
-headers = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
+if HF_TOKEN:
+    print(f" [OK] HF_TOKEN loaded ({HF_TOKEN[:5]}...)")
+else:
+    print(" [ERROR] HF_TOKEN NOT FOUND in " + env_path)
+
+# Reliable model via InferenceClient
+MODEL_ID = "Qwen/Qwen2.5-Coder-32B-Instruct"
+
+# Initialize Client
+client = None
+if HF_TOKEN:
+    print(f" [OK] HF_TOKEN loaded ({HF_TOKEN[:5]}...)")
+    client = InferenceClient(model=MODEL_ID, token=HF_TOKEN)
+else:
+    print(" [ERROR] HF_TOKEN NOT FOUND in " + env_path)
 
 def generate_site_content_pro(company_name, description, industry):
     """
@@ -55,24 +71,27 @@ Required Structure:
 
     payload = {
         "inputs": prompt,
-        "parameters": {"max_new_tokens": 1800, "temperature": 0.2}
+        "parameters": {"max_new_tokens": 1200, "temperature": 0.1, "top_p": 0.9}
     }
 
     try:
         print(f" [AI-SCALE] Generating Multi-Page content for {company_name}...")
-        response = requests.post(API_URL, headers=headers, json=payload, timeout=60)
         
-        if response.status_code == 200:
-            result = response.json()
-            content = result[0].get('generated_text', '') if isinstance(result, list) else result.get('generated_text', '')
-            import re
-            match = re.search(r'\{.*\}', content, re.DOTALL)
-            if match:
-                return json.loads(match.group())
-        else:
-            print(f" [AI-SCALE] Error {response.status_code}: {response.text}")
+        # Use Chat Completion for better structure instruction following
+        messages = [{"role": "user", "content": prompt}]
+        response = client.chat.completions.create(
+            messages=messages,
+            max_tokens=1200,
+            temperature=0.1
+        )
+        
+        content = response.choices[0].message.content
+        import re
+        match = re.search(r'\{.*\}', content, re.DOTALL)
+        if match:
+            return json.loads(match.group())
     except Exception as e:
-        print(f" [AI-SCALE] Request failed: {e}")
+        print(f" [AI-SCALE] Generation failed: {e}")
 
     return get_fallback_content(company_name, description, industry)
 
@@ -94,15 +113,42 @@ def get_fallback_content(company_name, description, industry):
         "seo": {"title": f"{comp}", "description": "SaaS Website."}
     }
 
-@app.route('/generate', methods=['POST'])
-def generate_content():
+@app.route('/generate-logo', methods=['POST'])
+def generate_logo():
+    """Returns a logo URL based on the prompt."""
+    data = request.json
+    company_name = data.get('companyName') or data.get('prompt')
+    # We use a high-quality placeholder or a generated one
+    # For now, let's use a nice colored text-based logo or Unsplash
+    logo_type = data.get('style', 'modern')
+    return jsonify({
+        "success": True, 
+        "imageUrls": [f"https://ui-avatars.com/api/?name={company_name}&background=random&color=fff&size=512&font-size=0.33"]
+    })
+
+@app.route('/generate-copy', methods=['POST'])
+def generate_copy():
+    """Returns the full site structure (Home, About, Contact)."""
     data = request.json
     company_name = data.get('companyName')
     description = data.get('description')
     industry = data.get('category', 'Technologie')
     
     content = generate_site_content_pro(company_name, description, industry)
-    return jsonify(content)
+    return jsonify({
+        "success": True,
+        "content": content
+    })
+
+# Legacy / test route
+@app.route('/generate', methods=['POST'])
+def generate_legacy():
+    data = request.json
+    # If it's a logo request (has prompt)
+    if 'prompt' in data:
+        return generate_logo()
+    # Otherwise site generation
+    return generate_copy()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

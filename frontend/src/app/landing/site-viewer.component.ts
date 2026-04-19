@@ -125,7 +125,7 @@ import { Title, Meta } from '@angular/platform-browser';
             
             <!-- Standard Grid -->
             <div *ngIf="aiContent?.layout?.featureLayout !== 'bento'" class="grid grid-cols-1 md:grid-cols-3 gap-12">
-               <div *for="let p of aiContent.products" class="group bg-white p-4" [style.border-radius]="'var(--border-radius)'">
+               <div *ngFor="let p of aiContent.products" class="group bg-white p-4" [style.border-radius]="'var(--border-radius)'">
                   <div class="aspect-[3/4] overflow-hidden mb-6 relative" [style.border-radius]="'calc(var(--border-radius) / 2)'">
                      <img [src]="p.image" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000">
                      <button (click)="addToCart(p)" class="absolute bottom-4 right-4 bg-white/90 backdrop-blur-md p-4 rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all">
@@ -139,29 +139,6 @@ import { Title, Meta } from '@angular/platform-browser';
             </div>
           </div>
         </section>
-      </div>
-
-          <!-- Bento Grid Layout (Modern Trend) -->
-          <div *ngIf="aiContent?.layout?.featureLayout === 'bento'" class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-6 min-h-[600px]">
-             <div class="md:col-span-2 md:row-span-2 bg-slate-100 p-10 relative overflow-hidden group shadow-xl" [style.border-radius]="'var(--border-radius)'">
-                <img [src]="aiContent.products[0]?.image" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:scale-105 transition-transform duration-1000">
-                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-                <div class="relative h-full flex flex-col justify-end text-white">
-                   <h3 class="text-4xl font-black mb-2 leading-none uppercase tracking-tighter">{{aiContent.products[0]?.name}}</h3>
-                   <p class="text-white/70 max-w-xs mb-6 text-sm font-medium">{{aiContent.products[0]?.desc}}</p>
-                   <span class="text-3xl font-black text-[var(--accent-color)]">{{aiContent.products[0]?.price}}</span>
-                </div>
-             </div>
-             <div *ngFor="let p of aiContent.products.slice(1, 4)" class="md:col-span-1 bg-white border border-slate-100 p-8 flex flex-col items-center text-center group hover:border-[var(--accent-color)] transition-all shadow-sm" [style.border-radius]="'var(--border-radius)'">
-                <div class="w-24 h-24 overflow-hidden mb-6 shadow-lg rotate-3 group-hover:rotate-0 transition-transform" [style.border-radius]="'calc(var(--border-radius) / 3)'">
-                   <img [src]="p.image" class="w-full h-full object-cover">
-                </div>
-                <h4 class="font-black text-slate-800 mb-2 tracking-tight">{{p.name}}</h4>
-                <p class="text-[10px] text-slate-400 mb-4 line-clamp-2 uppercase tracking-widest font-bold">{{p.desc}}</p>
-                <span class="font-black text-xl" [style.color]="'var(--accent-color)'">{{p.price}}</span>
-             </div>
-          </div>
-                </section>
       </div>
 
       <!-- ABOUT PAGE CONTENT -->

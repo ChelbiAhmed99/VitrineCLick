@@ -2,7 +2,7 @@ import os
 import uuid
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from logo_gen import generate_logo_hf
-from content_gen import generate_site_content_hf
+from content_gen import generate_site_content_pro
 from dotenv import load_dotenv
 import random
 from concurrent.futures import ThreadPoolExecutor
@@ -68,7 +68,7 @@ def generate_copy():
     simulate = data.get('simulate', False)
     
     try:
-        content_json = generate_site_content_hf(company_name, description, category, simulate)
+        content_json = generate_site_content_pro(company_name, description, category)
         return jsonify({
             "success": True,
             "content": content_json

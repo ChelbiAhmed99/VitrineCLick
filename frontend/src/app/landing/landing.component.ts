@@ -193,5 +193,9 @@ export class LandingPanelComponent implements OnInit {
     }, 2000);
   }
 
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   toggleMobileMenu() { this.isMobileMenuOpen = !this.isMobileMenuOpen; }
 }

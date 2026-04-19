@@ -23,9 +23,9 @@
   <!-- NAVIGATION -->
   <nav class="fixed top-0 left-0 right-0 z-[120] px-6 py-8">
     <div class="max-w-7xl mx-auto flex items-center justify-between glass-morphism p-5 rounded-[40px] border border-white/40 shadow-[0_20px_50px_rgba(0,0,0,0.05)] bg-white/70 backdrop-blur-2xl">
-      <div class="flex items-center gap-4 cursor-pointer group">
-        <div class="w-14 h-14 bg-[#2B3970] rounded-[22px] flex items-center justify-center shadow-xl group-hover:bg-[#FF6B2C] transition-all duration-500 transform group-hover:rotate-6">
-          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+      <div class="flex items-center gap-4 cursor-pointer group" (click)="scrollToTop()">
+        <div class="w-14 h-14 bg-white rounded-[22px] flex items-center justify-center shadow-xl overflow-hidden group-hover:scale-105 transition-all duration-500">
+          <img src="/logo.png" alt="VitrineClick Logo" class="w-full h-full object-contain p-2">
         </div>
         <div class="flex flex-col">
           <span class="text-3xl font-black text-[#2B3970] tracking-tighter leading-none">VitrineClick<span class="text-[#FF6B2C]">.</span></span>
@@ -246,8 +246,10 @@
   <!-- FOOTER -->
   <footer class="py-32 bg-white border-t border-slate-100">
       <div class="max-w-7xl mx-auto px-6 text-center">
-          <div class="flex items-center justify-center gap-4 mb-16 opacity-30 grayscale grayscale-0 hover:opacity-100 transition-all">
-             <div class="w-12 h-12 bg-[#2B3970] rounded-xl flex items-center justify-center"><svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
+          <div class="flex items-center justify-center gap-4 mb-16 opacity-100 transition-all">
+             <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center border border-slate-100 shadow-sm overflow-hidden p-1">
+                <img src="/logo.png" alt="VitrineClick Logo" class="w-full h-full object-contain">
+             </div>
              <span class="text-4xl font-black text-[#2B3970] tracking-tighter">VitrineClick<span class="text-[#FF6B2C]">.</span></span>
           </div>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 text-left border-b border-slate-50 pb-20">

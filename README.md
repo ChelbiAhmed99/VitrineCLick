@@ -19,16 +19,16 @@ VitrineClick is a high-end, AI-driven SaaS platform designed to transform user p
 
 ---
 
-## 💻 Running Locally (Windows Environment)
+## 💻 Running Locally
 
-Follow these steps to set up and run VitrineClick on your Windows machine.
+Follow these steps to set up and run VitrineClick on your machine.
 
 ### Prerequisites
 
 - **Java**: Install [JDK 21+](https://www.oracle.com/java/technologies/downloads/).
 - **Node.js**: Install [Node 20+](https://nodejs.org/).
-- **Python**: Install [Python 3.10+](https://www.python.org/downloads/windows/).
-- **Git**: [Git for Windows](https://git-scm.com/download/win).
+- **Python**: Install [Python 3.10+](https://www.python.org/downloads/).
+- **Git**: [Git SCM](https://git-scm.com/downloads).
 
 ### Step 1: Clone the Repository
 ```bash
@@ -42,13 +42,15 @@ Navigate to the `ai-service` folder.
    ```env
    HF_TOKEN=your_token_here
    ```
-2. Install dependencies:
-   ```powershell
+2. Install dependencies (recommended to use a virtual environment):
+   ```bash
    cd ai-service
-   pip install flask flask-cors requests python-dotenv
+   python -m venv venv
+   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+   pip install -r requirements.txt
    ```
 3. Start the service:
-   ```powershell
+   ```bash
    python content_gen.py
    ```
    *The service runs on Port 5000.*
@@ -56,25 +58,25 @@ Navigate to the `ai-service` folder.
 ### Step 3: Start the Backend
 Navigate to the `backend` folder.
 1. Clean and build the project:
-   ```powershell
+   ```bash
    cd backend
-   .\gradlew clean build
+   ./gradlew clean build  # On Windows use `.\gradlew.bat`
    ```
 2. Run the application:
-   ```powershell
-   .\gradlew bootRun
+   ```bash
+   ./gradlew bootRun
    ```
    *The API runs on Port 8080.*
 
 ### Step 4: Launch the Frontend
 Navigate to the `frontend` folder.
 1. Install dependencies:
-   ```powershell
+   ```bash
    cd frontend
    npm install
    ```
 2. Start the development server:
-   ```powershell
+   ```bash
    npm start
    ```
    *Access the Studio at `http://localhost:4200`.*

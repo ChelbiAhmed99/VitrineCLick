@@ -21,7 +21,7 @@ import { NotificationService } from '../services/notification.service';
             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
           </div>
           <div>
-            <span class="text-xl font-black text-white tracking-tight">Viky<span class="text-[#FF6B2C]">Hub</span></span>
+            <span class="text-xl font-black text-white tracking-tight">User<span class="text-[#FF6B2C]">Panel</span></span>
             <p class="text-[9px] font-bold text-white/25 uppercase tracking-[0.35em]">Identity Studio</p>
           </div>
         </div>
@@ -281,12 +281,8 @@ import { NotificationService } from '../services/notification.service';
                   </div>
                   <div>
                      <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Secteur d'Activité</label>
-                     <select [(ngModel)]="newSite.category" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all cursor-pointer appearance-none">
-                       <option value="Tech">Technologie</option>
-                       <option value="Restaurant">Gastronomie</option>
-                       <option value="Consulting">Consulting</option>
-                       <option value="Beauty">Bien-être</option>
-                       <option value="Retail">E-Commerce</option>
+                     <select [(ngModel)]="newSite.category" (ngModelChange)="onCategoryChange()" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all cursor-pointer appearance-none">
+                       <option *ngFor="let s of sectors" [value]="s.value">{{s.label}}</option>
                      </select>
                   </div>
                   <div>
@@ -325,108 +321,95 @@ import { NotificationService } from '../services/notification.service';
 
               <!-- Section 3 : Design & Template -->
               <div>
-                <h3 class="text-xl font-black text-[#2B3970] mb-2">3. Design & Structure</h3>
-                <p class="text-slate-400 text-sm font-medium mb-6">Sélectionnez le style de base. L'IA l'adaptera entièrement à votre secteur.</p>
+                <h3 class="text-xl font-black text-[#2B3970] mb-1">3. Design & Structure</h3>
+                <p class="text-slate-400 text-sm font-medium mb-5">Choisissez un design. L'IA l'adaptera à votre secteur.</p>
 
-            <div class="grid grid-cols-2 md:grid-cols-3 gap-5 mb-8">
-              <button *ngFor="let t of aiTemplates" (click)="selectedTemplate = t.id"
-                class="group relative border-2 rounded-[20px] overflow-hidden transition-all duration-300 text-left bg-white flex flex-col"
-                [class]="selectedTemplate === t.id ? 'border-[#FF6B2C] shadow-[0_16px_48px_rgba(255,107,44,0.18)] scale-[1.03]' : 'border-slate-100 hover:border-[#FF6B2C]/40 hover:shadow-2xl hover:-translate-y-1'">
+                <!-- ===== MARKETPLACE TEMPLATE GRID ===== -->
+                <div class="grid grid-cols-3 gap-4 mb-6">
+                  <button *ngFor="let t of marketplaceTemplates" (click)="selectedTemplate = t.id"
+                    class="group relative flex flex-col cursor-pointer outline-none bg-white rounded-2xl overflow-hidden border-2 transition-all duration-300"
+                    [class]="selectedTemplate === t.id
+                      ? 'border-[#FF6B2C] shadow-[0_8px_32px_rgba(255,107,44,0.22)] -translate-y-0.5'
+                      : 'border-slate-100 hover:border-slate-300 hover:shadow-lg hover:-translate-y-0.5'">
 
-                <!-- Elite Badge -->
-                <div *ngIf="t.isPremium" class="absolute top-2.5 left-2.5 z-20 bg-[#FF6B2C] text-white text-[7px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shadow">
-                  Elite
-                </div>
+                    <!-- Photo Thumbnail -->
+                    <div class="relative w-full overflow-hidden" style="height:150px">
+                      <img [src]="t.photo" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" [alt]="t.name">
 
-                <!-- ===== PREMIUM WEBSITE MOCKUP PREVIEW ===== -->
-                <div class="h-40 relative overflow-hidden flex-shrink-0" [style.background]="t.navBg">
+                      <!-- Gradient overlay at bottom -->
+                      <div class="absolute inset-0" style="background:linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.25) 100%)"></div>
 
-                  <!-- Browser chrome -->
-                  <div class="absolute top-0 left-0 right-0 h-4 flex items-center px-2 gap-1 z-20" [style.background]="t.navBg">
-                    <div class="w-1.5 h-1.5 rounded-full bg-red-400/60"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-yellow-400/60"></div>
-                    <div class="w-1.5 h-1.5 rounded-full bg-green-400/60"></div>
-                    <div class="flex-1 mx-2 h-1.5 rounded-full bg-white/10"></div>
-                  </div>
-
-                  <!-- Navbar -->
-                  <div class="absolute top-4 left-0 right-0 h-6 flex items-center justify-between px-2.5 z-10" [style.background]="t.navBg">
-                    <div class="flex items-center gap-1.5">
-                      <div class="w-2 h-2 rounded-sm" [style.background]="t.accent"></div>
-                      <div class="w-10 h-1 rounded-full" [style.background]="t.textLight"></div>
-                    </div>
-                    <div class="flex gap-3 items-center">
-                      <div class="w-6 h-0.5 rounded-full" [style.background]="t.textLight"></div>
-                      <div class="w-6 h-0.5 rounded-full" [style.background]="t.textLight"></div>
-                      <div class="h-3 px-2 rounded text-[5.5px] font-black flex items-center" [style.background]="t.accent" [style.color]="t.accentText">Contact</div>
-                    </div>
-                  </div>
-
-                  <!-- Hero / Main content -->
-                  <div class="absolute top-10 left-0 right-0 bottom-0" [ngStyle]="{'background': t.heroBg}">
-                    <div class="flex h-full">
-                      <!-- Left content -->
-                      <div class="flex-1 flex flex-col justify-center px-3 py-1.5">
-                        <!-- Eyebrow label -->
-                        <div class="h-1 rounded-sm mb-1.5 w-10" [style.background]="t.accent"></div>
-                        <!-- H1 -->
-                        <div class="h-2.5 rounded-sm mb-1 w-24" [style.background]="t.heroText"></div>
-                        <!-- H1 line 2 -->
-                        <div class="h-2.5 rounded-sm mb-2 w-20" [style.background]="t.heroText"></div>
-                        <!-- Subtext -->
-                        <div class="h-1 rounded-full mb-0.5 w-20" [style.background]="t.heroTextLight"></div>
-                        <div class="h-1 rounded-full mb-3 w-16" [style.background]="t.heroTextLight"></div>
-                        <!-- CTA Buttons -->
-                        <div class="flex gap-1.5 items-center">
-                          <div class="h-3.5 px-2 rounded text-[5.5px] font-black flex items-center shadow-sm" [style.background]="t.accent" [style.color]="t.accentText">Démarrer</div>
-                          <div class="h-3.5 px-2 rounded border text-[5.5px] flex items-center" [style.border-color]="t.heroText + '50'" [style.color]="t.heroText">En savoir +</div>
-                        </div>
+                      <!-- Popular badge -->
+                      <div *ngIf="t.popular"
+                        class="absolute top-2.5 right-2.5 flex items-center gap-1 px-2.5 py-1 rounded-full text-[9px] font-black text-white uppercase tracking-wider shadow-lg"
+                        style="background:#FF6B2C">
+                        <svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+                        Populaire
                       </div>
-                      <!-- Right visual block -->
-                      <div *ngIf="t.hasImage" class="w-14 flex items-center justify-center overflow-hidden relative mr-1.5">
-                        <div class="w-11 h-full rounded-lg overflow-hidden" [style.background]="t.imageBg">
-                          <!-- Simulated card/image placeholder -->
-                          <div class="m-1.5 h-5 rounded" [style.background]="'rgba(255,255,255,0.15)'"></div>
-                          <div class="mx-1.5 h-1 rounded-full mb-1" [style.background]="'rgba(255,255,255,0.25)'"></div>
-                          <div class="mx-1.5 h-1 rounded-full" [style.background]="'rgba(255,255,255,0.15)'"></div>
+
+                      <!-- Selected checkmark overlay -->
+                      <div *ngIf="selectedTemplate === t.id"
+                        class="absolute inset-0 flex items-center justify-center"
+                        style="background:rgba(255,107,44,0.15)">
+                        <div class="w-10 h-10 bg-[#FF6B2C] rounded-full flex items-center justify-center shadow-xl">
+                          <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+                          </svg>
                         </div>
                       </div>
                     </div>
 
-                    <!-- Features row at bottom -->
-                    <div class="absolute bottom-0 left-0 right-0 flex gap-1 px-3 pb-1.5">
-                      <div *ngFor="let bar of t.featureBars" class="flex-1 h-4 rounded-md" [style.background]="bar"></div>
-                    </div>
-                  </div>
-
-                  <!-- Hover overlay -->
-                  <div class="absolute inset-0 bg-white/0 group-hover:bg-white/5 transition-colors duration-300"></div>
-                </div>
-
-                <!-- Card Footer -->
-                <div class="p-3 flex-1 flex flex-col justify-between" [class]="selectedTemplate === t.id ? 'bg-orange-50/70' : 'bg-white group-hover:bg-slate-50/60 transition-colors'">
-                  <div>
-                    <div class="flex items-start justify-between gap-1 mb-1">
-                      <h4 class="font-black text-[#2B3970] text-xs leading-tight">{{t.name}}</h4>
-                      <span class="text-[6.5px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full flex-shrink-0 mt-0.5"
-                        [style.background]="t.accent + '22'" [style.color]="t.accent">{{t.tags[0]}}</span>
-                    </div>
-                    <p class="text-[8.5px] text-slate-400 font-medium leading-tight line-clamp-2">{{t.desc}}</p>
-                  </div>
-                  <div class="flex items-center justify-between mt-1.5">
-                    <span class="text-[7px] text-slate-300 font-bold uppercase tracking-wider">{{t.style}}</span>
-                    <div *ngIf="selectedTemplate === t.id" class="flex items-center gap-1">
-                      <div class="w-3.5 h-3.5 bg-[#FF6B2C] rounded-full flex items-center justify-center shadow">
-                        <svg class="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7"/></svg>
+                    <!-- Card Footer -->
+                    <div class="px-3.5 py-3 flex flex-col gap-1.5">
+                      <!-- Name + accent dot -->
+                      <div class="flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2 min-w-0">
+                          <h4 class="font-black text-[13px] text-[#2B3970] truncate leading-tight">{{t.name}}</h4>
+                        </div>
+                        <div class="w-3 h-3 rounded-full flex-shrink-0 shadow ring-2 ring-white"
+                          [style.background]="t.accent"></div>
                       </div>
-                      <span class="text-[7px] font-black text-[#FF6B2C] uppercase">Sélectionné</span>
-                    </div>
-                  </div>
-                </div>
-              </button>
-            </div>
 
-            </div>
+                      <!-- Category label -->
+                      <span class="text-[10px] text-slate-400 font-semibold">{{t.categoryLabel}}</span>
+
+                      <!-- Star rating + score -->
+                      <div class="flex items-center justify-between pt-1.5 border-t border-slate-100 mt-0.5">
+                        <div class="flex items-center gap-1">
+                          <div class="flex items-center gap-0.5">
+                            <svg *ngFor="let star of getStars(t.rating)" class="w-3 h-3"
+                              [style.color]="star === 'full' ? '#FF6B2C' : (star === 'half' ? '#FF6B2C' : '#e2e8f0')"
+                              fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                          </div>
+                          <span class="text-[10px] font-black text-slate-500">{{t.rating}}</span>
+                        </div>
+                        <!-- Selected indicator or hover hint -->
+                        <span *ngIf="selectedTemplate === t.id"
+                          class="text-[9px] font-black text-[#FF6B2C] uppercase tracking-wide">Sélectionné ✓</span>
+                        <span *ngIf="selectedTemplate !== t.id"
+                          class="text-[9px] font-black text-slate-300 uppercase tracking-wide opacity-0 group-hover:opacity-100 transition-opacity">
+                          Choisir →
+                        </span>
+                      </div>
+                    </div>
+
+                    <!-- Bottom accent bar -->
+                    <div class="h-0.5 w-full transition-all duration-300"
+                      [style.background]="selectedTemplate === t.id ? t.accent : 'transparent'"
+                      [class]="'group-hover:opacity-100 ' + (selectedTemplate !== t.id ? 'opacity-0' : '')">
+                    </div>
+                  </button>
+                </div>
+
+                <!-- No results -->
+                <div *ngIf="marketplaceTemplates.length === 0"
+                  class="text-center py-12 text-slate-300 font-bold text-sm">
+                  Aucun template trouvé pour ce filtre.
+                </div>
+              </div>
+
 
             <!-- Section 4 : Le Prompt Magique -->
               <div>
@@ -464,12 +447,8 @@ import { NotificationService } from '../services/notification.service';
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Secteur</label>
-                    <select [(ngModel)]="newSite.category" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-4 font-bold text-[#2B3970] focus:border-[#2B3970] outline-none cursor-pointer appearance-none transition-all">
-                      <option value="Tech">Technologie</option>
-                      <option value="Restaurant">Gastronomie</option>
-                      <option value="Consulting">Consulting</option>
-                      <option value="Beauty">Bien-être</option>
-                      <option value="Retail">E-Commerce</option>
+                    <select [(ngModel)]="newSite.category" (ngModelChange)="onCategoryChange()" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-4 font-bold text-[#2B3970] focus:border-[#2B3970] outline-none cursor-pointer appearance-none transition-all">
+                      <option *ngFor="let s of sectors" [value]="s.value">{{s.label}}</option>
                     </select>
                   </div>
                   <div>
@@ -509,93 +488,96 @@ import { NotificationService } from '../services/notification.service';
           </div>
 
           <!-- STEP 3: Generation Status (Enhanced with Live Preview) -->
-          <div *ngIf="wizardStep === 3" class="flex-1 flex flex-col items-center justify-center p-8 bg-slate-50 relative overflow-hidden min-h-[500px]">
-             
-             <!-- Floating Background Blobs -->
-             <div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#FF6B2C]/10 rounded-full blur-3xl animate-pulse"></div>
-             <div class="absolute -left-20 -top-20 w-64 h-64 bg-[#2B3970]/5 rounded-full blur-3xl"></div>
+          <div *ngIf="wizardStep === 3" class="flex-1 flex flex-col items-center justify-center p-6 relative overflow-hidden min-h-[500px]" [style.background]="isGenerating ? '#0f172a' : '#f0fdf4'">
 
-             <!-- Status & Progress -->
-             <div class="z-10 w-full max-w-sm text-center mb-10">
-                <div class="relative w-20 h-20 mx-auto mb-6">
-                   <div class="absolute inset-0 border-2 border-[#FF6B2C]/20 rounded-2xl animate-spin" style="animation-duration: 3s"></div>
+             <!-- Star particles -->
+             <div *ngIf="isGenerating" class="absolute inset-0 overflow-hidden pointer-events-none">
+               <div class="absolute top-12 left-1/4 w-1 h-1 bg-[#FF6B2C] rounded-full animate-ping" style="animation-delay:0s"></div>
+               <div class="absolute top-1/3 right-1/4 w-1.5 h-1.5 bg-blue-400 rounded-full animate-ping" style="animation-delay:0.7s"></div>
+               <div class="absolute bottom-1/4 left-1/3 w-1 h-1 bg-[#FF6B2C]/70 rounded-full animate-ping" style="animation-delay:1.4s"></div>
+             </div>
+
+             <!-- GENERATING STATE -->
+             <ng-container *ngIf="isGenerating">
+               <div class="z-10 w-full max-w-md text-center mb-8">
+                 <div class="relative w-20 h-20 mx-auto mb-5">
+                   <svg class="w-20 h-20 -rotate-90" viewBox="0 0 80 80">
+                     <circle cx="40" cy="40" r="36" fill="none" stroke="rgba(255,107,44,0.12)" stroke-width="4"/>
+                     <circle cx="40" cy="40" r="36" fill="none" stroke="#FF6B2C" stroke-width="4"
+                       stroke-linecap="round" stroke-dasharray="226"
+                       [style.stroke-dashoffset]="226 - (progressPercent/100)*226"
+                       style="transition: stroke-dashoffset 0.8s ease"/>
+                   </svg>
                    <div class="absolute inset-0 flex items-center justify-center">
-                      <div class="w-12 h-12 bg-gradient-to-br from-[#2B3970] to-[#1a2450] rounded-xl flex items-center justify-center shadow-lg relative overflow-hidden">
-                         <div class="absolute inset-0 bg-[#FF6B2C]/20 animate-pulse"></div>
-                         <svg class="w-6 h-6 text-white relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                      </div>
+                     <div class="w-11 h-11 bg-gradient-to-br from-[#FF6B2C] to-orange-600 rounded-2xl flex items-center justify-center shadow-lg shadow-[#FF6B2C]/30">
+                       <svg class="w-5 h-5 text-white animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                     </div>
                    </div>
-                </div>
-                <h3 class="text-xl font-black text-[#2B3970] mb-2 tracking-tight">{{progressText}}</h3>
-                <div class="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden mb-4 shadow-inner">
-                   <div class="h-full bg-gradient-to-r from-[#FF6B2C] to-[#f97316] transition-all duration-700 shadow-[0_0_10px_rgba(255,107,44,0.3)]" [style.width.%]="progressPercent"></div>
-                </div>
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] animate-pulse">Identify Gen™ en cours d'exécution</p>
-             </div>
+                 </div>
+                 <p class="text-[9px] font-black text-white/20 uppercase tracking-[0.3em] mb-2">Identify Gen™ A.I.</p>
+                 <h3 class="text-lg font-black text-white tracking-tight">{{progressText}}</h3>
+                 <p class="text-white/30 text-xs font-semibold mt-1">{{progressPercent}}% complété</p>
+               </div>
 
-             <!-- THE LIVE PREVIEW MOCKUP -->
-             <div *ngIf="liveContent" class="z-10 w-full max-w-lg bg-white rounded-[32px] shadow-[0_30px_70px_-20px_rgba(0,0,0,0.15)] border border-white overflow-hidden transform transition-all duration-700 hover:scale-[1.02] relative animate-fade-in-up">
-                <!-- Browser Bar -->
-                <div class="h-7 bg-slate-50 flex items-center gap-1.5 px-5 border-b border-slate-100">
-                   <div class="flex gap-1">
-                     <div class="w-1.5 h-1.5 rounded-full bg-red-400"></div>
-                     <div class="w-1.5 h-1.5 rounded-full bg-yellow-400"></div>
-                     <div class="w-1.5 h-1.5 rounded-full bg-green-400"></div>
+               <div class="z-10 w-full max-w-md space-y-2 mb-8">
+                 <div *ngFor="let step of generationSteps; let i = index"
+                      class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-500"
+                      [class.bg-white]="i === currentStepIndex"
+                      [class.bg-white/0]="i !== currentStepIndex">
+                   <div class="w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0"
+                        [class.bg-emerald-500]="i < currentStepIndex"
+                        [class.bg-[#FF6B2C]]="i === currentStepIndex"
+                        [class.bg-white/10]="i > currentStepIndex">
+                     <svg *ngIf="i < currentStepIndex" class="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>
+                     <div *ngIf="i === currentStepIndex" class="w-2 h-2 bg-white rounded-full"></div>
                    </div>
-                   <div class="mx-auto text-[8px] font-black text-slate-300 tracking-tighter uppercase">{{newSite.subdomain || 'votre-site'}}.vitrineclick.com</div>
-                </div>
-                
-                <!-- Mockup Content -->
-                <div class="p-8">
-                   <!-- Mockup Navbar -->
-                   <div class="flex items-center justify-between mb-8">
-                      <div class="flex items-center gap-2.5">
-                         <div class="w-8 h-8 rounded-lg flex items-center justify-center text-white font-black text-xs shadow-md transition-all duration-500" [style.background-color]="liveContent.theme?.primary || '#f1f5f9'">
-                            <span *ngIf="liveContent.theme">{{newSite.companyName?.charAt(0)}}</span>
-                         </div>
-                         <div class="h-1.5 w-16 rounded-full bg-slate-100" *ngIf="!liveContent.seo"></div>
-                         <div class="text-[9px] font-black text-[#2B3970] uppercase tracking-wider" *ngIf="liveContent.seo">{{newSite.companyName}}</div>
-                      </div>
-                      <div class="flex gap-2">
-                         <div class="h-1 w-6 rounded-full bg-slate-100"></div>
-                         <div class="h-1 w-6 rounded-full bg-slate-100"></div>
-                      </div>
-                   </div>
-                   
-                   <!-- Mockup Hero -->
-                   <div class="space-y-4 mb-8">
-                      <div class="space-y-1.5">
-                        <div class="h-2 rounded-lg w-16 bg-[#FF6B2C]/20" *ngIf="liveContent.theme"></div>
-                        <div class="h-4 rounded-lg w-5/6 animate-pulse bg-slate-50" *ngIf="!liveContent.heroText"></div>
-                        <div class="text-xl font-black leading-none text-[#2B3970] animate-fade-in" *ngIf="liveContent.heroText">{{liveContent.heroText}}</div>
-                      </div>
-                      
-                      <div class="space-y-1.5">
-                        <div class="h-2 rounded-full w-1/2 animate-pulse bg-slate-50" *ngIf="!liveContent.aboutText"></div>
-                        <div class="text-[9px] text-slate-400 font-medium leading-relaxed animate-fade-in" *ngIf="liveContent.aboutText">{{liveContent.aboutText}}</div>
-                      </div>
+                   <span class="text-xs font-semibold"
+                     [class.text-[#2B3970]]="i === currentStepIndex"
+                     [class.text-white/50]="i !== currentStepIndex">{{step}}</span>
+                   <span *ngIf="i < currentStepIndex" class="ml-auto text-[9px] text-emerald-400 font-black">✓</span>
+                 </div>
+               </div>
 
-                      <div class="flex gap-2.5 pt-2" *ngIf="liveContent.theme">
-                         <div class="h-7 w-20 rounded-lg shadow-sm" [style.background-color]="liveContent.theme.primary"></div>
-                         <div class="h-7 w-20 rounded-lg border border-slate-100"></div>
-                      </div>
+               <!-- Live mini preview -->
+               <div *ngIf="liveContent?.theme" class="z-10 w-full max-w-md rounded-2xl overflow-hidden border border-white/10">
+                 <div class="h-5 bg-[#1e293b] flex items-center px-3 gap-1.5 border-b border-white/5">
+                   <div class="w-1.5 h-1.5 rounded-full bg-red-400/60"></div>
+                   <div class="w-1.5 h-1.5 rounded-full bg-yellow-400/60"></div>
+                   <div class="w-1.5 h-1.5 rounded-full bg-green-400/60"></div>
+                   <span class="mx-auto text-[7px] text-white/20 font-mono">{{newSite.subdomain || 'votre-site'}}.vitrineclick.com</span>
+                 </div>
+                 <div class="bg-[#0f172a] p-4">
+                   <div class="flex items-center gap-2 mb-3">
+                     <div class="w-5 h-5 rounded-md flex items-center justify-center text-[8px] font-black text-white" [style.background]="liveContent.theme.primary">{{newSite.companyName?.charAt(0)}}</div>
+                     <span class="text-[8px] font-black text-white/60">{{newSite.companyName}}</span>
+                     <div class="ml-auto flex gap-2">
+                       <div class="h-1 w-5 rounded-full bg-white/10"></div>
+                       <div class="h-1 w-5 rounded-full bg-white/10"></div>
+                     </div>
                    </div>
-                   
-                   <!-- Mockup Products -->
-                   <div class="mt-8 grid grid-cols-4 gap-3 animate-fade-in" *ngIf="liveContent.products">
-                      <div *ngFor="let p of liveContent.products" class="aspect-[4/5] bg-slate-50 rounded-xl flex flex-col p-2 border border-slate-100/50 transition-all hover:shadow-md">
-                         <div class="w-full h-3/4 rounded-lg mb-2 relative overflow-hidden" [style.background-color]="liveContent.theme.primary + '11'">
-                           <div class="absolute inset-0 flex items-center justify-center opacity-20">
-                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
-                           </div>
-                         </div>
-                         <div class="h-1 w-2/3 bg-slate-200 rounded-full mb-1"></div>
-                         <div class="h-1 w-1/2 bg-slate-100 rounded-full"></div>
-                      </div>
+                   <div class="text-[8px] font-black uppercase tracking-wider mb-1" [style.color]="liveContent.theme.primary">{{newSite.category}}</div>
+                   <div class="text-sm font-black text-white leading-tight mb-2">{{liveContent.heroText || newSite.companyName}}</div>
+                   <div class="text-[8px] text-white/30 mb-4 leading-relaxed">{{liveContent.heroSubtext?.substring(0,70)}}</div>
+                   <div class="flex gap-2">
+                     <div class="h-6 px-3 rounded-lg text-[8px] flex items-center text-white font-black" [style.background]="liveContent.theme.primary">Découvrir</div>
+                     <div class="h-6 px-3 rounded-lg text-[8px] flex items-center text-white/40 border border-white/10">En savoir +</div>
                    </div>
-                </div>
-             </div>
+                 </div>
+               </div>
+             </ng-container>
+
+             <!-- SUCCESS STATE -->
+             <ng-container *ngIf="!isGenerating && progressPercent === 100">
+               <div class="z-10 text-center">
+                 <div class="w-20 h-20 bg-emerald-50 rounded-[28px] flex items-center justify-center mx-auto mb-5 shadow-lg">
+                   <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                 </div>
+                 <h3 class="text-2xl font-black text-emerald-700 mb-2">Vitrine Générée !</h3>
+                 <p class="text-slate-500 text-sm">Votre site est prêt dans votre tableau de bord.</p>
+               </div>
+             </ng-container>
           </div>
+
         </div>
       </div>
     </div>
@@ -711,12 +693,14 @@ import { NotificationService } from '../services/notification.service';
               <div class="h-40 relative overflow-hidden" [style.background]="'linear-gradient(135deg,' + (site.primaryColor || '#2B3970') + '22 0%, ' + (site.primaryColor || '#2B3970') + '10 100%)'">
                 <!-- Accent orb -->
                 <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full blur-3xl" [style.background]="(site.primaryColor || '#2B3970') + '40'"></div>
-                <!-- Status badge -->
                 <div class="absolute top-4 left-4 z-10">
                   <span class="px-2.5 py-1 rounded-xl text-[9px] font-black uppercase tracking-widest border flex items-center gap-1.5 backdrop-blur-sm"
-                    [class]="site.published ? 'bg-emerald-50/90 text-emerald-600 border-emerald-100' : 'bg-white/80 text-orange-500 border-orange-100'">
-                    <span class="w-1.5 h-1.5 rounded-full" [class]="site.published ? 'bg-emerald-500 animate-pulse' : 'bg-orange-400'"></span>
-                    {{site.published ? 'En ligne' : 'Brouillon'}}
+                    [class]="site.generationStatus === 'COMPLETED' ? (site.published ? 'bg-emerald-50/90 text-emerald-600 border-emerald-100' : 'bg-white/80 text-orange-500 border-orange-100') : 'bg-blue-50/90 text-blue-600 border-blue-100'">
+                    <span class="w-1.5 h-1.5 rounded-full" 
+                      [class]="site.generationStatus === 'COMPLETED' ? (site.published ? 'bg-emerald-500 animate-pulse' : 'bg-orange-400') : 'bg-blue-500 animate-spin'"></span>
+                    {{site.generationStatus === 'COMPLETED' ? (site.published ? 'En ligne' : 'Brouillon') : 
+                      site.generationStatus === 'GENERATING_LOGO' ? 'Logo...' : 
+                      site.generationStatus === 'GENERATING_CONTENT' ? 'Contenu...' : 'Initialisation...'}}
                   </span>
                 </div>
                 <!-- Hover actions -->
@@ -790,61 +774,147 @@ import { NotificationService } from '../services/notification.service';
               </div>
             </button>
           </div>
-        </div>
-
-        <!-- =================== TAB: ASSETS =================== -->
-          <!-- TAB ASSETS -->
-          <div *ngIf="!loading && activeTab==='assets'" class="tab-enter space-y-8">
-            <div class="stagger-in">
-              <div class="flex items-center justify-between bg-white rounded-[32px] p-8 border border-slate-100 mb-10 shadow-[0_4px_20px_rgb(0,0,0,0.03)]">
-               <div>
-                 <h2 class="text-3xl font-black text-[#2B3970] tracking-tight">Bibliothèque d'Assets</h2>
-                 <p class="text-slate-500 font-medium mt-2 text-sm">Tous vos logos et graphismes générés par l'IA Identify Gen™ centralisés.</p>
-               </div>
-               <button (click)="openCreateWizard()" class="px-6 py-3.5 bg-slate-50 text-[#2B3970] font-black text-xs uppercase tracking-widest rounded-2xl flex items-center justify-center gap-3 border border-slate-100 hover:bg-[#2B3970] hover:text-white hover:border-[#2B3970] shadow-sm transition-all group">
-                  <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                  Nouveau Logo IA
-               </button>
-            </div>
-
-            <!-- Empty Assets State -->
-            <div *ngIf="sites.length === 0" class="bg-white rounded-[40px] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-20 flex flex-col items-center text-center">
-              <div class="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[32px] flex items-center justify-center text-slate-300 mb-8 border border-slate-200/50 shadow-inner -rotate-6">
-                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <!-- TAB ASSETS: IDENTIFY GEN™ -->
+          <div *ngIf="!loading && activeTab==='assets'" class="tab-enter space-y-10">
+            
+            <!-- PREMIUM DASHBOARD HEADER -->
+            <div class="relative overflow-hidden rounded-[40px] bg-[#0f172a] border border-white/10 shadow-2xl">
+              <!-- Animated Background Accents -->
+              <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px] animate-pulse"></div>
+              <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-[#FF6B2C]/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s"></div>
+              
+              <div class="relative z-10 p-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="text-center md:text-left">
+                  <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4 backdrop-blur-md">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span class="text-[9px] text-white/70 font-black uppercase tracking-wider">Identité IA Active</span>
+                  </div>
+                  <h2 class="text-4xl font-black text-white tracking-tight mb-2">Identify Gen<span class="text-[#FF6B2C]">™</span></h2>
+                  <p class="text-slate-400 font-medium max-w-md">Géréz votre ADN visuel. Notre IA Identité a généré <span class="text-white font-bold">{{sites.length}} assets</span> haute définition pour vos marques.</p>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                  <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-3xl text-center min-w-[120px]">
+                    <p class="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Total Assets</p>
+                    <p class="text-2xl font-black text-white">{{sites.length}}</p>
+                  </div>
+                  <button (click)="openCreateWizard()" class="h-16 px-8 bg-[#FF6B2C] hover:bg-orange-500 text-white font-black text-xs uppercase tracking-widest rounded-3xl flex items-center gap-3 shadow-xl shadow-[#FF6B2C]/20 transition-all hover:-translate-y-1 active:translate-y-0 group">
+                    <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center group-hover:rotate-90 transition-transform">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    </div>
+                    Générer un Logotype
+                  </button>
+                </div>
               </div>
-              <h2 class="text-2xl font-black text-[#2B3970] mb-3">Aucun asset généré</h2>
-              <p class="text-slate-500 mb-8 max-w-sm">Vous n'avez pas encore généré d'identité visuelle avec notre IA.</p>
             </div>
 
-            <!-- Assets Grid -->
-            <div *ngIf="sites.length > 0" class="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div *ngFor="let site of sites" class="bg-white rounded-[32px] border border-slate-100 overflow-hidden group shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_12px_40px_rgb(0,0,0,0.08)] transition-all duration-300 hover:-translate-y-1 relative">
-                <!-- Hover Overlay -->
-                <div class="absolute inset-x-0 top-0 h-40 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity z-10 flex items-center justify-center gap-3 backdrop-blur-sm">
-                  <button class="w-10 h-10 rounded-full bg-white text-[#2B3970] flex items-center justify-center hover:bg-[#FF6B2C] hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 shadow-xl" title="Télécharger">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                  </button>
-                  <button (click)="openSite(site.subdomain)" class="w-10 h-10 rounded-full bg-white text-[#2B3970] flex items-center justify-center hover:bg-[#FF6B2C] hover:text-white transition-colors transform translate-y-4 group-hover:translate-y-0 duration-300 delay-75 shadow-xl" title="Voir le site">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  </button>
-                </div>
-                <!-- Image Header -->
-                <div class="h-40 bg-slate-50 relative flex items-center justify-center overflow-hidden">
-                   <div class="absolute inset-0 bg-gradient-to-tr" [style.background-image]="'linear-gradient(to top right, ' + site.primaryColor + '20, transparent)'"></div>
-                   <div class="w-20 h-20 rounded-2xl flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-500 relative z-0" [style.background-color]="site.primaryColor">
-                      <span class="text-3xl font-black text-white mix-blend-overlay">{{ site.companyName.charAt(0).toUpperCase() }}</span>
-                   </div>
-                </div>
-                <!-- Body -->
-                <div class="p-6">
-                  <div class="flex items-center justify-between mb-2">
-                    <h3 class="font-black text-[#2B3970] text-sm truncate">{{ site.companyName }} — Logo</h3>
-                  </div>
-                  <div class="flex items-center justify-between">
-                    <p class="text-xs text-slate-400 font-medium uppercase tracking-widest">{{ site.category }}</p>
-                    <span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100">SVG/PNG</span>
+            <div class="flex flex-col lg:flex-row gap-10">
+              <!-- ASSET CATEGORIES SIDENAV -->
+              <div class="w-full lg:w-64 shrink-0 space-y-6">
+                <div>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] px-4 mb-4">Bibliothèque</p>
+                  <div class="space-y-1">
+                    <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-xs transition-all shadow-lg border border-white/5">
+                      <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-[#FF6B2C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                        Tous les types
+                      </div>
+                      <span class="text-[9px] bg-white/10 px-2 py-0.5 rounded-md">{{sites.length}}</span>
+                    </button>
+                    <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-slate-50 hover:text-[#2B3970] font-bold text-xs transition-all group">
+                      <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                        Logos & Identité
+                      </div>
+                    </button>
+                    <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-slate-50 hover:text-[#2B3970] font-bold text-xs transition-all group">
+                      <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zM3 7l9 6 9-6"/></svg>
+                        Kits Marketing
+                      </div>
+                    </button>
                   </div>
                 </div>
+
+                <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
+                  <div class="flex items-center gap-2 mb-3">
+                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.952 11.952 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    <p class="text-[10px] font-black text-[#2B3970] uppercase">Stockage Cloud</p>
+                  </div>
+                  <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-2">
+                    <div class="h-full bg-emerald-500" style="width: 15%"></div>
+                  </div>
+                  <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-right">0.8 GB / 5 GB</p>
+                </div>
+              </div>
+
+              <!-- ASSET GRID (MOCKUP CARDS) -->
+              <div class="flex-1">
+                <!-- Empty Assets State -->
+                <div *ngIf="sites.length === 0" class="bg-white rounded-[40px] border border-slate-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] p-20 flex flex-col items-center text-center">
+                  <div class="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[32px] flex items-center justify-center text-slate-300 mb-8 border border-slate-200/50 shadow-inner -rotate-6">
+                    <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                  </div>
+                  <h2 class="text-2xl font-black text-[#2B3970] mb-3">Aucun asset généré</h2>
+                  <p class="text-slate-500 mb-8 max-w-sm">Commencez par générer un site ou une identité pour voir vos assets apparaître ici.</p>
+                </div>
+
+                <div *ngIf="sites.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 stagger-in">
+                  <div *ngFor="let site of sites" class="group relative flex flex-col cursor-pointer outline-none">
+                    
+                    <!-- MOCKUP STACK CONTAINER -->
+                    <div class="relative h-64 w-full mb-4">
+                      <!-- Layer 1: Dark Preview (Back Layer) -->
+                      <div class="absolute inset-0 bg-[#1e293b] rounded-[32px] scale-[0.9] -translate-y-8 translate-x-4 opacity-40 blur-[1px] group-hover:scale-[0.95] group-hover:-translate-y-12 transition-all duration-500 shadow-xl border border-white/5"></div>
+                      
+                      <!-- Layer 2: Business Card Mockup (Middle Layer) -->
+                      <div class="absolute inset-0 bg-white rounded-[32px] scale-[0.95] -translate-y-4 translate-x-2 shadow-2xl skew-x-1 group-hover:scale-100 group-hover:-translate-y-6 transition-all duration-500 overflow-hidden border border-slate-100">
+                        <div class="absolute inset-0 flex items-center justify-center p-8 opacity-20">
+                          <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-full h-full object-contain grayscale blur-sm">
+                        </div>
+                        <div class="absolute bottom-4 left-4 right-4 h-1 bg-slate-50 rounded-full"></div>
+                      </div>
+
+                      <!-- Layer 3: Main Asset Card (Top Layer) -->
+                      <div class="absolute inset-0 bg-white rounded-[32px] shadow-[0_20px_50px_rgba(0,0,0,0.1)] border border-slate-100 flex flex-col group-hover:shadow-[0_30px_70px_rgba(0,0,0,0.15)] transition-all duration-500 overflow-hidden">
+                        <!-- Branding display -->
+                        <div class="flex-1 relative flex items-center justify-center p-10 group-hover:bg-slate-50/50 transition-colors">
+                          <div class="absolute inset-0 opacity-[0.03]" [style.background-color]="site.primaryColor"></div>
+                          
+                          <!-- Dynamic Logo / Initial -->
+                          <div class="w-24 h-24 rounded-3xl flex items-center justify-center shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-110 overflow-hidden" 
+                            [style.background-color]="site.primaryColor">
+                            <!-- Generation Pulse -->
+                            <div *ngIf="site.generationStatus === 'GENERATING_LOGO' || site.generationStatus === 'INITIALIZING'" class="absolute inset-0 bg-white/20 animate-pulse flex items-center justify-center">
+                              <svg class="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                            </div>
+                            <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-16 h-16 object-contain p-2" [alt]="site.companyName">
+                            <span *ngIf="!site.logoUrl && site.generationStatus === 'COMPLETED'" class="text-4xl font-black text-white mix-blend-overlay">{{ site.companyName.charAt(0).toUpperCase() }}</span>
+                          </div>
+
+                          <!-- Download Quick Actions -->
+                          <div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform bg-white/80 backdrop-blur-md border-t border-slate-100 flex gap-2">
+                            <button class="flex-1 py-2 text-[10px] font-black uppercase text-[#2B3970] bg-slate-50 rounded-xl hover:bg-[#2B3970] hover:text-white transition-all shadow-sm">PNG</button>
+                            <button class="flex-1 py-2 text-[10px] font-black uppercase text-[#FF6B2C] bg-orange-50 rounded-xl hover:bg-[#FF6B2C] hover:text-white transition-all shadow-sm">SVG</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- CARD BOTTOM INFO -->
+                    <div class="px-2">
+                       <div class="flex items-center justify-between mb-1">
+                         <h3 class="font-black text-[#2B3970] text-sm tracking-tight">{{site.companyName}} Identité</h3>
+                         <span class="text-[9px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">HQ</span>
+                       </div>
+                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{site.category}} • Logo v1.0</p>
+                    </div>
+
+                    <!-- Subtle Floating Action -->
+                    <button class="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-slate-400 opacity-0 group-hover:opacity-100 hover:text-[#FF6B2C] hover:scale-110 transition-all z-20">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -995,8 +1065,8 @@ import { NotificationService } from '../services/notification.service';
                   </td>
                   <td class="px-6 py-5">
                     <span class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase border"
-                      [class]="site.published ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-orange-50 text-orange-500 border-orange-100'">
-                      {{site.published ? 'En ligne' : 'Brouillon'}}
+                      [class]="site.generationStatus === 'COMPLETED' ? (site.published ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-orange-50 text-orange-500 border-orange-100') : 'bg-blue-50 text-blue-600 border-blue-100'">
+                      {{site.generationStatus === 'COMPLETED' ? (site.published ? 'En ligne' : 'Brouillon') : (site.generationStatus || 'Initialisation...')}}
                     </span>
                   </td>
                   <td class="px-6 py-5 font-black text-[#2B3970]">{{site.published ? (site.visits || 0) : '—'}}</td>
@@ -1170,8 +1240,10 @@ import { NotificationService } from '../services/notification.service';
             </div>
           </div>
 
+        </div>
       </div>
     </main>
+
       <!-- ======================== MOBILE BOTTOM NAV ======================== -->
       <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex items-center justify-around pb-safe pt-2 px-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
         <button (click)="setTab('sites')" class="flex flex-col items-center justify-center p-2 min-w-[64px] transition-all" [class]="activeTab === 'sites' ? 'text-[#FF6B2C]' : 'text-slate-400 hover:text-slate-600'">
@@ -1299,11 +1371,7 @@ import { NotificationService } from '../services/notification.service';
             <div>
               <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Secteur</label>
               <select [(ngModel)]="editSiteData.category" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all cursor-pointer appearance-none">
-                <option value="Tech">Technologie</option>
-                <option value="Restaurant">Gastronomie</option>
-                <option value="Consulting">Consulting</option>
-                <option value="Beauty">Bien-être</option>
-                <option value="Retail">E-Commerce</option>
+                <option *ngFor="let s of sectors" [value]="s.value">{{s.label}}</option>
               </select>
             </div>
             <div>
@@ -1425,7 +1493,9 @@ import { NotificationService } from '../services/notification.service';
   `
 })
 export class UserPanelComponent implements OnInit, OnDestroy {
-  activeTab: 'sites' | 'assets' | 'analytics' | 'settings' = 'sites';
+  activeTab: any = 'sites';
+
+
   sites: any[] = [];
   loading = true;
   username: string = '';
@@ -1439,6 +1509,71 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   creationMode: 'ai' | 'manual' | null = null;
   selectedTemplate: string | null = null;
   newSite: any = { companyName: '', category: 'Tech', description: '', subdomain: '', primaryColor: '#2B3970', email: '', phone: '', address: '' };
+
+
+  allMarketplaceTemplates = [
+    // Tech & SaaS
+    { id: 'modern', name: 'Nexus SaaS Pro', categoryLabel: 'Technologie', sector: 'Tech', rating: 4.9, popular: true, accent: '#6366f1', photo: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=80' },
+    { id: 'tech-launch', name: 'LaunchPad Alpha', categoryLabel: 'Startup', sector: 'Tech', rating: 4.6, popular: false, accent: '#0ea5e9', photo: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80' },
+
+    // Business & Consulting
+    { id: 'strategic', name: 'Strategic Edge', categoryLabel: 'Affaires', sector: 'Consulting', rating: 4.8, popular: false, accent: '#f59e0b', photo: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=600&q=80' },
+    { id: 'corporate', name: 'Apex Trust', categoryLabel: 'Conseil', sector: 'Consulting', rating: 4.9, popular: true, accent: '#3b82f6', photo: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80' },
+
+    // Retail & Fashion
+    { id: 'marketplace', name: 'Shopper Elite', categoryLabel: 'E-Commerce', sector: 'Retail', rating: 4.9, popular: true, accent: '#f97316', photo: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80' },
+    { id: 'bold', name: 'Vanguard Mode', categoryLabel: 'Mode', sector: 'Mode', rating: 4.7, popular: false, accent: '#111827', photo: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80' },
+
+    // Gastronomy
+    { id: 'bistro', name: 'Gourmet Bistro', categoryLabel: 'Restauration', sector: 'Restaurant', rating: 4.7, popular: false, accent: '#ea580c', photo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=600&q=80' },
+    { id: 'gourmet', name: 'Grand Gourmet', categoryLabel: 'Gastronomie', sector: 'Restaurant', rating: 4.9, popular: true, accent: '#b91c1c', photo: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=600&q=80' },
+
+    // Beauty & Health
+    { id: 'spa', name: 'Aura Beauty', categoryLabel: 'Bien-être', sector: 'Beauty', rating: 5.0, popular: true, accent: '#f43f5e', photo: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80' },
+    { id: 'medical', name: 'CareFirst Pro', categoryLabel: 'Santé', sector: 'Medical', rating: 4.8, popular: false, accent: '#0284c7', photo: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80' },
+
+    // Education & Knowledge
+    { id: 'edu', name: 'AcadeMind Plus', categoryLabel: 'Éducation', sector: 'Education', rating: 4.7, popular: false, accent: '#7c3aed', photo: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80' },
+    { id: 'organic', name: 'Eco Learn', categoryLabel: 'Formation', sector: 'Education', rating: 4.5, popular: false, accent: '#16a34a', photo: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=600&q=80' },
+
+    // Specialized Industries
+    { id: 'mansion', name: 'Elite Real Estate', categoryLabel: 'Immobilier', sector: 'Immobilier', rating: 4.8, popular: true, accent: '#7c3aed', photo: 'https://images.unsplash.com/photo-1582407947304-fd86f28f82f6?auto=format&fit=crop&w=600&q=80' },
+    { id: 'sport', name: 'PowerZone Gym', categoryLabel: 'Sport', sector: 'Sport', rating: 4.9, popular: true, accent: '#ef4444', photo: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
+    { id: 'finance', name: 'Capital Shield', categoryLabel: 'Juridique', sector: 'Juridique', rating: 4.7, popular: false, accent: '#1e3a8a', photo: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80' },
+    { id: 'artisan', name: 'Atelier Folk', categoryLabel: 'Artisanat', sector: 'Artisanat', rating: 4.7, popular: false, accent: '#92400e', photo: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=80' }
+  ];
+
+  get marketplaceTemplates() {
+    return this.allMarketplaceTemplates.filter(t => {
+      const selectedSector = this.newSite.category;
+      return selectedSector === 'all' || t.sector === selectedSector;
+    });
+  }
+
+  getStars(rating: number): string[] {
+    const stars = [];
+    for (let i = 1; i <= 5; i++) {
+      if (i <= Math.floor(rating)) stars.push('full');
+      else if (i - 0.5 <= rating) stars.push('half');
+      else stars.push('empty');
+    }
+    return stars;
+  }
+
+  sectors = [
+    { value: 'Tech', label: 'Technologie & SaaS' },
+    { value: 'Restaurant', label: 'Gastronomie & Restauration' },
+    { value: 'Beauty', label: 'Beauté & Bien-être' },
+    { value: 'Retail', label: 'E-Commerce & Retail' },
+    { value: 'Consulting', label: 'Consulting & Conseil' },
+    { value: 'Medical', label: 'Santé & Médecine' },
+    { value: 'Education', label: 'Éducation & Formation' },
+    { value: 'Immobilier', label: 'Immobilier & Architecture' },
+    { value: 'Juridique', label: 'Juridique & Finance' },
+    { value: 'Mode', label: 'Mode & Luxe' },
+    { value: 'Sport', label: 'Sport & Fitness' },
+    { value: 'Artisanat', label: 'Artisanat & Art' },
+  ];
   liveContent: any = null;
   mathClass = Math;
 
@@ -1446,56 +1581,144 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   get avgAiScore() { const pub = this.sites.filter(s => s.published); return pub.length ? pub.reduce((sum, s) => sum + (s.aiScore || 0), 0) / pub.length : 0; }
   get avgRetention() { const pub = this.sites.filter(s => s.published); return pub.length ? pub.reduce((sum, s) => sum + (s.retentionTimeSeconds || 0), 0) / pub.length : 0; }
 
-
   aiTemplates = [
+    // ── Tech & SaaS ──
     {
-      id: 'modern', name: 'Nexus Pro', desc: 'Architecture minimaliste pour la conversion B2B SaaS.', tags: ['SaaS', 'Tech'], isPremium: true, style: 'Dark Minimal',
+      id: 'modern', name: 'Nexus Pro', desc: 'Architecture minimaliste pour la conversion B2B SaaS.', tags: ['SaaS', 'Tech'], sectors: ['Tech'], isPremium: true, style: 'Dark Minimal', font: 'Inter',
       navBg: '#0f172a', accent: '#6366f1', accentText: '#fff', textLight: 'rgba(255,255,255,0.2)',
       heroBg: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', heroText: 'rgba(255,255,255,0.85)', heroTextLight: 'rgba(255,255,255,0.3)',
-      hasImage: true, imageBg: 'linear-gradient(180deg, #6366f1 0%, #4f46e5 100%)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
       featureBars: ['rgba(99,102,241,0.5)', 'rgba(99,102,241,0.3)', 'rgba(99,102,241,0.2)'],
       sectionBg: 'rgba(99,102,241,0.08)', cardBg: 'rgba(255,255,255,0.04)', footerBg: '#020617'
     },
     {
-      id: 'bold', name: 'Vanguard', desc: 'Typographie massive, contrastes marqués pour agences créatives.', tags: ['Agence', 'Créatif'], isPremium: false, style: 'Bold & Vibrant',
-      navBg: '#fff', accent: '#f97316', accentText: '#fff', textLight: 'rgba(0,0,0,0.18)',
-      heroBg: 'linear-gradient(135deg, #fff7ed 0%, #fff 100%)', heroText: 'rgba(15,23,42,0.9)', heroTextLight: 'rgba(15,23,42,0.35)',
-      hasImage: true, imageBg: 'linear-gradient(150deg, #fed7aa 0%, #fb923c 100%)',
-      featureBars: ['rgba(249,115,22,0.5)', 'rgba(249,115,22,0.3)', 'rgba(249,115,22,0.15)'],
-      sectionBg: 'rgba(249,115,22,0.06)', cardBg: 'rgba(249,115,22,0.05)', footerBg: '#0f172a'
+      id: 'tech-launch', name: 'LaunchPad', desc: "Design épuré pour startups et apps mobiles en phase de lancement.", tags: ['Startup', 'App'], sectors: ['Tech'], isPremium: false, style: 'Clean Launch', font: 'Outfit',
+      navBg: '#fff', accent: '#0ea5e9', accentText: '#fff', textLight: 'rgba(0,0,0,0.15)',
+      heroBg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', heroText: 'rgba(7,89,133,0.9)', heroTextLight: 'rgba(7,89,133,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(14,165,233,0.5)', 'rgba(14,165,233,0.3)', 'rgba(14,165,233,0.15)'],
+      sectionBg: 'rgba(14,165,233,0.07)', cardBg: 'rgba(255,255,255,0.8)', footerBg: '#0c4a6e'
+    },
+    // ── Restaurant & Gastronomie ──
+    {
+      id: 'bistro', name: 'Le Bistrot', desc: 'Chaleur et gourmandise pour restaurants & traiteurs.', tags: ['Restaurant', 'Food'], sectors: ['Restaurant'], isPremium: false, style: 'Warm & Tasty', font: 'Playfair Display',
+      navBg: '#3b1a08', accent: '#ea580c', accentText: '#fff', textLight: 'rgba(255,255,255,0.25)',
+      heroBg: 'linear-gradient(135deg, #3b1a08 0%, #5c2d0e 100%)', heroText: 'rgba(255,255,255,0.9)', heroTextLight: 'rgba(255,255,255,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(234,88,12,0.6)', 'rgba(234,88,12,0.35)', 'rgba(234,88,12,0.2)'],
+      sectionBg: 'rgba(234,88,12,0.07)', cardBg: 'rgba(255,255,255,0.05)', footerBg: '#1c0a02'
     },
     {
-      id: 'elegant', name: 'Maison Luxe', desc: 'Grilles aérées et esthétique éditoriale haut de gamme.', tags: ['Luxe', 'Mode'], isPremium: true, style: 'Luxury Editorial',
-      navBg: '#1a1108', accent: '#d4af37', accentText: '#1a1108', textLight: 'rgba(212,175,55,0.3)',
-      heroBg: 'linear-gradient(135deg, #1a1108 0%, #2d1f0a 100%)', heroText: 'rgba(255,255,255,0.9)', heroTextLight: 'rgba(255,255,255,0.3)',
-      hasImage: true, imageBg: 'linear-gradient(180deg, #d4af37 0%, #b8860b 100%)',
-      featureBars: ['rgba(212,175,55,0.6)', 'rgba(212,175,55,0.35)', 'rgba(212,175,55,0.2)'],
-      sectionBg: 'rgba(212,175,55,0.07)', cardBg: 'rgba(255,255,255,0.03)', footerBg: '#0a0804'
+      id: 'gourmet', name: 'Gourmet Blanc', desc: "Élégance intemporelle pour restaurants gastronomiques haut de gamme.", tags: ['Gastronomie', 'Luxe'], sectors: ['Restaurant'], isPremium: true, style: 'Fine Dining', font: 'Lora',
+      navBg: '#fff', accent: '#b91c1c', accentText: '#fff', textLight: 'rgba(0,0,0,0.12)',
+      heroBg: 'linear-gradient(135deg, #fff 0%, #fef2f2 100%)', heroText: 'rgba(15,23,42,0.9)', heroTextLight: 'rgba(15,23,42,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(185,28,28,0.5)', 'rgba(185,28,28,0.3)', 'rgba(185,28,28,0.15)'],
+      sectionBg: 'rgba(185,28,28,0.05)', cardBg: 'rgba(255,255,255,0.9)', footerBg: '#0f172a'
     },
+    // ── Beauté & Bien-être ──
     {
-      id: 'organic', name: 'Botanica', desc: 'Lignes fluides et palette naturelle apaisante pour bien-être.', tags: ['Bien-être', 'Bio'], isPremium: false, style: 'Natural & Soft',
+      id: 'organic', name: 'Botanica', desc: 'Lignes fluides et palette naturelle apaisante pour bien-être.', tags: ['Bien-être', 'Bio'], sectors: ['Beauty'], isPremium: false, style: 'Natural & Soft', font: 'Montserrat',
       navBg: '#f0fdf4', accent: '#16a34a', accentText: '#fff', textLight: 'rgba(22,163,74,0.2)',
       heroBg: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)', heroText: 'rgba(15,40,15,0.85)', heroTextLight: 'rgba(15,40,15,0.3)',
-      hasImage: true, imageBg: 'linear-gradient(180deg, #4ade80 0%, #16a34a 100%)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80',
       featureBars: ['rgba(22,163,74,0.5)', 'rgba(22,163,74,0.3)', 'rgba(22,163,74,0.15)'],
       sectionBg: 'rgba(22,163,74,0.06)', cardBg: 'rgba(255,255,255,0.7)', footerBg: '#052e16'
     },
     {
-      id: 'urban', name: 'Cyber Night', desc: 'Interface sombre avec accents néon pour gaming & Web3.', tags: ['E-sport', 'Web3'], isPremium: true, style: 'Neon Dark',
-      navBg: '#0d0d1a', accent: '#a855f7', accentText: '#fff', textLight: 'rgba(168,85,247,0.3)',
-      heroBg: 'linear-gradient(135deg, #0d0d1a 0%, #1a0d2e 100%)', heroText: 'rgba(255,255,255,0.85)', heroTextLight: 'rgba(255,255,255,0.25)',
-      hasImage: true, imageBg: 'linear-gradient(180deg, #a855f7 0%, #7c3aed 100%)',
-      featureBars: ['rgba(168,85,247,0.6)', 'rgba(168,85,247,0.35)', 'rgba(168,85,247,0.2)'],
-      sectionBg: 'rgba(168,85,247,0.08)', cardBg: 'rgba(255,255,255,0.04)', footerBg: '#04011a'
+      id: 'spa', name: 'Aura Spa', desc: "Design rosé et apaisant pour instituts de beauté et spas.", tags: ['Spa', 'Beauté'], sectors: ['Beauty'], isPremium: true, style: 'Blush & Calm', font: 'Montserrat',
+      navBg: '#fff5f5', accent: '#f43f5e', accentText: '#fff', textLight: 'rgba(244,63,94,0.2)',
+      heroBg: 'linear-gradient(135deg, #fff5f5 0%, #ffe4e6 100%)', heroText: 'rgba(76,5,25,0.85)', heroTextLight: 'rgba(76,5,25,0.3)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(244,63,94,0.5)', 'rgba(244,63,94,0.3)', 'rgba(244,63,94,0.15)'],
+      sectionBg: 'rgba(244,63,94,0.05)', cardBg: 'rgba(255,255,255,0.8)', footerBg: '#4c0519'
+    },
+    // ── E-Commerce & Retail ──
+    {
+      id: 'bold', name: 'Vanguard', desc: 'Typographie massive, contrastes marqués pour boutiques et marques.', tags: ['Retail', 'Boutique'], sectors: ['Retail', 'Mode'], isPremium: false, style: 'Bold & Vibrant', font: 'Syne',
+      navBg: '#fff', accent: '#f97316', accentText: '#fff', textLight: 'rgba(0,0,0,0.18)',
+      heroBg: 'linear-gradient(135deg, #fff7ed 0%, #fff 100%)', heroText: 'rgba(15,23,42,0.9)', heroTextLight: 'rgba(15,23,42,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(249,115,22,0.5)', 'rgba(249,115,22,0.3)', 'rgba(249,115,22,0.15)'],
+      sectionBg: 'rgba(249,115,22,0.06)', cardBg: 'rgba(249,115,22,0.05)', footerBg: '#0f172a'
     },
     {
-      id: 'corporate', name: 'Apex Trust', desc: 'Structure classique qui inspire fiabilité pour finance & légal.', tags: ['Finance', 'Légal'], isPremium: false, style: 'Classic Corporate',
+      id: 'marketplace', name: 'Shopper Dark', desc: 'Vitrine sombre premium pour e-commerce avec mise en avant produits.', tags: ['E-Shop', 'Dark'], sectors: ['Retail', 'Mode'], isPremium: true, style: 'Dark Store', font: 'Inter',
+      navBg: '#111827', accent: '#10b981', accentText: '#fff', textLight: 'rgba(255,255,255,0.2)',
+      heroBg: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)', heroText: 'rgba(255,255,255,0.9)', heroTextLight: 'rgba(255,255,255,0.3)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(16,185,129,0.5)', 'rgba(16,185,129,0.3)', 'rgba(16,185,129,0.15)'],
+      sectionBg: 'rgba(16,185,129,0.07)', cardBg: 'rgba(255,255,255,0.04)', footerBg: '#030712'
+    },
+    // ── Immobilier & Architecture ──
+    {
+      id: 'mansion', name: 'Elite Estates', desc: "Luxe et prestige pour l'immobilier haut de gamme.", tags: ['Immobilier', 'Luxe'], sectors: ['Immobilier'], isPremium: true, style: 'Premium Property', font: 'Montserrat',
+      navBg: '#fff', accent: '#7c3aed', accentText: '#fff', textLight: 'rgba(0,0,0,0.12)',
+      heroBg: 'linear-gradient(135deg, #f5f3ff 0%, #fff 100%)', heroText: 'rgba(30,27,75,0.9)', heroTextLight: 'rgba(30,27,75,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1582407947304-fd86f28f82f6?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(124,58,237,0.5)', 'rgba(124,58,237,0.3)', 'rgba(124,58,237,0.15)'],
+      sectionBg: 'rgba(124,58,237,0.06)', cardBg: 'rgba(255,255,255,0.9)', footerBg: '#1e1b4b'
+    },
+    // ── Consulting & Professional ──
+    {
+      id: 'corporate', name: 'Apex Trust', desc: 'Structure classique qui inspire fiabilité pour consulting & légal.', tags: ['Consulting', 'Finance'], sectors: ['Consulting', 'Juridique'], isPremium: false, style: 'Classic Corporate', font: 'Inter',
       navBg: '#1e3a8a', accent: '#3b82f6', accentText: '#fff', textLight: 'rgba(255,255,255,0.25)',
       heroBg: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)', heroText: 'rgba(30,58,138,0.9)', heroTextLight: 'rgba(30,58,138,0.35)',
-      hasImage: false, imageBg: '',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=800&q=80',
       featureBars: ['rgba(59,130,246,0.5)', 'rgba(59,130,246,0.3)', 'rgba(59,130,246,0.15)'],
       sectionBg: 'rgba(59,130,246,0.07)', cardBg: 'rgba(255,255,255,0.8)', footerBg: '#0f172a'
     },
+    // ── Artisanat ──
+    {
+      id: 'artisan', name: 'Atelier Folk', desc: 'Esthétique craft et textures chaleureuses pour artisans et créateurs.', tags: ['Artisanat', 'Créatif'], sectors: ['Artisanat'], isPremium: false, style: 'Craft & Warm', font: 'Playfair Display',
+      navBg: '#fef3c7', accent: '#92400e', accentText: '#fff', textLight: 'rgba(146,64,14,0.25)',
+      heroBg: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', heroText: 'rgba(92,40,10,0.9)', heroTextLight: 'rgba(92,40,10,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(146,64,14,0.5)', 'rgba(146,64,14,0.3)', 'rgba(146,64,14,0.15)'],
+      sectionBg: 'rgba(146,64,14,0.06)', cardBg: 'rgba(255,255,255,0.7)', footerBg: '#451a03'
+    },
+    // ── Stratégie & Santé ──
+    {
+      id: 'strategic', name: 'Strategic Edge', desc: 'Design épuré et autoritaire pour cabinets de conseil en stratégie.', tags: ['Stratégie', 'B2B'], sectors: ['Consulting'], isPremium: true, style: 'Authority', font: 'Inter',
+      navBg: '#0f172a', accent: '#f59e0b', accentText: '#000', textLight: 'rgba(255,255,255,0.2)',
+      heroBg: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', heroText: 'rgba(255,255,255,0.88)', heroTextLight: 'rgba(255,255,255,0.3)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(245,158,11,0.6)', 'rgba(245,158,11,0.35)', 'rgba(245,158,11,0.2)'],
+      sectionBg: 'rgba(245,158,11,0.07)', cardBg: 'rgba(255,255,255,0.04)', footerBg: '#020617'
+    },
+    {
+      id: 'medical', name: 'CareFirst', desc: 'Interface propre et rassurante pour cabinets médicaux et cliniques.', tags: ['Médecine', 'Santé'], sectors: ['Medical'], isPremium: false, style: 'Clean Medical', font: 'Inter',
+      navBg: '#fff', accent: '#0284c7', accentText: '#fff', textLight: 'rgba(0,0,0,0.1)',
+      heroBg: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)', heroText: 'rgba(12,74,110,0.9)', heroTextLight: 'rgba(12,74,110,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(2,132,199,0.5)', 'rgba(2,132,199,0.3)', 'rgba(2,132,199,0.15)'],
+      sectionBg: 'rgba(2,132,199,0.06)', cardBg: 'rgba(255,255,255,0.9)', footerBg: '#075985'
+    },
+    // ── Éducation & Sport ──
+    {
+      id: 'edu', name: 'AcadeMind', desc: "Plateforme pédagogique moderne pour centres de formation et écoles.", tags: ['Formation', 'École'], sectors: ['Education'], isPremium: false, style: 'Academic Fresh', font: 'Outfit',
+      navBg: '#fff', accent: '#7c3aed', accentText: '#fff', textLight: 'rgba(0,0,0,0.15)',
+      heroBg: 'linear-gradient(135deg, #faf5ff 0%, #ede9fe 100%)', heroText: 'rgba(46,16,101,0.9)', heroTextLight: 'rgba(46,16,101,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(124,58,237,0.5)', 'rgba(124,58,237,0.3)', 'rgba(124,58,237,0.15)'],
+      sectionBg: 'rgba(124,58,237,0.06)', cardBg: 'rgba(255,255,255,0.8)', footerBg: '#2e1065'
+    },
+    {
+      id: 'sport', name: 'PowerZone', desc: 'Énergie brute et dynamisme pour salles de sport et coachs.', tags: ['Sport', 'Fitness'], sectors: ['Sport'], isPremium: false, style: 'High Energy', font: 'Syne',
+      navBg: '#111827', accent: '#ef4444', accentText: '#fff', textLight: 'rgba(255,255,255,0.2)',
+      heroBg: 'linear-gradient(135deg, #111827 0%, #1f2937 100%)', heroText: 'rgba(255,255,255,0.9)', heroTextLight: 'rgba(255,255,255,0.3)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(239,68,68,0.6)', 'rgba(239,68,68,0.35)', 'rgba(239,68,68,0.2)'],
+      sectionBg: 'rgba(239,68,68,0.07)', cardBg: 'rgba(255,255,255,0.04)', footerBg: '#030712'
+    },
+    {
+      id: 'finance', name: 'Capital Shield', desc: 'Sérieux et sécurité pour services financiers et juridiques.', tags: ['Finance', 'Légal'], sectors: ['Juridique'], isPremium: false, style: 'Corporate Secure', font: 'Inter',
+      navBg: '#1e3a8a', accent: '#1e3a8a', accentText: '#fff', textLight: 'rgba(255,255,255,0.15)',
+      heroBg: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)', heroText: 'rgba(15,23,42,0.9)', heroTextLight: 'rgba(15,23,42,0.35)',
+      hasImage: true, heroImg: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=800&q=80',
+      featureBars: ['rgba(30,58,138,0.6)', 'rgba(30,58,138,0.35)', 'rgba(30,58,138,0.2)'],
+      sectionBg: 'rgba(30,58,138,0.05)', cardBg: 'rgba(255,255,255,0.9)', footerBg: '#0f172a'
+    }
   ];
 
   brandColors = [
@@ -1517,6 +1740,21 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   get publishedCount(): number {
     return this.sites.filter(s => s.published).length;
+  }
+
+  get filteredTemplates() {
+    return this.getFilteredTemplatesForCategory(this.newSite.category);
+  }
+
+  getFilteredTemplatesForCategory(category: string) {
+    if (!category) return this.aiTemplates;
+    const filtered = this.aiTemplates.filter(t => t.sectors?.includes(category));
+    return filtered.length > 0 ? filtered : this.aiTemplates;
+  }
+
+  onCategoryChange() {
+    // Reset template selection when sector changes
+    this.selectedTemplate = null;
   }
 
   constructor(private siteService: SiteService, private authService: AuthService, private notificationService: NotificationService) { }
@@ -1552,7 +1790,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   openSite(subdomain: string) {
-    if(subdomain) window.open('/s/' + subdomain, '_blank');
+    if (subdomain) window.open('/s/' + subdomain, '_blank');
   }
 
   getGenerationStatus(): string {
@@ -1588,8 +1826,11 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   previewSite(site: any) {
-    if (site.subdomain) {
-      window.open(`/s/${site.subdomain}`, '_blank');
+    const sub = site.subdomain || (site.companyName || '').toLowerCase().replace(/\s+/g, '-');
+    if (sub) {
+      window.open(`/s/${sub}`, '_blank');
+    } else {
+      this.showToast('Aucun sous-domaine configuré pour ce site.', 'info');
     }
   }
 
@@ -1644,7 +1885,16 @@ export class UserPanelComponent implements OnInit, OnDestroy {
 
   progressText = '';
   progressPercent = 0;
-  
+  currentStepIndex = 0;
+  generationSteps = [
+    'Configuration du modèle IA',
+    'Analyse sémantique de votre secteur',
+    'Génération de l\'identité visuelle',
+    'Rédaction des contenus SEO & Marketing',
+    'Optimisation de la structure',
+    'Finalisation & Déploiement'
+  ];
+
   submitCreateSite() {
     if (this.creationMode === 'manual' && !this.newSite.companyName) return;
     if (this.creationMode === 'ai' && !this.newSite.description) return;
@@ -1652,40 +1902,69 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     this.wizardStep = 3;
     this.isGenerating = true;
     this.progressText = "Initialisation...";
-    this.progressPercent = 10;
+    this.progressPercent = 5;
+    this.currentStepIndex = 0;
+    this.liveContent = null;
 
-    // Simulate AI Generation logic UX flow
-    const executeCreation = () => {
-      let templateConfigStr = null;
-      if (this.selectedTemplate) {
-        const t = this.aiTemplates.find(t => t.id === this.selectedTemplate);
-        if (t) templateConfigStr = JSON.stringify(t);
+    let selectedStyle = 'premium';
+    let selectedFont = 'Inter';
+    let templateConfigStr = null;
+
+    if (this.selectedTemplate) {
+      const t = this.aiTemplates.find(t => t.id === this.selectedTemplate);
+      if (t) {
+        templateConfigStr = JSON.stringify(t);
+        selectedStyle = t.style || 'premium';
+        if (t.font) selectedFont = t.font;
+        // If template has an accent and user didn't change the default primary color, use template's accent
+        if (t.accent && (this.newSite.primaryColor === '#FF6B2C' || !this.newSite.primaryColor)) {
+          this.newSite.primaryColor = t.accent;
+        }
       }
-      
-      let finalSite = { 
-        ...this.newSite, 
+    }
+
+    const executeCreation = () => {
+      let finalSite: any = {
+        ...this.newSite,
         templateIdString: this.selectedTemplate,
         templateConfig: templateConfigStr,
-        aiMode: true 
+        primaryColor: this.newSite.primaryColor,
+        style: selectedStyle,
+        font: selectedFont,
+        aiMode: this.creationMode === 'ai'
       };
 
-      if (this.creationMode === 'ai') {
-        if (!finalSite.subdomain && finalSite.companyName) {
-          finalSite.subdomain = finalSite.companyName.toLowerCase().replace(/\s+/g, '-');
-        }
+      if (!finalSite.subdomain && finalSite.companyName) {
+        finalSite.subdomain = finalSite.companyName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
       }
 
       this.siteService.createSite(finalSite).subscribe({
-        next: () => {
+        next: (created: any) => {
           this.progressPercent = 100;
-          this.progressText = "Terminé !";
+          this.progressText = "Site généré avec succès !";
+          this.currentStepIndex = this.generationSteps.length;
+
+          // Populate live preview with real AI response
+          if (created?.generatedVisuals) {
+            try {
+              const aiData = JSON.parse(created.generatedVisuals);
+              this.liveContent = {
+                theme: aiData.theme || { primary: this.newSite.primaryColor },
+                heroText: aiData.pages?.home?.heroText,
+                heroSubtext: aiData.pages?.home?.heroSubtext,
+                seo: aiData.seo,
+                products: aiData.pages?.home?.products || []
+              };
+            } catch (e) { }
+          }
+
           setTimeout(() => {
             this.isGenerating = false;
             this.showCreateWizard = false;
             this.activeTab = 'sites';
             this.loadSites();
             this.showToast(this.creationMode === 'ai' ? 'L\'IA a généré votre vitrine avec succès !' : 'Vitrine créée avec succès !', 'success');
-          }, 800);
+          }, 1500);
         },
         error: () => {
           this.isGenerating = false;
@@ -1696,38 +1975,44 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     };
 
     if (this.creationMode === 'ai') {
-      this.liveContent = { status: 'thinking' };
-      
-      // Update UI state periodically while the request is in flight
-      const steps = [
-        { text: "Analyse du secteur " + this.newSite.category + "...", pct: 25 },
-        { text: "Génération du branding & SEO...", pct: 50 },
-        { text: "Fabrication du catalogue produits IA...", pct: 75 },
-        { text: "Déploiement final du Studio...", pct: 90 }
-      ];
-      
-      let stepIdx = 0;
-      const interval = setInterval(() => {
-        if (stepIdx < steps.length && this.isGenerating) {
-          this.progressText = steps[stepIdx].text;
-          this.progressPercent = steps[stepIdx].pct;
-          
-          if (stepIdx === 1) this.liveContent = { ...this.liveContent, theme: { primary: this.newSite.primaryColor, font: 'Inter' }, seo: { title: this.newSite.companyName + " | Officiel" } };
-          if (stepIdx === 2) this.liveContent = { ...this.liveContent, products: [{}, {}, {}, {}] };
-          
-          stepIdx++;
-        } else {
-          clearInterval(interval);
-        }
-      }, 1500);
+      // Seed the live preview immediately with basic theme info
+      this.liveContent = { theme: { primary: this.newSite.primaryColor, fontFamily: selectedFont }, seo: null };
 
-      // Call Backend IMMEDIATELY
+      // Drive the progress timeline while the backend is processing
+      const stepDurations = [1200, 2500, 3500, 4000, 3000, 2500];
+      const stepPcts = [12, 28, 45, 68, 85, 96];
+      let idx = 0;
+
+      const advance = () => {
+        if (idx < this.generationSteps.length && this.isGenerating) {
+          this.currentStepIndex = idx;
+          this.progressText = this.generationSteps[idx];
+          this.progressPercent = stepPcts[idx];
+          
+          console.log(` [WIZARD] Step ${idx}: ${this.progressText} (${this.progressPercent}%)`);
+
+          // Progressive live content enrichment
+          if (idx === 1) this.liveContent = { ...this.liveContent, heroText: this.newSite.companyName };
+          if (idx === 2) this.liveContent = { ...this.liveContent, heroSubtext: "Génération de votre proposition de valeur unique..." };
+          if (idx === 3) this.liveContent = { ...this.liveContent, heroSubtext: this.newSite.description };
+          if (idx === 4) this.liveContent = { ...this.liveContent, seo: { title: this.newSite.companyName + ' | Site Officiel' } };
+
+          idx++;
+          if (idx < this.generationSteps.length) {
+            console.log(` [WIZARD] Scheduling next step in ${stepDurations[idx]}ms`);
+            setTimeout(advance, stepDurations[idx]);
+          }
+        } else {
+          console.log(` [WIZARD] Progress loop stopped. idx=${idx}, isGenerating=${this.isGenerating}`);
+        }
+      };
+
+      advance();
       executeCreation();
     } else {
-      executeCreation(); // Instant
+      executeCreation();
     }
   }
-
 
   logout() {
     this.authService.logout();

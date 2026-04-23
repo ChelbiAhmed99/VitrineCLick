@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Outfit:wght@400;700;900&family=Playfair+Display:wght@400;700;900&family=Lora:wght@400;700&family=Montserrat:wght@400;700;900&family=Syne:wght@400;700;800&display=swap');
+
 @layer base {
   body {
     @apply bg-[#F8FAFC] text-slate-700;

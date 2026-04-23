@@ -14,7 +14,7 @@ VitrineClick is a high-end, AI-driven SaaS platform designed to transform user p
 ##  Technology Stack
 
 - **Frontend:** Angular 21, TailwindCSS.
-- **Backend:** Spring Boot (Java 21), Spring Data JPA, H2/MySQL.
+- **Backend:** Spring Boot (Java 21), Spring Data JPA, PostgreSQL.
 - **AI Service:** Flask (Python 3.10+), Hugging Face Inference API.
 
 ---
@@ -28,6 +28,7 @@ Follow these steps to set up and run VitrineClick on your machine.
 - **Java**: Install [JDK 21+](https://www.oracle.com/java/technologies/downloads/).
 - **Node.js**: Install [Node 20+](https://nodejs.org/).
 - **Python**: Install [Python 3.10+](https://www.python.org/downloads/).
+- **Docker**: [Docker Desktop](https://www.docker.com/products/docker-desktop/) or Docker Engine (required for PostgreSQL).
 - **Git**: [Git SCM](https://git-scm.com/downloads).
 
 ### Step 1: Clone the Repository
@@ -36,7 +37,13 @@ git clone git@github.com:ChelbiAhmed99/VitrineCLick.git
 cd VitrineClick
 ```
 
-### Step 2: Configure AI Service
+### Step 2: Start the Database
+VitrineClick now uses PostgreSQL. You can start it easily using Docker:
+```bash
+docker-compose up -d
+```
+
+### Step 3: Configure AI Service
 Navigate to the `ai-service` folder.
 1. Create a `.env` file and add your Hugging Face API Token:
    ```env
@@ -55,7 +62,7 @@ Navigate to the `ai-service` folder.
    ```
    *The service runs on Port 5000.*
 
-### Step 3: Start the Backend
+### Step 4: Start the Backend
 Navigate to the `backend` folder.
 1. Clean and build the project:
    ```bash
@@ -68,7 +75,7 @@ Navigate to the `backend` folder.
    ```
    *The API runs on Port 8080.*
 
-### Step 4: Launch the Frontend
+### Step 5: Launch the Frontend
 Navigate to the `frontend` folder.
 1. Install dependencies:
    ```bash

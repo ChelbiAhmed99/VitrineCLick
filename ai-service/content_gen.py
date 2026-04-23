@@ -21,7 +21,7 @@ else:
     print(" [ERROR] HF_TOKEN NOT FOUND in " + env_path)
 
 # Reliable model via InferenceClient
-MODEL_ID = "Qwen/Qwen2.5-Coder-32B-Instruct"
+MODEL_ID = "Qwen/Qwen2.5-1.5B-Instruct"
 
 # Initialize Client
 client = None
@@ -31,26 +31,34 @@ if HF_TOKEN:
 else:
     print(" [ERROR] HF_TOKEN NOT FOUND in " + env_path)
 
-def generate_site_content_pro(company_name, description, industry):
+def generate_site_content_pro(company_name, description, industry, primary_color="#2B3970", font="Inter", template_style="premium"):
     """
     Generates professional, multi-page JSON website content.
     Includes Home, About, and Contact pages with advanced layout hints.
     """
     if not HF_TOKEN:
         print(" [WARNING] HF_TOKEN missing. Using high-quality fallback.")
-        return get_fallback_content(company_name, description, industry)
+        return get_fallback_content(company_name, description, industry, primary_color, font)
 
     prompt = f"""
 Output ONLY a valid raw JSON object. NO markdown, NO text.
 Task: Design an enterprise-grade VITRINE website for '{company_name}' ({industry}).
+Style Context: {template_style}, Primary Color: {primary_color}, Font: {font}.
+
 Required Structure:
 {{
-  "theme": {{ "primary": "#hex", "secondary": "#hex", "fontFamily": "Inter" | "Montserrat", "borderRadius": "3xl" | "xl" }},
-  "layout": {{ "heroType": "split" | "centered", "featureLayout": "bento" | "grid", "style": "premium" | "glassmorphism" }},
+  "theme": {{ 
+    "primary": "{primary_color}", 
+    "secondary": "#ffffff", 
+    "fontFamily": "{font}", 
+    "borderRadius": "2xl",
+    "mode": "light" | "dark"
+  }},
+  "layout": {{ "heroType": "split" | "centered", "featureLayout": "bento" | "grid", "style": "{template_style}" }},
   "pages": {{
     "home": {{
-      "heroText": "Impactful H1",
-      "heroSubtext": "Value prop",
+      "heroText": "Impactful H1 about {company_name}",
+      "heroSubtext": "Value proposition: {description}",
       "features": [ {{"title": "...", "desc": "..."}}, ... ],
       "products": [ {{"name": "...", "price": "...", "desc": "...", "image": "unsplash_url"}}, ... ]
     }},
@@ -61,11 +69,11 @@ Required Structure:
     }},
     "contact": {{
       "message": "Enthusiastic invitation to reach out.",
-      "address": "Mock professional address",
+      "address": "Mock professional address in France",
       "hours": "Mon-Fri 9am-6pm"
     }}
   }},
-  "seo": {{ "title": "...", "description": "..." }}
+  "seo": {{ "title": "{company_name} | {industry} Expertise", "description": "{description}" }}
 }}
 """
 
@@ -79,38 +87,55 @@ Required Structure:
         
         # Use Chat Completion for better structure instruction following
         messages = [{"role": "user", "content": prompt}]
+        
+        # Explicit timeout to prevent hanging the whole process
         response = client.chat.completions.create(
             messages=messages,
-            max_tokens=1200,
-            temperature=0.1
+            max_tokens=1000,
+            temperature=0.1,
+            timeout=30 
         )
         
         content = response.choices[0].message.content
         import re
         match = re.search(r'\{.*\}', content, re.DOTALL)
         if match:
-            return json.loads(match.group())
+            parsed = json.loads(match.group())
+            # Force design attributes to strictly follow parameters if AI deviates
+            if "theme" in parsed:
+                parsed["theme"]["primary"] = primary_color
+                parsed["theme"]["fontFamily"] = font
+            return parsed
     except Exception as e:
-        print(f" [AI-SCALE] Generation failed: {e}")
+        print(f" [AI-SCALE] Generation failed or timed out: {e}")
+        # Always return fallback immediately on error/timeout
+        return get_fallback_content(company_name, description, industry, primary_color, font)
 
-    return get_fallback_content(company_name, description, industry)
+    return get_fallback_content(company_name, description, industry, primary_color, font)
 
-def get_fallback_content(company_name, description, industry):
+def get_fallback_content(company_name, description, industry, primary_color="#2B3970", font="Inter"):
     comp = company_name or "Entreprise"
     return {
-        "theme": {"primary": "#2B3970", "secondary": "#FF6B2C", "fontFamily": "Inter", "borderRadius": "3xl"},
+        "theme": {"primary": primary_color, "secondary": "#FF6B2C", "fontFamily": font, "borderRadius": "3xl"},
         "layout": {"heroType": "centered", "featureLayout": "grid", "style": "premium"},
         "pages": {
             "home": {
                 "heroText": f"L'Excellence avec {comp}",
-                "heroSubtext": f"Solutions innovantes en {industry}.",
-                "features": [{"title": "Expertise", "desc": "Savoir-faire reconnu."}],
-                "products": [{"name": "Produit Star", "price": "99€", "desc": "Qualité premium.", "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80"}]
+                "heroSubtext": f"{description or 'Solutions innovantes en ' + industry}.",
+                "features": [
+                    {"title": "Expertise", "desc": "Savoir-faire reconnu dans notre domaine."},
+                    {"title": "Innovation", "desc": "Toujours à la pointe de la technologie."},
+                    {"title": "Accompagnement", "desc": "Une équipe dédiée à votre succès."}
+                ],
+                "products": [
+                    {"name": "Solution Pro", "price": "Sur devis", "desc": "Performance optimisée.", "image": "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=400&q=80"},
+                    {"name": "Pack Excellence", "price": "Sur devis", "desc": "Le meilleur de notre savoir-faire.", "image": "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=400&q=80"}
+                ]
             },
-            "about": {"story": "Une histoire d'audace.", "mission": "Vivre l'innovation."},
-            "contact": {"message": "Contactez-nous.", "address": "Paris, France"}
+            "about": {"story": f"{comp} est née d'une vision d'excellence et d'innovation.", "mission": "Offrir le meilleur service possible à nos clients."},
+            "contact": {"message": "Notre équipe est à votre disposition pour toute question.", "address": "75008 Paris, France"}
         },
-        "seo": {"title": f"{comp}", "description": "SaaS Website."}
+        "seo": {"title": f"{comp} | Expertise {industry}", "description": description or f"Site officiel de {comp}"}
     }
 
 @app.route('/generate-logo', methods=['POST'])
@@ -134,7 +159,13 @@ def generate_copy():
     description = data.get('description')
     industry = data.get('category', 'Technologie')
     
-    content = generate_site_content_pro(company_name, description, industry)
+    primary_color = data.get('primaryColor', '#2B3970')
+    font = data.get('font', 'Inter')
+    template_style = data.get('style', 'premium')
+    
+    print(f" [DEBUG] generate_copy input: {company_name=}, {primary_color=}, {font=}, {template_style=}")
+    
+    content = generate_site_content_pro(company_name, description, industry, primary_color, font, template_style)
     return jsonify({
         "success": True,
         "content": content

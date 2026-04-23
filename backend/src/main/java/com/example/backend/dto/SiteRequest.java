@@ -24,4 +24,6 @@ public class SiteRequest {
     private String metaDescription;
     private boolean aiMode;
     private String primaryColor;
+    private String font;
+    private String style;
 }

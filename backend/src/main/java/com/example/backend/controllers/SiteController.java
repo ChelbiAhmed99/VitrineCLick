@@ -10,6 +10,7 @@ import com.example.backend.repositories.TemplateRepository;
 import com.example.backend.repositories.UserRepository;
 import com.example.backend.security.UserDetailsImpl;
 import com.example.backend.services.AiIntegrationService;
+import com.example.backend.services.AsyncSiteService;
 import com.example.backend.services.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,9 @@ public class SiteController {
 
     @Autowired
     NotificationService notificationService;
+
+    @Autowired
+    AsyncSiteService asyncSiteService;
 
     @GetMapping
     public ResponseEntity<List<Site>> getUserSites() {
@@ -93,40 +97,33 @@ public class SiteController {
 
         site.setOwner(currentUser);
 
-        // Generate AI using parallel requests for massive acceleration
-        try {
-            String logoPrompt = "Professional logo for " + site.getCompanyName() + ", " + site.getDescription();
-            
-            CompletableFuture<String> logoFuture = CompletableFuture.supplyAsync(() -> {
-                return aiIntegrationService.generateLogo(logoPrompt, "modern", "vector");
-            });
-            
-            CompletableFuture<String> contentFuture = CompletableFuture.supplyAsync(() -> {
-                return aiIntegrationService.generateSiteContent(site.getCompanyName(), site.getDescription(), site.getCategory());
-            });
-            
-            CompletableFuture.allOf(logoFuture, contentFuture).join();
-            
-            String logoUrl = logoFuture.get();
-            if (logoUrl != null) {
-                if (logoUrl.startsWith("/static/")) {
-                    logoUrl = "http://localhost:5000" + logoUrl;
-                }
-                site.setLogoUrl(logoUrl);
-            }
-            
-            String jsonContent = contentFuture.get();
-            if (jsonContent != null) {
-                site.setGeneratedVisuals(jsonContent);
-                site.setPublished(true); // Automatically publish AI-generated sites for immediate consultation
-            }
-        } catch (Exception e) {
-            // Log error but allow site creation to proceed
+        // Set initial status
+        site.setGenerationStatus("INITIALIZING");
+        site.setPublished(false);
+        
+        // Save initially to get an ID and allow frontend to see it
+        Site savedSite = siteRepository.save(site);
+        
+        // Trigger AI generation asynchronously if needed
+        if (request.isAiMode()) {
+            asyncSiteService.generateAiContent(
+                savedSite.getId(), 
+                request.getPrimaryColor(), 
+                request.getFont(), 
+                request.getStyle()
+            );
+        } else {
+            savedSite.setGenerationStatus("COMPLETED");
+            siteRepository.save(savedSite);
         }
 
-        siteRepository.save(site);
-        notificationService.sendNotification(userDetails.getId(), Map.of("message", "Votre site '" + site.getCompanyName() + "' a été généré avec succès !"));
-        return ResponseEntity.ok(site);
+        notificationService.sendNotification(userDetails.getId(), Map.of(
+            "type", "SITE_CREATED",
+            "siteId", savedSite.getId(),
+            "message", "La création de votre site '" + site.getCompanyName() + "' a débuté !"
+        ));
+
+        return ResponseEntity.ok(savedSite);
     }
     
     @GetMapping("/{id}")
@@ -172,6 +169,10 @@ public class SiteController {
         site.setMetaDescription(request.getMetaDescription());
 
         siteRepository.save(site);
+        notificationService.sendNotification(userDetails.getId(), Map.of(
+            "type", "SITE_UPDATE",
+            "message", "Le site '" + site.getCompanyName() + "' a été mis à jour."
+        ));
         return ResponseEntity.ok(site);
     }
 
@@ -185,6 +186,11 @@ public class SiteController {
         }
 
         siteRepository.delete(site);
+        notificationService.sendNotification(userDetails.getId(), Map.of(
+            "type", "SITE_DELETE",
+            "siteId", id,
+            "message", "Le site a été supprimé."
+        ));
         return ResponseEntity.ok(new MessageResponse("Site deleted successfully"));
     }
 
@@ -199,6 +205,12 @@ public class SiteController {
 
         site.setPublished(!site.isPublished());
         siteRepository.save(site);
+        notificationService.sendNotification(userDetails.getId(), Map.of(
+            "type", "SITE_PUBLISH_TOGGLE",
+            "siteId", site.getId(),
+            "published", site.isPublished(),
+            "message", "Visibilité du site '" + site.getCompanyName() + "' modifiée."
+        ));
         return ResponseEntity.ok(site);
     }
 

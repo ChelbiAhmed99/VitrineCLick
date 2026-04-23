@@ -68,7 +68,11 @@ def generate_copy():
     simulate = data.get('simulate', False)
     
     try:
-        content_json = generate_site_content_pro(company_name, description, category)
+        primary_color = data.get('primaryColor', '#2B3970')
+        font = data.get('font', 'Inter')
+        style = data.get('style', 'premium')
+        
+        content_json = generate_site_content_pro(company_name, description, category, primary_color, font, style)
         return jsonify({
             "success": True,
             "content": content_json

@@ -21,6 +21,7 @@ public class Site {
     private String email;
     private String subdomain;
     private String logoUrl;
+    private String generationStatus; // "INITIALIZING", "GENERATING_LOGO", "GENERATING_CONTENT", "COMPLETED"
     
     // JSON or separate strings for generated visuals / theme customization
     @Column(columnDefinition = "TEXT")

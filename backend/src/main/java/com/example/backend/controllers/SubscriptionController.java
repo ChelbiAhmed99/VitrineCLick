@@ -67,7 +67,11 @@ public class SubscriptionController {
         }
 
         subscriptionRepository.save(sub);
-        notificationService.sendNotification(userDetails.getId(), Map.of("message", "Félicitations ! Votre abonnement " + plan + " est maintenant actif."));
+        notificationService.sendNotification(userDetails.getId(), Map.of(
+            "type", "SUBSCRIPTION_UPDATE",
+            "message", "Félicitations ! Votre abonnement " + plan + " est maintenant actif."
+        ));
+
         return ResponseEntity.ok(sub);
     }
 }

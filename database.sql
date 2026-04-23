@@ -82,8 +82,8 @@ INSERT INTO roles (name) VALUES ('ROLE_CLIENT');
 INSERT INTO roles (name) VALUES ('ROLE_ADMIN');
 
 -- Password is 'password123' BCrypt encoded
-INSERT INTO users (username, email, password, full_name) VALUES ('admin', 'admin@vitrineclick.com', '$2a$10$8.UnVuG9HHgffUDAlk8qn.6nQH22LujUXRWf9.n0T000000000000', 'Administrateur Système');
-INSERT INTO users (username, email, password, full_name) VALUES ('user', 'user@vitrineclick.com', '$2a$10$8.UnVuG9HHgffUDAlk8qn.6nQH22LujUXRWf9.n0T000000000000', 'Utilisateur Test');
+INSERT INTO users (username, email, password, full_name) VALUES ('admin', 'admin@vitrineclick.com', '$2a$10$MgAjCJIvHBZ2h79fdYo1B.H7raLG4/WwfIiiCW7tDc0NInglXn8zi', 'Administrateur Système');
+INSERT INTO users (username, email, password, full_name) VALUES ('user', 'user@vitrineclick.com', '$2a$10$MgAjCJIvHBZ2h79fdYo1B.H7raLG4/WwfIiiCW7tDc0NInglXn8zi', 'Utilisateur Test');
 
 -- Assign roles (Admin: 1, User: 2)
 INSERT INTO user_roles (user_id, role_id) VALUES (1, 2); -- Admin has ROLE_ADMIN

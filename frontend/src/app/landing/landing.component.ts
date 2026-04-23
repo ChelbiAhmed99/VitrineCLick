@@ -38,7 +38,7 @@ export class LandingPanelComponent implements OnInit {
   siteData = { companyName: '', description: '', category: '', address: '', phone: '', email: '', templateId: 0, aiVisuals: false, aiGenerating: false };
   isLoginMode = true;
   loginData = { username: 'user', password: 'password123' };
-  signupData = { username: '', email: '', password: '' };
+  signupData = { username: '', email: '', password: '', fullName: '' };
   errorMessage = '';
   aiLoadingText = "Analyse de l'identité de la marque...";
   generatedLogoUrl = '';
@@ -51,7 +51,9 @@ export class LandingPanelComponent implements OnInit {
   paymentSuccess = false;
 
   isMobileMenuOpen = false;
-  notifications: {id: number, message: string}[] = [];
+  notifications: {id: number, message: string, type?: string, date: Date}[] = [];
+  notificationHistory: {id: number, message: string, type?: string, date: Date}[] = [];
+  showNotificationCenter = false;
   private notificationId = 0;
 
   publicStats: any = null;
@@ -73,6 +75,11 @@ export class LandingPanelComponent implements OnInit {
     // 1. Session check - Redirect if already logged in
     const roles = this.authService.getUserRoles();
     if (roles.length > 0) {
+      this.authService.syncUser().subscribe({
+        next: (user) => console.log('User synced:', user),
+        error: (err) => console.error('Sync failed:', err)
+      });
+      
       if (roles.includes('ROLE_ADMIN')) {
         this.router.navigate(['/admin']);
       } else {
@@ -82,8 +89,17 @@ export class LandingPanelComponent implements OnInit {
 
     // 2. Notifications subscription
     this.notificationService.getNotifications().subscribe(notif => {
-      this.addToast(notif.message);
-      // Optional: if real-time needs to be extremely accurate, we can refetch stats or update counters here 
+      const newNotif = { 
+        id: this.notificationId++, 
+        message: notif.message || notif.content || "Nouvelle notification", 
+        type: notif.type || 'info',
+        date: new Date()
+      };
+      
+      this.addToast(newNotif);
+      this.notificationHistory.unshift(newNotif);
+      if (this.notificationHistory.length > 20) this.notificationHistory.pop();
+
       if (notif.type === 'GLOBAL_UPDATE' || notif.type === 'SITE_UPDATE') {
         this.fetchGlobalStats();
       }
@@ -130,7 +146,7 @@ export class LandingPanelComponent implements OnInit {
         this.isLoginMode = true;
         this.loginData.username = this.signupData.username;
         this.loginData.password = '';
-        this.signupData = { username: '', email: '', password: '' };
+        this.signupData = { username: '', email: '', password: '', fullName: '' };
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur lors de l\'inscription';
@@ -138,12 +154,15 @@ export class LandingPanelComponent implements OnInit {
     });
   }
 
-  addToast(message: string) {
-    const id = this.notificationId++;
-    this.notifications.push({ id, message });
+  addToast(notif: any) {
+    this.notifications.push(notif);
     setTimeout(() => {
-      this.notifications = this.notifications.filter(n => n.id !== id);
-    }, 5000);
+      this.notifications = this.notifications.filter(n => n.id !== notif.id);
+    }, 6000);
+  }
+
+  toggleNotificationCenter() {
+    this.showNotificationCenter = !this.showNotificationCenter;
   }
 
   removeToast(id: number) {

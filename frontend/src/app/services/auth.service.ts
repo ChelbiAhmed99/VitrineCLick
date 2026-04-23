@@ -39,6 +39,17 @@ export class AuthService {
     this.userSubject.next(null);
   }
 
+  syncUser(): Observable<any> {
+    return this.http.get(API_URL + 'me').pipe(
+      tap((user: any) => {
+        const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+        const updatedUser = { ...currentUser, ...user };
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+        this.userSubject.next(updatedUser);
+      })
+    );
+  }
+
   getToken() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     return user?.token;

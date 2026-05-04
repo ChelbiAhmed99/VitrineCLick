@@ -1,0 +1,292 @@
+Mismatched closing tag </svg> for <p> (opened at line 27) at line 27
+Mismatched closing tag </button> for <svg> (opened at line 27) at line 30
+Mismatched closing tag </svg> for <p> (opened at line 36) at line 36
+Mismatched closing tag </button> for <svg> (opened at line 36) at line 38
+Mismatched closing tag </svg> for <p> (opened at line 44) at line 44
+Mismatched closing tag </button> for <svg> (opened at line 44) at line 46
+Mismatched closing tag </svg> for <p> (opened at line 54) at line 54
+Mismatched closing tag </button> for <svg> (opened at line 54) at line 56
+Mismatched closing tag </div> for <button> (opened at line 50) at line 57
+Mismatched closing tag </nav> for <div> (opened at line 48) at line 58
+Mismatched closing tag </svg> for <p> (opened at line 63) at line 63
+Mismatched closing tag </button> for <svg> (opened at line 63) at line 65
+Mismatched closing tag </div> for <button> (opened at line 62) at line 66
+Mismatched closing tag </svg> for <p> (opened at line 83) at line 83
+Mismatched closing tag </button> for <svg> (opened at line 83) at line 85
+Mismatched closing tag </div> for <button> (opened at line 82) at line 86
+Mismatched closing tag </a> for <div> (opened at line 69) at line 87
+Mismatched closing tag </svg> for <p> (opened at line 119) at line 119
+Mismatched closing tag </button> for <svg> (opened at line 119) at line 121
+Mismatched closing tag </div> for <button> (opened at line 118) at line 122
+Mismatched closing tag </svg> for <p> (opened at line 216) at line 216
+Mismatched closing tag </div> for <svg> (opened at line 216) at line 217
+Mismatched closing tag </button> for <div> (opened at line 213) at line 227
+Mismatched closing tag </svg> for <p> (opened at line 235) at line 235
+Mismatched closing tag </div> for <svg> (opened at line 235) at line 236
+Mismatched closing tag </button> for <div> (opened at line 234) at line 244
+Mismatched closing tag </div> for <button> (opened at line 230) at line 245
+Mismatched closing tag </div> for <button> (opened at line 170) at line 252
+Mismatched closing tag </div> for <label> (opened at line 271) at line 273
+Mismatched closing tag </div> for <label> (opened at line 275) at line 277
+Mismatched closing tag </div> for <option> (opened at line 281) at line 283
+Mismatched closing tag </div> for <select> (opened at line 280) at line 284
+Mismatched closing tag </div> for <label> (opened at line 289) at line 291
+Mismatched closing tag </svg> for <p> (opened at line 334) at line 335
+Mismatched closing tag </div> for <svg> (opened at line 333) at line 336
+Mismatched closing tag </button> for <div> (opened at line 331) at line 337
+Mismatched closing tag </div> for <button> (opened at line 293) at line 338
+Mismatched closing tag </svg> for <p> (opened at line 364) at line 364
+Mismatched closing tag </div> for <svg> (opened at line 364) at line 367
+Mismatched closing tag </div> for <label> (opened at line 363) at line 373
+Mismatched closing tag </svg> for <p> (opened at line 391) at line 391
+Mismatched closing tag </div> for <svg> (opened at line 391) at line 394
+Mismatched closing tag </div> for <label> (opened at line 390) at line 399
+Mismatched closing tag </div> for <label> (opened at line 436) at line 438
+Mismatched closing tag </div> for <label> (opened at line 440) at line 442
+Mismatched closing tag </div> for <label> (opened at line 444) at line 446
+Mismatched closing tag </svg> for <p> (opened at line 474) at line 474
+Mismatched closing tag </div> for <svg> (opened at line 474) at line 476
+Mismatched closing tag </svg> for <p> (opened at line 484) at line 485
+Mismatched closing tag </div> for <svg> (opened at line 483) at line 486
+Mismatched closing tag </svg> for <p> (opened at line 511) at line 511
+Mismatched closing tag </div> for <svg> (opened at line 508) at line 512
+Mismatched closing tag </button> for <div> (opened at line 491) at line 530
+Mismatched closing tag </svg> for <p> (opened at line 547) at line 547
+Mismatched closing tag </div> for <svg> (opened at line 547) at line 548
+Mismatched closing tag </svg> for <p> (opened at line 557) at line 557
+Mismatched closing tag </button> for <svg> (opened at line 557) at line 559
+Mismatched closing tag </div> for <button> (opened at line 555) at line 560
+Mismatched closing tag </div> for <label> (opened at line 571) at line 573
+Mismatched closing tag </div> for <option> (opened at line 578) at line 580
+Mismatched closing tag </div> for <label> (opened at line 582) at line 584
+Mismatched closing tag </div> for <label> (opened at line 587) at line 589
+Mismatched closing tag </svg> for <p> (opened at line 600) at line 600
+Mismatched closing tag </div> for <svg> (opened at line 600) at line 603
+Mismatched closing tag </div> for <label> (opened at line 599) at line 604
+Mismatched closing tag </div> for <label> (opened at line 591) at line 614
+Mismatched closing tag </svg> for <p> (opened at line 640) at line 640
+Mismatched closing tag </div> for <svg> (opened at line 640) at line 641
+Mismatched closing tag </svg> for <p> (opened at line 658) at line 658
+Mismatched closing tag </div> for <svg> (opened at line 658) at line 660
+Mismatched closing tag </svg> for <p> (opened at line 700) at line 700
+Mismatched closing tag </div> for <svg> (opened at line 700) at line 701
+Mismatched closing tag </svg> for <p> (opened at line 778) at line 778
+Mismatched closing tag </div> for <svg> (opened at line 778) at line 779
+Mismatched closing tag </button> for <div> (opened at line 776) at line 782
+Mismatched closing tag </div> for <button> (opened at line 774) at line 783
+Mismatched closing tag </svg> for <p> (opened at line 836) at line 836
+Mismatched closing tag </button> for <svg> (opened at line 836) at line 837
+Mismatched closing tag </svg> for <p> (opened at line 840) at line 840
+Mismatched closing tag </button> for <svg> (opened at line 840) at line 841
+Mismatched closing tag </div> for <button> (opened at line 838) at line 842
+Mismatched closing tag </div> for <button> (opened at line 834) at line 852
+Mismatched closing tag </svg> for <p> (opened at line 891) at line 891
+Mismatched closing tag </button> for <svg> (opened at line 891) at line 892
+Mismatched closing tag </div> for <button> (opened at line 890) at line 893
+Mismatched closing tag </svg> for <p> (opened at line 900) at line 900
+Mismatched closing tag </div> for <svg> (opened at line 900) at line 901
+Mismatched closing tag </button> for <div> (opened at line 899) at line 906
+Mismatched closing tag </div> for <button> (opened at line 898) at line 907
+Mismatched closing tag </svg> for <p> (opened at line 932) at line 932
+Mismatched closing tag </button> for <svg> (opened at line 932) at line 934
+Mismatched closing tag </div> for <button> (opened at line 931) at line 935
+Mismatched closing tag </svg> for <p> (opened at line 944) at line 944
+Mismatched closing tag </div> for <svg> (opened at line 944) at line 945
+Mismatched closing tag </svg> for <p> (opened at line 952) at line 952
+Mismatched closing tag </div> for <svg> (opened at line 952) at line 954
+Mismatched closing tag </button> for <div> (opened at line 951) at line 956
+Mismatched closing tag </svg> for <p> (opened at line 959) at line 959
+Mismatched closing tag </div> for <svg> (opened at line 959) at line 961
+Mismatched closing tag </button> for <div> (opened at line 958) at line 963
+Mismatched closing tag </svg> for <p> (opened at line 966) at line 966
+Mismatched closing tag </div> for <svg> (opened at line 966) at line 968
+Mismatched closing tag </button> for <div> (opened at line 965) at line 970
+Mismatched closing tag </svg> for <p> (opened at line 973) at line 973
+Mismatched closing tag </div> for <svg> (opened at line 973) at line 975
+Mismatched closing tag </button> for <div> (opened at line 972) at line 976
+Mismatched closing tag </div> for <button> (opened at line 971) at line 977
+Mismatched closing tag </div> for <button> (opened at line 964) at line 978
+Mismatched closing tag </div> for <button> (opened at line 957) at line 994
+Mismatched closing tag </svg> for <p> (opened at line 1001) at line 1001
+Mismatched closing tag </div> for <svg> (opened at line 1001) at line 1002
+Mismatched closing tag </svg> for <p> (opened at line 1046) at line 1046
+Mismatched closing tag </button> for <svg> (opened at line 1046) at line 1048
+Mismatched closing tag </svg> for <p> (opened at line 1050) at line 1050
+Mismatched closing tag </button> for <svg> (opened at line 1050) at line 1052
+Mismatched closing tag </div> for <button> (opened at line 1049) at line 1053
+Mismatched closing tag </div> for <button> (opened at line 1045) at line 1054
+Mismatched closing tag </svg> for <p> (opened at line 1075) at line 1075
+Mismatched closing tag </button> for <p> (opened at line 1075) at line 1076
+Mismatched closing tag </div> for <svg> (opened at line 1075) at line 1077
+Mismatched closing tag </div> for <button> (opened at line 1074) at line 1078
+Mismatched closing tag </svg> for <p> (opened at line 1090) at line 1090
+Mismatched closing tag </div> for <p> (opened at line 1090) at line 1091
+Mismatched closing tag </div> for <svg> (opened at line 1090) at line 1099
+Mismatched closing tag </svg> for <p> (opened at line 1113) at line 1113
+Mismatched closing tag </div> for <svg> (opened at line 1113) at line 1114
+Mismatched closing tag </svg> for <p> (opened at line 1132) at line 1132
+Mismatched closing tag </div> for <svg> (opened at line 1132) at line 1133
+Mismatched closing tag </svg> for <p> (opened at line 1181) at line 1184
+Mismatched closing tag </div> for <p> (opened at line 1180) at line 1197
+Mismatched closing tag </div> for <svg> (opened at line 1169) at line 1204
+Mismatched closing tag </svg> for <p> (opened at line 1258) at line 1258
+Mismatched closing tag </button> for <svg> (opened at line 1258) at line 1260
+Mismatched closing tag </div> for <button> (opened at line 1257) at line 1261
+Mismatched closing tag </svg> for <p> (opened at line 1329) at line 1329
+Mismatched closing tag </div> for <p> (opened at line 1329) at line 1330
+Mismatched closing tag </div> for <svg> (opened at line 1329) at line 1331
+Mismatched closing tag </div> for <label> (opened at line 1349) at line 1351
+Mismatched closing tag </svg> for <p> (opened at line 1356) at line 1356
+Mismatched closing tag </div> for <svg> (opened at line 1356) at line 1357
+Mismatched closing tag </div> for <label> (opened at line 1353) at line 1359
+Mismatched closing tag </div> for <label> (opened at line 1361) at line 1366
+Mismatched closing tag </div> for <label> (opened at line 1390) at line 1394
+Mismatched closing tag </div> for <label> (opened at line 1397) at line 1399
+Mismatched closing tag </svg> for <p> (opened at line 1447) at line 1447
+Mismatched closing tag </div> for <svg> (opened at line 1447) at line 1448
+Mismatched closing tag </svg> for <p> (opened at line 1460) at line 1460
+Mismatched closing tag </div> for <svg> (opened at line 1460) at line 1461
+Mismatched closing tag </svg> for <p> (opened at line 1473) at line 1473
+Mismatched closing tag </div> for <svg> (opened at line 1473) at line 1474
+Mismatched closing tag </main> for <div> (opened at line 1379) at line 1495
+Mismatched closing tag </svg> for <p> (opened at line 1500) at line 1500
+Mismatched closing tag </button> for <svg> (opened at line 1500) at line 1502
+Mismatched closing tag </svg> for <p> (opened at line 1504) at line 1504
+Mismatched closing tag </button> for <svg> (opened at line 1504) at line 1506
+Mismatched closing tag </svg> for <p> (opened at line 1510) at line 1510
+Mismatched closing tag </button> for <svg> (opened at line 1510) at line 1511
+Mismatched closing tag </div> for <button> (opened at line 1509) at line 1512
+Mismatched closing tag </svg> for <p> (opened at line 1514) at line 1514
+Mismatched closing tag </button> for <svg> (opened at line 1514) at line 1516
+Mismatched closing tag </svg> for <p> (opened at line 1518) at line 1518
+Mismatched closing tag </button> for <svg> (opened at line 1518) at line 1520
+Mismatched closing tag </nav> for <button> (opened at line 1517) at line 1521
+Mismatched closing tag </div> for <button> (opened at line 1513) at line 1523
+Mismatched closing tag </svg> for <p> (opened at line 1536) at line 1536
+Mismatched closing tag </div> for <svg> (opened at line 1536) at line 1538
+Mismatched closing tag </svg> for <p> (opened at line 1542) at line 1542
+Mismatched closing tag </button> for <svg> (opened at line 1542) at line 1544
+Mismatched closing tag </div> for <button> (opened at line 1541) at line 1546
+Mismatched closing tag </svg> for <p> (opened at line 1598) at line 1598
+Mismatched closing tag </div> for <svg> (opened at line 1598) at line 1599
+Mismatched closing tag </div> for <label> (opened at line 1614) at line 1616
+Mismatched closing tag </div> for <label> (opened at line 1618) at line 1620
+Mismatched closing tag </div> for <option> (opened at line 1624) at line 1626
+Mismatched closing tag </div> for <label> (opened at line 1628) at line 1637
+Mismatched closing tag </div> for <select> (opened at line 1623) at line 1639
+Mismatched closing tag </div> for <label> (opened at line 1646) at line 1648
+Mismatched closing tag </div> for <label> (opened at line 1650) at line 1652
+Mismatched closing tag </div> for <label> (opened at line 1654) at line 1656
+Mismatched closing tag </div> for <label> (opened at line 1664) at line 1666
+Mismatched closing tag </div> for <label> (opened at line 1673) at line 1678
+Mismatched closing tag </svg> for <p> (opened at line 1727) at line 1727
+Mismatched closing tag </p> for <svg> (opened at line 1727) at line 1729
+Mismatched closing tag </div> for <p> (opened at line 1726) at line 1730
+Mismatched closing tag </div> for <label> (opened at line 1682) at line 1731
+Mismatched closing tag </svg> for <p> (opened at line 1744) at line 1744
+Mismatched closing tag </svg> for <p> (opened at line 1745) at line 1745
+Mismatched closing tag </svg> for <p> (opened at line 1746) at line 1746
+Mismatched closing tag </div> for <svg> (opened at line 1746) at line 1748
+Mismatched closing tag </div> for <svg> (opened at line 1745) at line 1749
+Unclosed tags:
+  <div> opened at line 2
+  <a> opened at line 5
+  <nav> opened at line 20
+  <button> opened at line 23
+  <button> opened at line 32
+  <button> opened at line 40
+  <div> opened at line 61
+  <main> opened at line 90
+  <div> opened at line 110
+  <div> opened at line 126
+  <div> opened at line 127
+  <div> opened at line 161
+  <div> opened at line 164
+  <div> opened at line 168
+  <div> opened at line 255
+  <div> opened at line 256
+  <div> opened at line 259
+  <div> opened at line 269
+  <div> opened at line 270
+  <div> opened at line 274
+  <div> opened at line 278
+  <label> opened at line 279
+  <div> opened at line 287
+  <div> opened at line 288
+  <div> opened at line 342
+  <label> opened at line 343
+  <div> opened at line 345
+  <div> opened at line 347
+  <div> opened at line 431
+  <div> opened at line 434
+  <div> opened at line 435
+  <div> opened at line 451
+  <div> opened at line 456
+  <button> opened at line 457
+  <div> opened at line 564
+  <div> opened at line 565
+  <div> opened at line 569
+  <div> opened at line 570
+  <div> opened at line 574
+  <div> opened at line 575
+  <label> opened at line 576
+  <select> opened at line 577
+  <div> opened at line 586
+  <div> opened at line 618
+  <div> opened at line 711
+  <div> opened at line 726
+  <div> opened at line 756
+  <div> opened at line 815
+  <div> opened at line 817
+  <div> opened at line 819
+  <div> opened at line 833
+  <div> opened at line 909
+  <div> opened at line 912
+  <div> opened at line 939
+  <div> opened at line 941
+  <div> opened at line 942
+  <div> opened at line 947
+  <div> opened at line 949
+  <button> opened at line 950
+  <div> opened at line 997
+  <div> opened at line 999
+  <div> opened at line 1008
+  <div> opened at line 1083
+  <div> opened at line 1085
+  <div> opened at line 1086
+  <div> opened at line 1088
+  <div> opened at line 1109
+  <div> opened at line 1153
+  <div> opened at line 1155
+  <div> opened at line 1309
+  <div> opened at line 1315
+  <div> opened at line 1317
+  <div> opened at line 1319
+  <div> opened at line 1320
+  <div> opened at line 1322
+  <div> opened at line 1346
+  <div> opened at line 1347
+  <div> opened at line 1348
+  <nav> opened at line 1498
+  <button> opened at line 1499
+  <button> opened at line 1503
+  <div> opened at line 1508
+  <div> opened at line 1526
+  <div> opened at line 1527
+  <div> opened at line 1590
+  <div> opened at line 1591
+  <div> opened at line 1593
+  <div> opened at line 1607
+  <div> opened at line 1610
+  <div> opened at line 1612
+  <div> opened at line 1613
+  <div> opened at line 1617
+  <div> opened at line 1621
+  <label> opened at line 1622
+  <div> opened at line 1642
+  <div> opened at line 1644
+  <div> opened at line 1645
+  <div> opened at line 1661
+  <div> opened at line 1742
+  <div> opened at line 1743
+  <svg> opened at line 1744

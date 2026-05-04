@@ -717,6 +717,7 @@ import { Router } from '@angular/router';
                </div>
              </ng-container>
           </div>
+          </div>
 
         </div>
       </div>
@@ -918,6 +919,7 @@ import { Router } from '@angular/router';
               </div>
             </button>
           </div>
+        </div>
           <!-- TAB ASSETS: IDENTIFY GEN™ -->
           <div *ngIf="!loading && activeTab==='assets'" class="tab-enter space-y-10">
             

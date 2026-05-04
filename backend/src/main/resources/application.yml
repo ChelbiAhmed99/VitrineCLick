@@ -1,9 +1,9 @@
 spring:
   datasource:
     # XAMPP / MySQL Configuration
-    url: ${DATABASE_URL:jdbc:mysql://localhost:3307/vitrineclick?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC}
-    driverClassName: com.mysql.cj.jdbc.Driver
-    username: ${DATABASE_USERNAME:root}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/vitrineclick}
+    driverClassName: org.postgresql.Driver
+    username: ${DATABASE_USERNAME:vitrine_admin}
     password: ${DATABASE_PASSWORD:}
     
     # Hibernate settings

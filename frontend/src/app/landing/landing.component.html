@@ -14,8 +14,13 @@
           <p class="text-sm font-bold text-[#2B3970] leading-tight">{{ n.message }}</p>
         </div>
       </div>
-      <button (click)="removeToast(n.id)" class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-slate-600 transition-colors">
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <button (click)="removeToast(n.id)"
+        class="w-8 h-8 flex items-center justify-center text-slate-300 hover:text-slate-600 transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
       </button>
     </div>
   </div>
@@ -41,38 +46,48 @@
       <div class="flex items-center gap-4">
         <!-- Notification Bell -->
         <div class="relative">
-          <button (click)="toggleNotificationCenter()" 
+          <button (click)="toggleNotificationCenter()"
             class="w-14 h-14 bg-slate-50 text-[#2B3970] rounded-2xl flex items-center justify-center hover:bg-slate-100 transition-all border border-slate-100 group">
-            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:rotate-12 transition-transform"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-            <span *ngIf="notificationHistory.length > 0" class="absolute -top-1 -right-1 w-5 h-5 bg-[#FF6B2C] text-white text-[9px] font-black flex items-center justify-center rounded-full ring-4 ring-white">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+              class="group-hover:rotate-12 transition-transform">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+            </svg>
+            <span *ngIf="notificationHistory.length > 0"
+              class="absolute -top-1 -right-1 w-5 h-5 bg-[#FF6B2C] text-white text-[9px] font-black flex items-center justify-center rounded-full ring-4 ring-white">
               {{notificationHistory.length}}
             </span>
           </button>
-          
+
           <!-- Notification Dropdown -->
-          <div *ngIf="showNotificationCenter" 
+          <div *ngIf="showNotificationCenter"
             class="absolute top-20 right-0 w-[400px] bg-white rounded-[32px] shadow-[0_40px_80px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-[150] animate-fade-in-up">
             <div class="p-6 bg-[#2B3970] text-white flex items-center justify-between">
               <h5 class="font-black text-sm uppercase tracking-widest">Centre de Notifications</h5>
-              <button (click)="showNotificationCenter = false" class="text-white/60 hover:text-white font-bold">X</button>
+              <button (click)="showNotificationCenter = false"
+                class="text-white/60 hover:text-white font-bold">X</button>
             </div>
             <div class="max-h-[400px] overflow-y-auto p-4 space-y-3">
               <div *ngIf="notificationHistory.length === 0" class="py-12 text-center">
                 <p class="text-slate-400 font-bold text-sm">Aucune notification pour le moment.</p>
               </div>
-              <div *ngFor="let h of notificationHistory" 
+              <div *ngFor="let h of notificationHistory"
                 class="p-5 rounded-2xl hover:bg-slate-50 transition-colors border border-transparent hover:border-slate-100 group">
                 <div class="flex items-start gap-4">
                   <div class="w-2 h-2 rounded-full bg-[#FF6B2C] mt-2 group-hover:scale-150 transition-transform"></div>
                   <div>
-                    <p class="text-xs font-black text-slate-400 uppercase tracking-tighter mb-1">{{h.date | date:'HH:mm'}}</p>
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-tighter mb-1">{{h.date |
+                      date:'HH:mm'}}</p>
                     <p class="text-sm font-bold text-[#2B3970] leading-snug">{{h.message}}</p>
                   </div>
                 </div>
               </div>
             </div>
             <div class="p-4 border-t border-slate-50 text-center">
-              <button class="text-[10px] font-black text-[#FF6B2C] uppercase tracking-[0.2em] hover:tracking-[0.3em] transition-all">Effacer tout l'historique</button>
+              <button
+                class="text-[10px] font-black text-[#FF6B2C] uppercase tracking-[0.2em] hover:tracking-[0.3em] transition-all">Effacer
+                tout l'historique</button>
             </div>
           </div>
         </div>
@@ -85,32 +100,109 @@
   </nav>
 
   <!-- HERO SECTION -->
-  <main class="relative pt-48">
-    <div
-      class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-6xl aspect-square bg-[radial-gradient(circle_at_center,_#FF6B2C08_0%,_transparent_70%)] pointer-events-none -z-10 animate-pulse">
-    </div>
+  <main class="relative">
+    <!-- ============================================================ -->
+    <!-- PREMIUM HERO — Full Viewport with Logo Background            -->
+    <!-- ============================================================ -->
+    <section class="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
 
-    <section class="max-w-7xl mx-auto px-6 text-center mb-32">
-      <div
-        class="inline-flex items-center gap-3 px-6 py-2 bg-white/50 backdrop-blur-md rounded-full border border-orange-100/50 text-[#FF6B2C] text-[10px] font-bold uppercase tracking-[0.3em] mb-10 animate-fade-in hover:bg-orange-50 transition-all cursor-default shadow-sm text-center mx-auto">
-        Solution de Création Digitale Intelligente
+      <!-- ── Deep gradient base ── -->
+      <div class="absolute inset-0 bg-gradient-to-br from-[#0D1228] via-[#1a2450] to-[#0f1a3a]"></div>
+
+      <!-- ── Animated noise grain overlay ── -->
+      <div class="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style="background-image: url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22300%22><filter id=%22n%22><feTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%224%22/></filter><rect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/></svg>');">
       </div>
-      <h1
-        class="text-6xl md:text-[88px] font-black text-[#2B3970] tracking-tight leading-[1.1] mb-10 animate-fade-in-up">
-        Donnez vie à votre <br> <span class="relative inline-block"><span
-            class="text-transparent bg-clip-text bg-gradient-to-r from-[#FF6B2C] via-orange-400 to-amber-500">Vision
-            Digitale.</span></span>
-      </h1>
-      <p
-        class="text-xl md:text-2xl text-slate-500 max-w-3xl mx-auto font-medium leading-relaxed mb-16 animate-fade-in-up delay-100">
-        VitrineClick réinvente la création de sites web. Un design sur mesure, un contenu captivant et une performance
-        inégalée, le tout propulsé par une IA qui comprend vos besoins.
-      </p>
-      <div class="flex flex-wrap justify-center gap-5 animate-fade-in-up delay-200">
-        <button (click)="scrollToLogin()"
-          class="group px-10 py-6 bg-[#FF6B2C] text-white rounded-2xl font-bold text-sm uppercase tracking-[0.15em] hover:bg-orange-500 transition-all shadow-xl shadow-[#FF6B2C]/20 flex items-center gap-3 hover:-translate-y-1">
-          Commencer mon Projet
-        </button>
+
+      <!-- ── Giant logo background watermark ── -->
+      <div class="absolute inset-0 flex items-center justify-end pointer-events-none overflow-hidden">
+        <div class="relative w-[70vw] max-w-[900px] aspect-square -mr-[15vw] opacity-[0.12] select-none"
+          style="animation: hero-logo-float 8s ease-in-out infinite;">
+          <img src="/d.png" alt="" class="w-full h-full object-contain drop-shadow-none"
+            style="filter: brightness(0) invert(1);">
+        </div>
+      </div>
+
+      <!-- ── Secondary glowing logo — left accent ── -->
+      <div class="absolute -left-24 bottom-0 w-[40vw] max-w-[500px] aspect-square pointer-events-none opacity-[0.06]"
+        style="animation: hero-logo-float 10s ease-in-out infinite reverse;">
+        <img src="/d.png" alt="" class="w-full h-full object-contain"
+          style="filter: brightness(0) saturate(100%) invert(44%) sepia(90%) saturate(800%) hue-rotate(360deg) brightness(110%);">
+      </div>
+
+      <!-- ── Radial glow spots ── -->
+      <div class="absolute top-1/4 right-1/4 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style="background: radial-gradient(circle, rgba(255,107,44,0.18) 0%, transparent 70%); animation: glow-pulse 4s ease-in-out infinite;">
+      </div>
+      <div class="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] rounded-full pointer-events-none"
+        style="background: radial-gradient(circle, rgba(43,57,112,0.5) 0%, transparent 70%); animation: glow-pulse 6s ease-in-out infinite reverse;">
+      </div>
+
+      <!-- ── Top horizontal light streak ── -->
+      <div class="absolute top-0 left-0 right-0 h-px pointer-events-none"
+        style="background: linear-gradient(90deg, transparent, rgba(255,107,44,0.6), transparent);"></div>
+
+      <!-- ── Hero Content ── -->
+      <div class="relative z-10 max-w-7xl mx-auto px-6 pt-40 pb-20 text-center">
+
+        <!-- Main headline -->
+        <h1
+          class="text-5xl md:text-[80px] lg:text-[96px] font-black tracking-tight leading-[1.05] mb-8 animate-fade-in-up">
+          <span class="text-white block">Donnez vie à votre</span>
+          <span class="relative inline-block mt-2">
+            <span class="text-transparent bg-clip-text"
+              style="background-image: linear-gradient(135deg, #FF6B2C 0%, #FF8C55 40%, #FFB347 70%, #FF6B2C 100%); background-size: 200% 200%; animation: gradient-shift 4s ease infinite;">
+              Vision Digitale.
+            </span>
+            <!-- Underline glow -->
+            <span class="absolute -bottom-2 left-0 right-0 h-0.5 rounded-full"
+              style="background: linear-gradient(90deg, transparent, #FF6B2C, transparent);"></span>
+          </span>
+        </h1>
+
+        <!-- Sub-headline -->
+        <p class="text-lg md:text-xl text-white/50 max-w-2xl mx-auto font-medium leading-relaxed mb-14 animate-fade-in-up"
+          style="animation-delay: 0.1s;">
+          VitrineClick réinvente la création de sites web. Un design sur mesure,
+          un contenu captivant et une performance inégalée, propulsés par une IA
+          qui comprend vos besoins.
+        </p>
+
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap justify-center gap-5 animate-fade-in-up" style="animation-delay: 0.2s;">
+          <button (click)="scrollToLogin()"
+            class="group relative px-10 py-5 rounded-2xl font-bold text-sm uppercase tracking-[0.15em] text-white overflow-hidden transition-all hover:-translate-y-1 hover:shadow-2xl"
+            style="background: linear-gradient(135deg, #FF6B2C, #e05a1f); box-shadow: 0 20px 60px rgba(255,107,44,0.35);">
+            <span class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity"
+              style="background: linear-gradient(135deg, #FF8C55, #FF6B2C);"></span>
+            <span class="relative flex items-center gap-3">
+              Commencer mon Projet
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"
+                class="group-hover:translate-x-1 transition-transform">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </span>
+          </button>
+
+          <button (click)="scrollToLogin()" class="px-10 py-5 rounded-2xl font-bold text-sm uppercase tracking-[0.15em] text-white/70
+              border border-white/10 bg-white/5 backdrop-blur-sm
+              hover:bg-white/10 hover:text-white hover:border-white/20
+              transition-all hover:-translate-y-1">
+            Voir les Tarifs
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Bottom fade to page background ── -->
+      <div class="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style="background: linear-gradient(to bottom, transparent, #F8FAFC);"></div>
+
+      <!-- ── Scroll indicator ── -->
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 z-10"
+        style="animation: bounce-slow 2s ease-in-out infinite;">
+        <div class="w-px h-8 bg-gradient-to-b from-white/20 to-transparent"></div>
       </div>
     </section>
 
@@ -174,7 +266,7 @@
             <li class="flex items-center gap-3 text-sm font-bold text-slate-600">Hébergement Inclus</li>
             <li class="flex items-center gap-3 text-sm font-bold text-slate-300">Analytics Avancés</li>
           </ul>
-          <button (click)="openPaymentModal('Essentiel', 29, false)"
+          <button (click)="selectPlan('Essentiel', 29, 'basic')"
             class="w-full py-4 bg-slate-50 text-[#2B3970] font-bold text-xs uppercase tracking-widest rounded-xl hover:bg-[#2B3970] hover:text-white transition-all shadow-sm">Choisir
             Essentiel</button>
         </div>
@@ -204,7 +296,7 @@
             <li class="flex items-center gap-3 text-sm font-bold text-white">Téléchargement des Assets (Logos)</li>
             <li class="flex items-center gap-3 text-sm font-bold text-white">Analytics Temps Réel</li>
           </ul>
-          <button (click)="openPaymentModal('Pro Studio', 79, true)"
+          <button (click)="selectPlan('Pro Studio', 79, 'pro')"
             class="w-full py-5 bg-[#FF6B2C] text-white font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-orange-500 shadow-lg shadow-[#FF6B2C]/25 transition-all hover:-translate-y-1">Démarrer
             en Pro</button>
         </div>
@@ -229,9 +321,9 @@
             <li class="flex items-center gap-3 text-sm font-bold text-slate-600">API Identity Gen™</li>
             <li class="flex items-center gap-3 text-sm font-bold text-slate-600">Support Prioritaire H24</li>
           </ul>
-          <button (click)="scrollToLogin()"
-            class="w-full py-4 bg-slate-50 text-[#2B3970] font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-all">Contacter
-            les Ventes</button>
+          <button (click)="selectPlan('Business', 199, 'business')"
+            class="w-full py-4 bg-slate-50 text-[#2B3970] font-black text-xs uppercase tracking-widest rounded-2xl hover:bg-slate-100 transition-all">Choisir
+            Business</button>
         </div>
       </div>
     </section>
@@ -297,8 +389,8 @@
 
           <div class="space-y-8" *ngIf="!isLoginMode">
             <div class="space-y-3">
-              <label
-                class="block text-[10px] font-black text-[#2B3970] uppercase tracking-[0.4em] ml-6 opacity-60">Nom Complet</label>
+              <label class="block text-[10px] font-black text-[#2B3970] uppercase tracking-[0.4em] ml-6 opacity-60">Nom
+                Complet</label>
               <input type="text" [(ngModel)]="signupData.fullName"
                 class="w-full px-10 py-7 bg-slate-50 border border-slate-100 rounded-[32px] outline-none focus:border-[#FF6B2C] focus:ring-8 focus:ring-[#FF6B2C]/5 transition-all font-black text-[#2B3970] text-xl shadow-inner"
                 placeholder="Votre nom complet">
@@ -326,7 +418,7 @@
             </div>
             <button (click)="signup()"
               class="w-full py-8 bg-[#FF6B2C] text-white font-black text-2xl rounded-[35px] shadow-[0_30px_60px_-15px_rgba(255,107,44,0.4)] hover:bg-[#e05a1f] transition-all hover:scale-[1.03] active:scale-95 flex items-center justify-center gap-6 group">
-              Réserver mon accès
+              {{ selectedPlan ? 'Payer & S\'inscrire' : 'Créer mon compte' }}
             </button>
             <p class="text-center font-bold text-slate-500 text-sm mt-6">
               Déjà un compte ? <button (click)="toggleAuthMode()" class="text-[#2B3970] hover:underline">Se
@@ -345,7 +437,6 @@
         <div class="w-16 h-16 bg-white rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
           <img src="/d.png" alt="VitrineClick Logo" class="w-full h-full object-contain p-1">
         </div>
-        <span class="text-4xl font-black text-[#2B3970] tracking-tighter">VitrineClick</span>
       </div>
       <div class="grid grid-cols-2 md:grid-cols-4 gap-12 mb-20 text-left border-b border-slate-50 pb-20">
         <div class="space-y-6">

@@ -38,6 +38,9 @@ public class AuthController {
 
     @Autowired
     RoleRepository roleRepository;
+    
+    @Autowired
+    com.example.backend.repositories.SubscriptionRepository subscriptionRepository;
 
     @Autowired
     PasswordEncoder encoder;
@@ -87,10 +90,32 @@ public class AuthController {
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
         user.setFullName(signUpRequest.getFullName());
 
+        String selectedPlan = signUpRequest.getPlan();
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
+        if (selectedPlan != null) {
+            switch (selectedPlan.toLowerCase()) {
+                case "pro":
+                    Role proRole = roleRepository.findByName(Role.ERole.ROLE_CLIENT_PRO)
+                            .orElseThrow(() -> new RuntimeException("Error: Role PRO is not found."));
+                    roles.add(proRole);
+                    roleRepository.findByName(Role.ERole.ROLE_CLIENT).ifPresent(roles::add);
+                    break;
+                case "business":
+                    Role bizRole = roleRepository.findByName(Role.ERole.ROLE_CLIENT_BUSINESS)
+                            .orElseThrow(() -> new RuntimeException("Error: Role BUSINESS is not found."));
+                    roles.add(bizRole);
+                    roleRepository.findByName(Role.ERole.ROLE_CLIENT).ifPresent(roles::add);
+                    break;
+                case "basic":
+                default:
+                    Role basicRole = roleRepository.findByName(Role.ERole.ROLE_CLIENT)
+                            .orElseThrow(() -> new RuntimeException("Error: Role CLIENT is not found."));
+                    roles.add(basicRole);
+                    break;
+            }
+        } else if (strRoles == null) {
             Role userRole = roleRepository.findByName(Role.ERole.ROLE_CLIENT)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
@@ -111,7 +136,17 @@ public class AuthController {
         }
 
         user.setRoles(roles);
-        userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // Professional logic: Create the active subscription record linked to the user object
+        com.example.backend.models.Subscription sub = new com.example.backend.models.Subscription();
+        sub.setUser(savedUser);
+        sub.setPlanTier(selectedPlan != null ? selectedPlan.toUpperCase() : "BASIC");
+        sub.setPlan("MONTHLY"); // Default billing cycle
+        sub.setStatus("ACTIVE");
+        sub.setStartDate(java.time.LocalDateTime.now());
+        sub.setAiUsage(0);
+        subscriptionRepository.save(sub);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }

@@ -10,5 +10,6 @@ public class SignupRequest {
     private String email;
     private String password;
     private String fullName;
+    private String plan;
     private Set<String> roles;
 }

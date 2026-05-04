@@ -15,6 +15,9 @@ public class AsyncSiteService {
     @Autowired
     private AiIntegrationService aiIntegrationService;
 
+    @org.springframework.beans.factory.annotation.Value("${ai.service.url}")
+    private String aiServiceUrl;
+
     @Autowired
     private SiteRepository siteRepository;
 
@@ -42,7 +45,7 @@ public class AsyncSiteService {
             
             if (logoUrl != null) {
                 if (logoUrl.startsWith("/static/")) {
-                    logoUrl = "http://localhost:5000" + logoUrl;
+                    logoUrl = aiServiceUrl + logoUrl;
                 }
                 site.setLogoUrl(logoUrl);
                 siteRepository.save(site);

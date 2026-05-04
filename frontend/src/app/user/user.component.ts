@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { SiteService } from '../services/site.service';
 import { AuthService } from '../services/auth.service';
 import { NotificationService } from '../services/notification.service';
+import { SubscriptionService, PlanStatus, FEATURES } from '../services/subscription.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-panel',
@@ -17,8 +19,8 @@ import { NotificationService } from '../services/notification.service';
       <!-- Logo -->
       <div class="px-8 py-7 border-b border-white/8">
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 bg-[#FF6B2C] rounded-2xl flex items-center justify-center shadow-xl shadow-[#FF6B2C]/30 rotate-3 flex-shrink-0">
-            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          <div class="w-11 h-11 bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-black/5 rotate-3 flex-shrink-0 overflow-hidden">
+            <img src="/d.png" class="w-8 h-8 object-contain" alt="VitrineClick Logo">
           </div>
           <div>
             <span class="text-xl font-black text-white tracking-tight">User<span class="text-[#FF6B2C]">Panel</span></span>
@@ -42,7 +44,7 @@ import { NotificationService } from '../services/notification.service';
 
         <button (click)="setTab('assets')"
           class="w-full flex items-center gap-3 px-4 py-3.5 font-bold text-xs uppercase tracking-widest rounded-2xl transition-all relative overflow-hidden"
-          [class]="activeTab==='assets' ? 'bg-white/12 text-white' : 'text-white/45 hover:bg-white/5 hover:text-white/75'">
+          [class]="activeTab==='assets' ? 'bg-white/12 text-white shadow-lg' : 'text-white/45 hover:bg-white/5 hover:text-white/75'">
           <span *ngIf="activeTab==='assets'" class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#FF6B2C] rounded-r-full"></span>
           <svg class="w-5 h-5 flex-shrink-0" [class]="activeTab==='assets'?'text-[#FF6B2C]':'text-white/30'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           Assets IA
@@ -50,10 +52,10 @@ import { NotificationService } from '../services/notification.service';
 
         <button (click)="setTab('analytics')"
           class="w-full flex items-center gap-3 px-4 py-3.5 font-bold text-xs uppercase tracking-widest rounded-2xl transition-all relative overflow-hidden"
-          [class]="activeTab==='analytics' ? 'bg-white/12 text-white' : 'text-white/45 hover:bg-white/5 hover:text-white/75'">
+          [class]="activeTab==='analytics' ? 'bg-white/12 text-white shadow-lg' : 'text-white/45 hover:bg-white/5 hover:text-white/75'">
           <span *ngIf="activeTab==='analytics'" class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-6 bg-[#FF6B2C] rounded-r-full"></span>
           <svg class="w-5 h-5 flex-shrink-0" [class]="activeTab==='analytics'?'text-[#FF6B2C]':'text-white/30'" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-          Analytiques
+          Statistiques IA
         </button>
 
         <div class="pt-4 border-t border-white/8 mt-4">
@@ -86,7 +88,7 @@ import { NotificationService } from '../services/notification.service';
             <p class="font-black text-white text-sm truncate">{{username ? '@'+username : 'Studio Client'}}</p>
             <div class="flex items-center gap-1.5 mt-0.5">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block"></span>
-              <span class="text-[9px] font-bold text-emerald-400/80 uppercase tracking-wider">Plan Pro · Actif</span>
+              <span class="text-[9px] font-bold text-emerald-400/80 uppercase tracking-wider">Plan {{ subService.getPlanLabel() }} · Actif</span>
             </div>
           </div>
         </div>
@@ -106,8 +108,8 @@ import { NotificationService } from '../services/notification.service';
       <!-- Header -->
       <header class="bg-white/95 backdrop-blur-xl px-6 md:px-10 py-4 flex justify-between items-center sticky top-0 z-10 border-b border-slate-100/80 shadow-[0_2px_24px_rgba(0,0,0,0.05)]">
         <div class="flex items-center gap-4">
-          <div class="hidden md:flex w-10 h-10 rounded-2xl bg-gradient-to-br from-[#2B3970] to-[#1a2450] text-white items-center justify-center font-black text-sm flex-shrink-0 shadow-md">
-            {{username ? username.charAt(0).toUpperCase() : 'U'}}
+          <div class="hidden md:flex w-10 h-10 rounded-2xl bg-white border border-slate-100 items-center justify-center flex-shrink-0 shadow-sm overflow-hidden">
+            <img src="/d.png" class="w-7 h-7 object-contain" alt="Logo">
           </div>
           <div>
             <h1 class="text-lg md:text-xl font-black text-[#2B3970] tracking-tight leading-none">
@@ -124,7 +126,7 @@ import { NotificationService } from '../services/notification.service';
           </span>
           <div class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-100 rounded-xl">
             <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Plan</span>
-            <span class="text-[10px] font-black text-[#FF6B2C] uppercase tracking-widest">Pro</span>
+            <span class="text-[10px] font-black text-[#FF6B2C] uppercase tracking-widest">{{ subService.getPlanLabel() }}</span>
           </div>
           <button (click)="openCreateWizard()" class="flex items-center gap-2 px-4 py-2.5 bg-[#FF6B2C] hover:bg-orange-500 text-white font-black text-[11px] uppercase tracking-widest rounded-xl shadow-lg shadow-[#FF6B2C]/25 hover:shadow-[#FF6B2C]/40 transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4"/></svg>
@@ -155,8 +157,8 @@ import { NotificationService } from '../services/notification.service';
             <div class="flex items-center gap-5 relative z-10">
               <div class="relative group">
                 <div class="absolute inset-0 bg-[#FF6B2C] blur-md opacity-40 group-hover:opacity-70 transition-opacity rounded-2xl"></div>
-                <div class="w-14 h-14 bg-gradient-to-br from-[#FF6B2C] to-orange-500 rounded-2xl flex items-center justify-center shadow-2xl relative z-10 border border-white/10">
-                  <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                <div class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl relative z-10 border border-white/10 overflow-hidden">
+                  <img src="/d.png" class="w-10 h-10 object-contain" alt="Identify Logo">
                 </div>
               </div>
               <div>
@@ -268,9 +270,16 @@ import { NotificationService } from '../services/notification.service';
               
               <!-- Section 1 : Identité & Visuel -->
               <div>
-                <h3 class="text-xl font-black text-[#2B3970] mb-2">1. Identité & Visuel</h3>
-                <p class="text-slate-400 text-sm font-medium mb-6">Définissez la base de votre vitrine.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-8 h-8 bg-[#FF6B2C] rounded-xl flex items-center justify-center text-white font-black text-xs">1</div>
+                  <div>
+                    <h3 class="text-lg font-black text-[#2B3970] leading-none">Identité & Visuel</h3>
+                    <p class="text-slate-400 text-xs font-medium mt-0.5">Définissez la base de votre vitrine.</p>
+                  </div>
+                </div>
+
+                <!-- Name + Domain + Sector -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
                   <div>
                     <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Nom de l'Entité</label>
                     <input [(ngModel)]="newSite.companyName" type="text" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all placeholder:text-slate-300" placeholder="Ex: Studio Alpha">
@@ -279,21 +288,153 @@ import { NotificationService } from '../services/notification.service';
                     <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Sous-domaine</label>
                     <input [(ngModel)]="newSite.subdomain" type="text" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all placeholder:text-slate-300" placeholder="studio-alpha">
                   </div>
-                  <div>
-                     <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Secteur d'Activité</label>
-                     <select [(ngModel)]="newSite.category" (ngModelChange)="onCategoryChange()" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all cursor-pointer appearance-none">
-                       <option *ngFor="let s of sectors" [value]="s.value">{{s.label}}</option>
-                     </select>
+                  <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Secteur d'Activité</label>
+                    <select [(ngModel)]="newSite.category" (ngModelChange)="onCategoryChange()" class="w-full border-2 border-slate-100 bg-slate-50 rounded-2xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all cursor-pointer appearance-none">
+                      <option *ngFor="let s of sectors" [value]="s.value">{{s.label}}</option>
+                    </select>
                   </div>
-                  <div>
-                    <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Couleur IA</label>
-                    <div class="flex gap-2 flex-wrap">
-                       <button *ngFor="let c of brandColors" (click)="newSite.primaryColor = c.hex"
-                          class="w-10 h-10 rounded-xl border-2 transition-all flex-shrink-0"
+                </div>
+
+                <!-- ── TYPOGRAPHY PICKER ── -->
+                <div class="mb-8">
+                  <div class="flex items-center justify-between mb-3">
+                    <label class="text-[10px] font-black uppercase tracking-[0.25em] text-slate-400">Typographie</label>
+                    <span class="text-[9px] font-black text-[#FF6B2C] uppercase tracking-widest">6 Combinaisons disponibles</span>
+                  </div>
+                  <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    <button *ngFor="let f of fontPairs"
+                      (click)="selectedFont = f.id; newSite.fontFamily = f.id"
+                      class="relative group text-left rounded-2xl border-2 p-4 transition-all duration-200 overflow-hidden"
+                      [class]="selectedFont === f.id
+                        ? 'border-[#FF6B2C] bg-orange-50 shadow-[0_4px_20px_rgba(255,107,44,0.15)] -translate-y-0.5'
+                        : 'border-slate-100 bg-white hover:border-slate-200 hover:shadow-md hover:-translate-y-0.5'">
+
+                      <!-- Selected glow -->
+                      <div *ngIf="selectedFont === f.id"
+                        class="absolute top-0 right-0 w-16 h-16 rounded-full blur-2xl pointer-events-none"
+                        [style.background]="(newSite.primaryColor || '#FF6B2C') + '30'"></div>
+
+                      <!-- Tag badge -->
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[8px] font-black uppercase tracking-widest mb-2 transition-colors"
+                        [class]="selectedFont === f.id ? 'bg-[#FF6B2C] text-white' : 'bg-slate-100 text-slate-400'">
+                        {{ f.tag }}
+                      </span>
+
+                      <!-- Font heading preview -->
+                      <p class="font-black text-[18px] leading-tight text-[#2B3970] mb-0.5 truncate"
+                        [style.fontFamily]="f.heading + ', sans-serif'">
+                        {{ newSite.companyName || 'Votre Marque' }}
+                      </p>
+
+                      <!-- Font body preview -->
+                      <p class="text-[10px] text-slate-400 leading-relaxed mb-2"
+                        [style.fontFamily]="f.body + ', sans-serif'">
+                        Texte de corps fluide et lisible.
+                      </p>
+
+                      <!-- Font labels -->
+                      <div class="flex items-center gap-1.5 flex-wrap">
+                        <span class="px-1.5 py-0.5 bg-[#2B3970]/8 text-[#2B3970] rounded text-[8px] font-black">{{ f.heading }}</span>
+                        <span class="text-slate-300 text-[8px]">+</span>
+                        <span class="px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded text-[8px] font-black">{{ f.body }}</span>
+                      </div>
+
+                      <!-- Selected check -->
+                      <div *ngIf="selectedFont === f.id"
+                        class="absolute top-2 right-2 w-5 h-5 bg-[#FF6B2C] rounded-full flex items-center justify-center shadow-md">
+                        <svg class="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3.5" d="M5 13l4 4L19 7"/>
+                        </svg>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- ── COLOR PALETTE PICKER ── -->
+                <div class="bg-slate-50 rounded-2xl p-5 border border-slate-100">
+                  <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-4">Palette de Couleurs</label>
+
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Primary color -->
+                    <div>
+                      <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2.5 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full border-2 border-slate-300 inline-block" [style.background]="newSite.primaryColor"></span>
+                        Couleur Principale
+                      </p>
+                      <div class="flex flex-wrap gap-2 mb-3">
+                        <button *ngFor="let c of brandColors"
+                          (click)="newSite.primaryColor = c.hex"
+                          class="w-8 h-8 rounded-xl border-2 transition-all flex-shrink-0 relative group/swatch"
                           [style.background]="c.hex"
-                          [class]="newSite.primaryColor === c.hex ? 'border-slate-700 scale-110 shadow-lg' : 'border-transparent hover:scale-105'"
+                          [class]="newSite.primaryColor === c.hex ? 'border-slate-700 scale-110 shadow-lg ring-2 ring-offset-1 ring-slate-400' : 'border-white hover:scale-110 hover:shadow-md'"
                           [title]="c.name">
-                       </button>
+                          <!-- Tooltip -->
+                          <span class="absolute -top-7 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#2B3970] text-white text-[7px] font-black rounded whitespace-nowrap opacity-0 group-hover/swatch:opacity-100 transition-opacity pointer-events-none">{{c.name}}</span>
+                        </button>
+                        <!-- Custom hex -->
+                        <label class="w-8 h-8 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center cursor-pointer hover:border-slate-400 hover:scale-110 transition-all relative overflow-hidden" title="Couleur personnalisée">
+                          <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                          <input type="color" [(ngModel)]="newSite.primaryColor" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
+                        </label>
+                      </div>
+                      <!-- Hex display -->
+                      <div class="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-slate-100">
+                        <div class="w-4 h-4 rounded-md flex-shrink-0 shadow-sm" [style.background]="newSite.primaryColor"></div>
+                        <span class="text-xs font-black text-[#2B3970] uppercase tracking-widest">{{ newSite.primaryColor }}</span>
+                      </div>
+                    </div>
+
+                    <!-- Secondary color -->
+                    <div>
+                      <p class="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-2.5 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full border-2 border-slate-300 inline-block" [style.background]="newSite.secondaryColor || '#0f172a'"></span>
+                        Couleur de Fond / Accent
+                      </p>
+                      <div class="flex flex-wrap gap-2 mb-3">
+                        <button *ngFor="let c of secondaryColors"
+                          (click)="newSite.secondaryColor = c.hex"
+                          class="w-8 h-8 rounded-xl border-2 transition-all flex-shrink-0 relative group/swatch"
+                          [style.background]="c.hex"
+                          [class]="newSite.secondaryColor === c.hex ? 'border-slate-700 scale-110 shadow-lg ring-2 ring-offset-1 ring-slate-400' : 'border-slate-200 hover:scale-110 hover:shadow-md'"
+                          [title]="c.name">
+                          <span class="absolute -top-7 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-[#2B3970] text-white text-[7px] font-black rounded whitespace-nowrap opacity-0 group-hover/swatch:opacity-100 transition-opacity pointer-events-none">{{c.name}}</span>
+                        </button>
+                        <label class="w-8 h-8 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center cursor-pointer hover:border-slate-400 hover:scale-110 transition-all relative overflow-hidden" title="Couleur personnalisée">
+                          <svg class="w-3.5 h-3.5 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                          <input type="color" [(ngModel)]="newSite.secondaryColor" class="absolute inset-0 opacity-0 w-full h-full cursor-pointer">
+                        </label>
+                      </div>
+                      <div class="flex items-center gap-2 bg-white rounded-xl px-3 py-2 border border-slate-100">
+                        <div class="w-4 h-4 rounded-md flex-shrink-0 shadow-sm border border-slate-200" [style.background]="newSite.secondaryColor || '#0f172a'"></div>
+                        <span class="text-xs font-black text-[#2B3970] uppercase tracking-widest">{{ newSite.secondaryColor || '#0f172a' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Live mini preview -->
+                  <div class="mt-5 rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                    <div class="h-5 flex items-center px-3 gap-1.5" [style.background]="newSite.secondaryColor || '#0f172a'">
+                      <div class="w-1.5 h-1.5 rounded-full bg-red-400/70"></div>
+                      <div class="w-1.5 h-1.5 rounded-full bg-yellow-400/70"></div>
+                      <div class="w-1.5 h-1.5 rounded-full bg-green-400/70"></div>
+                      <div class="mx-auto w-20 h-1.5 bg-white/10 rounded-full"></div>
+                    </div>
+                    <div class="p-4 flex items-center justify-between" [style.background]="newSite.secondaryColor || '#0f172a'">
+                      <div>
+                        <p class="text-[8px] font-black uppercase tracking-widest mb-1" [style.color]="newSite.primaryColor">
+                          {{ newSite.category || 'Secteur' }}
+                        </p>
+                        <p class="font-black text-white text-sm leading-tight"
+                          [style.font-family]="selectedFontHeading">
+                          {{ newSite.companyName || 'Votre Marque' }}
+                        </p>
+                        <p class="text-white/40 text-[8px] mt-0.5">Slogan de votre entreprise ici</p>
+                      </div>
+                      <div class="px-3 py-1.5 rounded-lg text-[8px] font-black text-white shadow-lg flex-shrink-0"
+                        [style.background]="newSite.primaryColor">
+                        Découvrir →
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -380,8 +521,7 @@ import { NotificationService } from '../services/notification.service';
                             <svg *ngFor="let star of getStars(t.rating)" class="w-3 h-3"
                               [style.color]="star === 'full' ? '#FF6B2C' : (star === 'half' ? '#FF6B2C' : '#e2e8f0')"
                               fill="currentColor" viewBox="0 0 20 20">
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
-                            </svg>
+                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
                           </div>
                           <span class="text-[10px] font-black text-slate-500">{{t.rating}}</span>
                         </div>
@@ -580,7 +720,6 @@ import { NotificationService } from '../services/notification.service';
 
         </div>
       </div>
-    </div>
       <!-- ===== SCROLLABLE CONTENT ===== -->
       <div class="flex-1 overflow-auto px-4 sm:px-6 md:px-10 py-6 md:py-10 relative z-10 w-full">
 
@@ -618,7 +757,7 @@ import { NotificationService } from '../services/notification.service';
             </div>
             <div class="bg-gradient-to-br from-[#2B3970] to-[#1a2450] border border-white/10 rounded-2xl p-5 shadow-[0_8px_20px_rgba(43,57,112,0.2)] hover:shadow-[0_12px_30px_rgba(43,57,112,0.3)] hover:-translate-y-0.5 transition-all duration-200 cursor-default">
               <p class="text-[10px] font-black text-white/40 uppercase tracking-[0.15em] mb-2">Plan Actif</p>
-              <p class="text-3xl font-black text-white">Pro</p>
+              <p class="text-3xl font-black text-white">{{ subService.getPlanLabel() }}</p>
               <div class="mt-2 flex items-center gap-1.5">
                 <span class="w-1.5 h-1.5 rounded-full bg-[#FF6B2C] animate-pulse"></span>
                 <span class="text-[9px] font-black text-white/40 uppercase tracking-widest">Studio</span>
@@ -734,6 +873,11 @@ import { NotificationService } from '../services/notification.service';
                   <span class="text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg flex-shrink-0 ml-2 border"
                     [style.background]="(site.primaryColor || '#2B3970') + '12'" [style.color]="site.primaryColor || '#2B3970'" [style.border-color]="(site.primaryColor || '#2B3970') + '25'">{{site.category}}</span>
                 </div>
+                <div class="flex items-center gap-3 mt-1.5">
+                  <span [class]="subService.getPlanColor()" class="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest">{{ subService.getPlanLabel() }}</span>
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]"></span>
+                  <span class="text-emerald-500 font-black text-[9px] uppercase tracking-wider">Actif</span>
+                </div>
                 <p *ngIf="site.description" class="text-slate-400 text-xs font-medium leading-relaxed flex-grow line-clamp-2 mb-3">{{site.description}}</p>
                 <!-- Mini stats bar -->
                 <div class="flex items-center gap-3 pt-3 border-t border-slate-50">
@@ -779,7 +923,6 @@ import { NotificationService } from '../services/notification.service';
             
             <!-- PREMIUM DASHBOARD HEADER -->
             <div class="relative overflow-hidden rounded-[40px] bg-[#0f172a] border border-white/10 shadow-2xl">
-              <!-- Animated Background Accents -->
               <div class="absolute -right-20 -top-20 w-80 h-80 bg-blue-500/20 rounded-full blur-[100px] animate-pulse"></div>
               <div class="absolute -left-20 -bottom-20 w-60 h-60 bg-[#FF6B2C]/20 rounded-full blur-[100px] animate-pulse" style="animation-delay: 2s"></div>
               
@@ -787,22 +930,20 @@ import { NotificationService } from '../services/notification.service';
                 <div class="text-center md:text-left">
                   <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 mb-4 backdrop-blur-md">
                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-                    <span class="text-[9px] text-white/70 font-black uppercase tracking-wider">Identité IA Active</span>
+                    <span class="text-[9px] text-white/70 font-black uppercase tracking-wider">Studio Graphique IA</span>
                   </div>
-                  <h2 class="text-4xl font-black text-white tracking-tight mb-2">Identify Gen<span class="text-[#FF6B2C]">™</span></h2>
-                  <p class="text-slate-400 font-medium max-w-md">Géréz votre ADN visuel. Notre IA Identité a généré <span class="text-white font-bold">{{sites.length}} assets</span> haute définition pour vos marques.</p>
+                  <h2 class="text-4xl font-black text-white tracking-tight mb-2">Identify Gen<span class="text-[#FF6B2C]">™</span> Assets</h2>
+                  <p class="text-slate-400 font-medium max-w-md">Exploitez vos ressources visuelles générées. Exportez vos logos, bannières et kits de marque en un clic.</p>
                 </div>
                 
                 <div class="flex items-center gap-4">
                   <div class="bg-white/5 backdrop-blur-xl border border-white/10 p-5 rounded-3xl text-center min-w-[120px]">
-                    <p class="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Total Assets</p>
-                    <p class="text-2xl font-black text-white">{{sites.length}}</p>
+                    <p class="text-[9px] font-black text-white/40 uppercase tracking-widest mb-1">Assets Disponibles</p>
+                    <p class="text-2xl font-black text-white">{{sites.length * 4}}</p>
                   </div>
                   <button (click)="openCreateWizard()" class="h-16 px-8 bg-[#FF6B2C] hover:bg-orange-500 text-white font-black text-xs uppercase tracking-widest rounded-3xl flex items-center gap-3 shadow-xl shadow-[#FF6B2C]/20 transition-all hover:-translate-y-1 active:translate-y-0 group">
-                    <div class="w-8 h-8 bg-white/20 rounded-xl flex items-center justify-center group-hover:rotate-90 transition-transform">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
-                    </div>
-                    Générer un Logotype
+                    <svg class="w-5 h-5 group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+                    Nouveau Kit IA
                   </button>
                 </div>
               </div>
@@ -811,40 +952,57 @@ import { NotificationService } from '../services/notification.service';
             <div class="flex flex-col lg:flex-row gap-10">
               <!-- ASSET CATEGORIES SIDENAV -->
               <div class="w-full lg:w-64 shrink-0 space-y-6">
+                <div class="relative group">
+                  <input type="text" placeholder="Rechercher un asset..." class="w-full bg-white border border-slate-200 rounded-2xl px-5 py-3.5 text-xs font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all shadow-sm">
+                  <svg class="absolute right-4 top-3.5 w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                </div>
+
                 <div>
                   <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.25em] px-4 mb-4">Bibliothèque</p>
                   <div class="space-y-1">
                     <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl bg-slate-900 text-white font-bold text-xs transition-all shadow-lg border border-white/5">
                       <div class="flex items-center gap-3">
                         <svg class="w-4 h-4 text-[#FF6B2C]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
-                        Tous les types
+                        Toutes les Vitrines
                       </div>
                       <span class="text-[9px] bg-white/10 px-2 py-0.5 rounded-md">{{sites.length}}</span>
                     </button>
                     <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-slate-50 hover:text-[#2B3970] font-bold text-xs transition-all group">
                       <div class="flex items-center gap-3">
                         <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
-                        Logos & Identité
+                        Logotypes HD
                       </div>
+                      <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded-md group-hover:bg-white transition-colors">{{sites.length}}</span>
                     </button>
                     <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-slate-50 hover:text-[#2B3970] font-bold text-xs transition-all group">
                       <div class="flex items-center gap-3">
-                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zM3 7l9 6 9-6"/></svg>
-                        Kits Marketing
+                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2zM3 7l9 6 9-6"/></svg>
+                        Kits Sociaux
+                      </div>
+                      <span class="text-[9px] bg-slate-100 px-2 py-0.5 rounded-md group-hover:bg-white transition-colors">{{sites.length * 2}}</span>
+                    </button>
+                    <button class="w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-slate-400 hover:bg-slate-50 hover:text-[#2B3970] font-bold text-xs transition-all group">
+                      <div class="flex items-center gap-3">
+                        <svg class="w-4 h-4 text-slate-300 group-hover:text-[#2B3970]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                        Bannières & Favicons
                       </div>
                     </button>
                   </div>
                 </div>
 
-                <div class="p-6 bg-slate-50 rounded-3xl border border-slate-100">
-                  <div class="flex items-center gap-2 mb-3">
-                    <svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.952 11.952 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
-                    <p class="text-[10px] font-black text-[#2B3970] uppercase">Stockage Cloud</p>
+                <div class="p-6 bg-gradient-to-br from-[#2B3970] to-[#1a2450] rounded-3xl border border-white/10 shadow-xl relative overflow-hidden">
+                  <div class="absolute -right-6 -bottom-6 w-20 h-20 bg-[#FF6B2C]/20 rounded-full blur-xl"></div>
+                  <div class="relative z-10">
+                    <p class="text-[9px] font-black text-white/40 uppercase tracking-widest mb-4">Stockage Cloud IA</p>
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="text-xs font-black text-white">840 MB / 2 GB</span>
+                      <span class="text-[9px] text-[#FF6B2C] font-black uppercase">42%</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden mb-5">
+                      <div class="h-full bg-[#FF6B2C] w-[42%]"></div>
+                    </div>
+                    <button class="w-full py-2 bg-white/10 hover:bg-white/20 text-white text-[9px] font-black uppercase tracking-widest rounded-lg border border-white/10 transition-all">Nettoyer les assets</button>
                   </div>
-                  <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden mb-2">
-                    <div class="h-full bg-emerald-500" style="width: 15%"></div>
-                  </div>
-                  <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-right">0.8 GB / 5 GB</p>
                 </div>
               </div>
 
@@ -855,8 +1013,9 @@ import { NotificationService } from '../services/notification.service';
                   <div class="w-24 h-24 bg-gradient-to-br from-slate-50 to-slate-100 rounded-[32px] flex items-center justify-center text-slate-300 mb-8 border border-slate-200/50 shadow-inner -rotate-6">
                     <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                   </div>
-                  <h2 class="text-2xl font-black text-[#2B3970] mb-3">Aucun asset généré</h2>
-                  <p class="text-slate-500 mb-8 max-w-sm">Commencez par générer un site ou une identité pour voir vos assets apparaître ici.</p>
+                  <h2 class="text-2xl font-black text-[#2B3970] mb-3">Votre atelier est vide</h2>
+                  <p class="text-slate-500 mb-8 max-w-sm">Chaque vitrine générée crée automatiquement un kit complet d'assets haute définition.</p>
+                  <button (click)="openCreateWizard()" class="px-8 py-4 bg-[#2B3970] text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-lg">Générer ma première vitrine</button>
                 </div>
 
                 <div *ngIf="sites.length > 0" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 stagger-in">
@@ -872,7 +1031,10 @@ import { NotificationService } from '../services/notification.service';
                         <div class="absolute inset-0 flex items-center justify-center p-8 opacity-20">
                           <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-full h-full object-contain grayscale blur-sm">
                         </div>
-                        <div class="absolute bottom-4 left-4 right-4 h-1 bg-slate-50 rounded-full"></div>
+                        <div class="absolute bottom-6 left-6 flex flex-col gap-1">
+                          <div class="w-12 h-1 bg-slate-100 rounded-full"></div>
+                          <div class="w-8 h-1 bg-slate-100 rounded-full"></div>
+                        </div>
                       </div>
 
                       <!-- Layer 3: Main Asset Card (Top Layer) -->
@@ -882,20 +1044,25 @@ import { NotificationService } from '../services/notification.service';
                           <div class="absolute inset-0 opacity-[0.03]" [style.background-color]="site.primaryColor"></div>
                           
                           <!-- Dynamic Logo / Initial -->
-                          <div class="w-24 h-24 rounded-3xl flex items-center justify-center shadow-xl relative z-10 transition-transform duration-500 group-hover:scale-110 overflow-hidden" 
+                          <div class="w-28 h-28 rounded-[32px] flex items-center justify-center shadow-2xl relative z-10 transition-all duration-500 group-hover:scale-110 group-hover:-rotate-3 overflow-hidden border-4 border-white" 
                             [style.background-color]="site.primaryColor">
-                            <!-- Generation Pulse -->
                             <div *ngIf="site.generationStatus === 'GENERATING_LOGO' || site.generationStatus === 'INITIALIZING'" class="absolute inset-0 bg-white/20 animate-pulse flex items-center justify-center">
                               <svg class="w-8 h-8 text-white animate-spin" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                             </div>
-                            <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-16 h-16 object-contain p-2" [alt]="site.companyName">
-                            <span *ngIf="!site.logoUrl && site.generationStatus === 'COMPLETED'" class="text-4xl font-black text-white mix-blend-overlay">{{ site.companyName.charAt(0).toUpperCase() }}</span>
+                            <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-20 h-20 object-contain p-2" [alt]="site.companyName">
+                            <span *ngIf="!site.logoUrl && site.generationStatus === 'COMPLETED'" class="text-5xl font-black text-white mix-blend-overlay">{{ site.companyName.charAt(0).toUpperCase() }}</span>
                           </div>
 
                           <!-- Download Quick Actions -->
-                          <div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform bg-white/80 backdrop-blur-md border-t border-slate-100 flex gap-2">
-                            <button class="flex-1 py-2 text-[10px] font-black uppercase text-[#2B3970] bg-slate-50 rounded-xl hover:bg-[#2B3970] hover:text-white transition-all shadow-sm">PNG</button>
-                            <button class="flex-1 py-2 text-[10px] font-black uppercase text-[#FF6B2C] bg-orange-50 rounded-xl hover:bg-[#FF6B2C] hover:text-white transition-all shadow-sm">SVG</button>
+                          <div class="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform bg-white/95 backdrop-blur-md border-t border-slate-100 flex gap-2">
+                            <button class="flex-1 py-3 text-[10px] font-black uppercase text-[#2B3970] bg-slate-100 rounded-xl hover:bg-[#2B3970] hover:text-white transition-all shadow-sm flex items-center justify-center gap-2">
+                              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                              PNG
+                            </button>
+                            <button class="flex-1 py-3 text-[10px] font-black uppercase text-[#FF6B2C] bg-orange-50 rounded-xl hover:bg-[#FF6B2C] hover:text-white transition-all shadow-sm flex items-center justify-center gap-2">
+                              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                              SVG
+                            </button>
                           </div>
                         </div>
                       </div>
@@ -904,13 +1071,19 @@ import { NotificationService } from '../services/notification.service';
                     <!-- CARD BOTTOM INFO -->
                     <div class="px-2">
                        <div class="flex items-center justify-between mb-1">
-                         <h3 class="font-black text-[#2B3970] text-sm tracking-tight">{{site.companyName}} Identité</h3>
-                         <span class="text-[9px] font-black text-emerald-500 bg-emerald-50 px-2 py-0.5 rounded-lg border border-emerald-100">HQ</span>
+                         <h3 class="font-black text-[#2B3970] text-sm tracking-tight">{{site.companyName}} Identity Kit</h3>
+                         <div class="flex gap-1">
+                           <span class="w-2 h-2 rounded-full" [style.background-color]="site.primaryColor"></span>
+                           <span class="w-2 h-2 rounded-full bg-slate-100"></span>
+                         </div>
                        </div>
-                       <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{site.category}} • Logo v1.0</p>
+                       <div class="flex items-center gap-3 mt-1">
+                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{site.category}}</p>
+                         <span class="w-1 h-1 rounded-full bg-slate-200"></span>
+                         <p class="text-[10px] text-[#FF6B2C] font-black uppercase tracking-widest">v1.2 Gen</p>
+                       </div>
                     </div>
 
-                    <!-- Subtle Floating Action -->
                     <button class="absolute -top-4 -right-4 w-12 h-12 bg-white rounded-2xl shadow-xl border border-slate-100 flex items-center justify-center text-slate-400 opacity-0 group-hover:opacity-100 hover:text-[#FF6B2C] hover:scale-110 transition-all z-20">
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                     </button>
@@ -923,22 +1096,25 @@ import { NotificationService } from '../services/notification.service';
         <div *ngIf="!loading && activeTab==='analytics'" class="space-y-8 tab-enter">
           <!-- KPI Cards -->
           <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white border border-slate-100 rounded-[32px] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-shadow relative overflow-hidden group">
+            <div class="bg-white border border-slate-100 rounded-[32px] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all relative overflow-hidden group">
               <div class="absolute -right-6 -top-6 w-24 h-24 bg-blue-50 rounded-full blur-2xl group-hover:bg-blue-100 transition-colors duration-500"></div>
               <div class="flex items-start justify-between mb-6 relative z-10">
                 <div class="w-14 h-14 bg-gradient-to-br from-blue-50 to-blue-100/50 border border-blue-100 rounded-2xl flex items-center justify-center text-[#2B3970] shadow-inner group-hover:scale-110 transition-transform duration-300">
                   <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                 </div>
-                <span class="flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6B2C]/10 border border-[#FF6B2C]/20 rounded-xl text-[#FF6B2C] font-black text-xs shadow-sm">
-                  <span class="w-2 h-2 rounded-full bg-[#FF6B2C] animate-pulse"></span>
-                  Temps Réel
-                </span>
+                <div class="flex flex-col items-end">
+                  <span class="flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6B2C]/10 border border-[#FF6B2C]/20 rounded-xl text-[#FF6B2C] font-black text-xs shadow-sm mb-1">
+                    <span class="w-2 h-2 rounded-full bg-[#FF6B2C] animate-pulse"></span>
+                    Live
+                  </span>
+                  <span class="text-[9px] font-bold text-emerald-500">+12% vs last week</span>
+                </div>
               </div>
               <div class="relative z-10">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 border-b border-slate-100 pb-3 inline-block">Visiteurs Uniques</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 border-b border-slate-100 pb-3 inline-block">Impact d'Audience</p>
                 <div class="flex items-baseline gap-3">
                   <p class="text-5xl font-black text-[#2B3970] tracking-tight">{{ totalVisits | number:'1.0-0' }}</p>
-                  <p class="text-xs text-slate-400 font-bold mb-1">/ sem</p>
+                  <p class="text-xs text-slate-400 font-bold mb-1">Visiteurs</p>
                 </div>
               </div>
             </div>
@@ -950,31 +1126,35 @@ import { NotificationService } from '../services/notification.service';
                   <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
                 </div>
                 <span class="flex items-center gap-1.5 px-3 py-1.5 bg-white/10 border border-white/20 rounded-xl text-white font-black text-xs shadow-sm backdrop-blur-sm">
-                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span> Synchronisé
+                  <span class="w-2 h-2 rounded-full bg-emerald-400"></span> IA Optimisé
                 </span>
               </div>
               <div class="relative z-10">
-                <p class="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-3 border-b border-white/10 pb-3 inline-block">Taux de Conversion</p>
+                <p class="text-[10px] font-black text-white/50 uppercase tracking-[0.2em] mb-3 border-b border-white/10 pb-3 inline-block">Score d'Identité IA</p>
                 <div class="flex items-baseline gap-3">
                   <p class="text-5xl font-black text-white tracking-tight">{{ avgAiScore | number:'1.0-0' }}<span class="text-3xl text-white/70">%</span></p>
-                  <p class="text-xs text-white/50 font-bold mb-1">IA Optimisé</p>
+                  <p class="text-xs text-white/50 font-bold mb-1">Efficacité</p>
                 </div>
               </div>
             </div>
             
-            <div class="bg-white border border-slate-100 rounded-[32px] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-shadow relative overflow-hidden group">
+            <div class="bg-white border border-slate-100 rounded-[32px] p-8 shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.06)] transition-all relative overflow-hidden group">
               <div class="absolute -left-6 -bottom-6 w-24 h-24 bg-orange-50 rounded-full blur-2xl group-hover:bg-orange-100 transition-colors duration-500"></div>
               <div class="flex items-start justify-between mb-6 relative z-10">
                 <div class="w-14 h-14 bg-gradient-to-br from-orange-50 to-orange-100/50 border border-orange-100 rounded-2xl flex items-center justify-center text-[#FF6B2C] shadow-inner group-hover:scale-110 transition-transform duration-300">
                   <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 </div>
-                <span class="flex items-center gap-1.5 px-3 py-1.5 bg-[#FF6B2C]/10 border border-[#FF6B2C]/20 rounded-xl text-[#FF6B2C] font-black text-xs shadow-sm">
-                  <span class="w-2 h-2 rounded-full bg-[#FF6B2C] animate-pulse"></span>
-                  En direct
-                </span>
+                <div class="flex flex-col items-end text-right">
+                  <p class="text-[9px] font-black text-[#FF6B2C] uppercase tracking-widest mb-1">Engagement Moyen</p>
+                  <div class="flex items-center gap-1">
+                    <div class="w-1 h-3 bg-emerald-400 rounded-full"></div>
+                    <div class="w-1 h-4 bg-emerald-400 rounded-full"></div>
+                    <div class="w-1 h-2 bg-emerald-400 rounded-full"></div>
+                  </div>
+                </div>
               </div>
               <div class="relative z-10">
-                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 border-b border-slate-100 pb-3 inline-block">Temps de Rétention</p>
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 border-b border-slate-100 pb-3 inline-block">Temps de Session</p>
                 <div class="flex items-baseline gap-2">
                   <p class="text-5xl font-black text-[#2B3970] tracking-tight">{{ mathClass.floor(avgRetention/60) }}<span class="text-3xl text-slate-400">m</span> {{ avgRetention % 60 }}<span class="text-3xl text-slate-400">s</span></p>
                 </div>
@@ -982,96 +1162,155 @@ import { NotificationService } from '../services/notification.service';
             </div>
           </div>
 
-          <!-- Chart Section -->
-          <div class="bg-white border border-slate-100 rounded-[40px] shadow-[0_8px_40px_rgba(0,0,0,0.03)] overflow-hidden stagger-in">
-            <div class="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
-              <div>
-                <h3 class="text-2xl font-black text-[#2B3970] tracking-tight">Activité Globale</h3>
-                <p class="text-slate-400 text-xs font-bold uppercase tracking-[0.1em] mt-1">Visites générées par vos vitrines IA cette semaine</p>
-              </div>
-              <div class="bg-emerald-50 text-emerald-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm animate-pulse">
-                Live Data
-              </div>
-            </div>
-            <div class="p-10">
-              <!-- Premium SVG Area Chart Illusion -->
-              <div class="relative h-64 mb-10 group">
-                <!-- SVG Chart -->
-                <svg class="w-full h-full" viewBox="0 0 700 200" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="premiumGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stop-color="#FF6B2C" stop-opacity="0.2" />
-                      <stop offset="100%" stop-color="#FF6B2C" stop-opacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <!-- Path Area -->
-                  <path d="M0,180 C100,100 200,190 300,60 C400,140 500,110 600,160 C700,90 800,90 900,90 V200 H0 Z" fill="url(#premiumGradient)" />
-                  <!-- Path Line -->
-                  <path d="M0,180 C100,100 200,190 300,60 C400,140 500,110 600,160 C700,90" 
-                        fill="none" stroke="#FF6B2C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
-                        class="drop-shadow-[0_8px_15px_rgba(255,107,44,0.3)]" />
-                </svg>
-
-                <!-- Data Tooltips Simulation -->
-                <div class="absolute inset-0 flex justify-between px-4 items-end pointer-events-none">
-                  <div *ngFor="let point of chartData" class="flex-1 flex flex-col items-center group/p pointer-events-auto">
-                    <div class="mb-4 opacity-0 group-hover/p:opacity-100 transition-all bg-[#2B3970] text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-xl translate-y-2 group-hover/p:translate-y-0">
-                      {{point.value * 12}} Visits
-                    </div>
-                    <div class="w-4 h-4 rounded-full border-4 border-white shadow-lg transition-all"
-                         [class]="point.isToday ? 'bg-[#FF6B2C] scale-125' : 'bg-slate-200 group-hover/p:bg-[#2B3970]'"
-                         [style.bottom.%]="point.value">
-                    </div>
+          <!-- Charts Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Main Activity Chart -->
+            <div class="lg:col-span-2 bg-white border border-slate-100 rounded-[40px] shadow-[0_8px_40px_rgba(0,0,0,0.03)] overflow-hidden">
+              <div class="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
+                <div>
+                  <h3 class="text-xl font-black text-[#2B3970] tracking-tight">Activité Hebdomadaire</h3>
+                  <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.1em] mt-1">Données agrégées de vos vitrines actives</p>
+                </div>
+                <div class="flex items-center gap-2">
+                  <div class="flex -space-x-2">
+                    <div *ngFor="let i of [1,2,3]" class="w-7 h-7 rounded-full border-2 border-white bg-slate-100 flex items-center justify-center text-[8px] font-black text-slate-400 uppercase">V{{i}}</div>
                   </div>
                 </div>
               </div>
+              <div class="p-10">
+                <div class="relative h-64 mb-10 group">
+                  <svg class="w-full h-full" viewBox="0 0 700 200" preserveAspectRatio="none">
+                    <defs>
+                      <linearGradient id="premiumGradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#FF6B2C" stop-opacity="0.3" />
+                        <stop offset="100%" stop-color="#FF6B2C" stop-opacity="0" />
+                      </linearGradient>
+                      <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                      </filter>
+                    </defs>
+                    <path d="M0,180 L0,180 C50,150 100,100 150,120 C200,140 250,60 300,80 C350,100 400,160 450,140 C500,120 550,70 600,90 C650,110 700,50 700,50 V200 H0 Z" fill="url(#premiumGradient)" />
+                    <path d="M0,180 C50,150 100,100 150,120 C200,140 250,60 300,80 C350,100 400,160 450,140 C500,120 550,70 600,90 C650,110 700,50" 
+                          fill="none" stroke="#FF6B2C" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"
+                          filter="url(#glow)" />
+                  </svg>
 
-              <div class="flex justify-between px-2">
-                <span *ngFor="let bar of chartData"
-                  class="flex-1 text-center text-[10px] font-black uppercase tracking-[0.2em]"
-                  [class]="bar.isToday ? 'text-[#FF6B2C]' : 'text-slate-300'">{{bar.day}}</span>
+                  <div class="absolute inset-0 flex justify-between px-4 items-end pointer-events-none">
+                    <div *ngFor="let point of chartData" class="flex-1 flex flex-col items-center group/p pointer-events-auto">
+                      <div class="mb-4 opacity-0 group-hover/p:opacity-100 transition-all bg-[#2B3970] text-white text-[10px] font-black px-3 py-1.5 rounded-lg shadow-xl translate-y-2 group-hover/p:translate-y-0 relative z-20">
+                        {{point.value * 15}} Hits
+                      </div>
+                      <div class="w-5 h-5 rounded-full border-[5px] border-white shadow-2xl transition-all relative z-10"
+                           [class]="point.isToday ? 'bg-[#FF6B2C] scale-150' : 'bg-slate-300 group-hover/p:bg-[#2B3970] group-hover/p:scale-125'"
+                           [style.bottom.%]="point.value">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="flex justify-between px-2">
+                  <span *ngFor="let bar of chartData"
+                    class="flex-1 text-center text-[10px] font-black uppercase tracking-[0.2em]"
+                    [class]="bar.isToday ? 'text-[#FF6B2C]' : 'text-slate-300'">{{bar.day}}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Device/Source Distribution -->
+            <div class="bg-white border border-slate-100 rounded-[40px] shadow-[0_8px_40px_rgba(0,0,0,0.03)] p-8 flex flex-col">
+              <h3 class="text-lg font-black text-[#2B3970] mb-8">Canaux d'Origine</h3>
+              <div class="flex-1 space-y-6">
+                <div>
+                  <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
+                    <span class="text-slate-400">Direct / Recherche</span>
+                    <span class="text-[#2B3970]">65%</span>
+                  </div>
+                  <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#2B3970] w-[65%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
+                    <span class="text-slate-400">Réseaux Sociaux</span>
+                    <span class="text-[#FF6B2C]">24%</span>
+                  </div>
+                  <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden">
+                    <div class="h-full bg-[#FF6B2C] w-[24%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between text-[10px] font-black uppercase tracking-widest mb-2">
+                    <span class="text-slate-400">Référencement</span>
+                    <span class="text-emerald-500">11%</span>
+                  </div>
+                  <div class="w-full bg-slate-50 h-3 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 w-[11%]"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="mt-8 pt-8 border-t border-slate-50">
+                <div class="bg-slate-900 rounded-3xl p-6 text-white relative overflow-hidden">
+                   <div class="absolute -right-4 -top-4 w-16 h-16 bg-white/5 rounded-full"></div>
+                   <p class="text-[9px] font-black uppercase tracking-widest text-white/40 mb-1">Conseil IA</p>
+                   <p class="text-xs font-bold leading-relaxed">Boostez votre score d'identité sur mobile pour gagner +15% de conversion.</p>
+                </div>
               </div>
             </div>
           </div>
 
           <!-- Sites Performance Table -->
-          <div *ngIf="sites.length > 0" class="bg-white border border-slate-100 rounded-[28px] shadow-sm overflow-hidden">
-            <div class="px-8 py-6 border-b border-slate-50">
-              <h3 class="font-black text-[#2B3970]">Performance par Vitrine</h3>
-              <p class="text-slate-400 text-xs font-medium">Métriques individuelles de chaque site déployé</p>
+          <div *ngIf="sites.length > 0" class="bg-white border border-slate-100 rounded-[40px] shadow-sm overflow-hidden">
+            <div class="px-10 py-8 border-b border-slate-50 flex items-center justify-between">
+              <div>
+                <h3 class="font-black text-[#2B3970] text-lg">Performance Détaillée</h3>
+                <p class="text-slate-400 text-xs font-medium">Analyse comparative de vos actifs digitaux</p>
+              </div>
+              <button class="px-5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-white transition-all shadow-sm flex items-center gap-2">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Exporter CSV
+              </button>
             </div>
             <table class="w-full">
-              <thead class="bg-slate-50/80">
+              <thead class="bg-slate-50/50">
                 <tr>
-                  <th class="text-left px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Vitrine</th>
-                  <th class="text-left px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Statut</th>
-                  <th class="text-left px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Visites</th>
-                  <th class="text-right px-8 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Score IA</th>
+                  <th class="text-left px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Entité Vitrine</th>
+                  <th class="text-left px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Statut</th>
+                  <th class="text-center px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Visites</th>
+                  <th class="text-center px-6 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Rebond</th>
+                  <th class="text-right px-10 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest">Index IA</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-50">
-                <tr *ngFor="let site of sites" class="hover:bg-slate-50/50 transition-colors">
-                  <td class="px-8 py-5">
-                    <div class="flex items-center gap-3">
-                      <div class="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0">
-                        <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-6 h-6 object-contain">
-                        <span *ngIf="!site.logoUrl" class="font-black text-slate-300 text-sm">{{site.companyName?.charAt(0)}}</span>
+                <tr *ngFor="let site of sites" class="hover:bg-slate-50/50 transition-colors group">
+                  <td class="px-10 py-6">
+                    <div class="flex items-center gap-4">
+                      <div class="w-11 h-11 rounded-2xl bg-white border border-slate-100 flex items-center justify-center overflow-hidden flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform">
+                        <img *ngIf="site.logoUrl" [src]="site.logoUrl" class="w-7 h-7 object-contain">
+                        <span *ngIf="!site.logoUrl" class="font-black text-[#FF6B2C] text-lg">{{site.companyName?.charAt(0)}}</span>
                       </div>
                       <div>
                         <p class="font-black text-[#2B3970] text-sm">{{site.companyName}}</p>
-                        <p class="text-[10px] text-slate-400">{{site.subdomain}}.vitrineclick.com</p>
+                        <p class="text-[10px] text-slate-400 font-medium">{{site.subdomain}}.vitrineclick.com</p>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-5">
-                    <span class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase border"
+                  <td class="px-6 py-6">
+                    <span class="px-3 py-1.5 rounded-xl text-[9px] font-black uppercase border-2 shadow-sm"
                       [class]="site.generationStatus === 'COMPLETED' ? (site.published ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-orange-50 text-orange-500 border-orange-100') : 'bg-blue-50 text-blue-600 border-blue-100'">
-                      {{site.generationStatus === 'COMPLETED' ? (site.published ? 'En ligne' : 'Brouillon') : (site.generationStatus || 'Initialisation...')}}
+                      {{site.generationStatus === 'COMPLETED' ? (site.published ? 'Actif' : 'Brouillon') : 'Génération...'}}
                     </span>
                   </td>
-                  <td class="px-6 py-5 font-black text-[#2B3970]">{{site.published ? (site.visits || 0) : '—'}}</td>
-                  <td class="px-8 py-5 text-right">
-                    <span class="font-black text-[#FF6B2C]">{{site.published ? (site.aiScore || 0) : '—'}}%</span>
+                  <td class="px-6 py-6 text-center font-black text-[#2B3970] text-sm">{{site.published ? (site.visits || 0) : '—'}}</td>
+                  <td class="px-6 py-6 text-center text-slate-400 font-bold text-xs">{{site.published ? '14%' : '—'}}</td>
+                  <td class="px-10 py-6 text-right">
+                    <div class="flex flex-col items-end">
+                      <span class="font-black text-lg text-[#FF6B2C] leading-none">{{site.published ? (site.aiScore || 0) : '—'}}%</span>
+                      <div *ngIf="site.published" class="w-16 bg-slate-100 h-1 rounded-full mt-2 overflow-hidden">
+                        <div class="h-full bg-[#FF6B2C]" [style.width.%]="site.aiScore"></div>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -1149,6 +1388,31 @@ import { NotificationService } from '../services/notification.service';
                   </div>
                 </div>
                 
+                <!-- Blank Page Mode (New Setting) -->
+                <div class="bg-white rounded-[32px] border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.02)] overflow-hidden">
+                  <div class="p-8 border-b border-slate-50">
+                    <h3 class="font-black text-[#2B3970] text-lg">Mode Page Vierge (Blank Page)</h3>
+                    <p class="text-slate-400 text-sm font-medium mt-1">Configurez le comportement de vos vitrines par défaut.</p>
+                  </div>
+                  <div class="p-8 space-y-6">
+                    <div class="flex items-center justify-between p-6 bg-slate-50 rounded-2xl border border-slate-100">
+                      <div>
+                        <p class="font-black text-[#2B3970] text-sm">Activer par défaut sur les nouveaux sites</p>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Affiche une page "En construction" professionnelle</p>
+                      </div>
+                      <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" class="sr-only peer">
+                        <div class="w-12 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6B2C]"></div>
+                      </label>
+                    </div>
+
+                    <div>
+                      <label class="block text-[10px] font-black uppercase tracking-[0.25em] text-slate-400 mb-2">Message Personnalisé (Blank Page)</label>
+                      <textarea rows="3" class="w-full border-2 border-slate-100 bg-slate-50 rounded-xl px-5 py-3.5 font-bold text-[#2B3970] focus:border-[#FF6B2C] outline-none transition-all placeholder:text-slate-300" placeholder="Ex: Notre nouvelle vitrine arrive bientôt. Restez connectés !"></textarea>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- Danger Zone -->
                 <div class="bg-red-50/50 border border-red-100 rounded-[32px] p-8 flex items-center justify-between">
                   <div>
@@ -1177,15 +1441,15 @@ import { NotificationService } from '../services/notification.service';
                       <p class="text-[10px] font-black uppercase tracking-widest text-white/40 mb-2">Plan Actuel</p>
                       <div class="flex items-end justify-between relative z-10">
                         <div>
-                          <p class="text-2xl font-black">Pro Studio</p>
+                          <p class="text-2xl font-black">{{ subService.getPlanLabel() }}</p>
                         </div>
                         <div class="text-right">
-                          <p class="text-2xl font-black text-[#FF6B2C]">29 DT<span class="text-[10px] text-white/40 ml-1">/mois</span></p>
+                          <p class="text-2xl font-black text-[#FF6B2C]">{{ subService.getPlanTier() === 'BUSINESS' ? '99' : (subService.getPlanTier() === 'PRO' ? '29' : '0') }} €<span class="text-[10px] text-white/40 ml-1">/mois</span></p>
                         </div>
                       </div>
                       <div class="mt-6 pt-4 border-t border-white/10 flex justify-between items-center relative z-10">
-                        <p class="text-white/50 text-[9px] uppercase font-bold tracking-wider">Renouvellement</p>
-                        <p class="text-white text-xs font-black">12 Mai 2026</p>
+                        <p class="text-white/50 text-[9px] uppercase font-bold tracking-wider">Expire / Renouvellement</p>
+                        <p class="text-white text-xs font-black">{{ subService.getStatus().endDate ? (subService.getStatus().endDate | date:'dd MMM yyyy') : 'Permanent' }}</p>
                       </div>
                     </div>
                     
@@ -1197,10 +1461,10 @@ import { NotificationService } from '../services/notification.service';
                           </div>
                           <div>
                             <p class="text-sm font-black text-[#2B3970]">Vitrines limitées</p>
-                            <p class="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-widest">Jusqu'à 10 sites en ligne</p>
+                            <p class="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-widest">Jusqu'à {{ subService.getStatus().maxSites }} sites en ligne</p>
                           </div>
                         </div>
-                        <p class="text-sm font-black text-slate-500">{{publishedCount}} / 10</p>
+                        <p class="text-sm font-black text-slate-500">{{ subService.getStatus().siteCount }} / {{ subService.getStatus().maxSites }}</p>
                       </div>
                       
                       <div class="flex items-center justify-between pb-5 border-b border-slate-50">
@@ -1213,7 +1477,7 @@ import { NotificationService } from '../services/notification.service';
                             <p class="text-[10px] text-slate-400 font-bold mt-0.5 uppercase tracking-widest">Identify Gen™</p>
                           </div>
                         </div>
-                        <p class="text-sm font-black text-emerald-500">Illimité</p>
+                        <p class="text-sm font-black text-emerald-500">{{ subService.getStatus().aiUsage }} / {{ subService.getStatus().maxAiCalls < 0 ? '∞' : subService.getStatus().maxAiCalls }}</p>
                       </div>
                       
                       <div class="flex items-center justify-between">
@@ -1232,8 +1496,8 @@ import { NotificationService } from '../services/notification.service';
                   </div>
                   
                   <div class="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
-                    <button class="flex-1 py-3.5 bg-white border border-slate-200 text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-xl hover:text-[#2B3970] transition-colors shadow-sm">Gérer</button>
-                    <button class="flex-1 py-3.5 text-[#FF6B2C] border-2 border-[#FF6B2C]/20 bg-orange-50/50 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-[#FF6B2C] hover:text-white transition-colors shadow-sm">Upgrade</button>
+                    <button (click)="activeTab='sites'" class="flex-1 py-3.5 bg-white border border-slate-200 text-slate-500 font-black text-[10px] uppercase tracking-widest rounded-xl hover:text-[#2B3970] transition-colors shadow-sm">Gérer</button>
+                    <button (click)="router.navigate(['/pricing'])" class="flex-1 py-3.5 text-[#FF6B2C] border-2 border-[#FF6B2C]/20 bg-orange-50/50 font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-[#FF6B2C] hover:text-white transition-colors shadow-sm">Upgrade</button>
                   </div>
                 </div>
               </div>
@@ -1241,8 +1505,7 @@ import { NotificationService } from '../services/notification.service';
           </div>
 
         </div>
-      </div>
-    </main>
+      </main>
 
       <!-- ======================== MOBILE BOTTOM NAV ======================== -->
       <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-xl border-t border-slate-100 flex items-center justify-around pb-safe pt-2 px-2 shadow-[0_-10px_40px_rgba(0,0,0,0.05)]">
@@ -1465,11 +1728,18 @@ import { NotificationService } from '../services/notification.service';
                   <p class="font-black text-[#2B3970] text-[9px] truncate leading-tight">{{t.name}}</p>
                   <div class="flex items-center justify-between mt-0.5">
                     <span class="text-[7px] font-bold uppercase tracking-wide" [style.color]="t.accent">{{t.tags[0]}}</span>
-                    <span *ngIf="editSiteData.template === t.id" class="text-[7px] font-black text-[#FF6B2C] uppercase">Actif</span>
+                    <div class="flex items-center gap-1">
+                      <span *ngIf="t.isPremium" class="text-[7px] font-black text-indigo-600 bg-indigo-50 px-1 rounded">PRO</span>
+                      <span *ngIf="editSiteData.template === t.id" class="text-[7px] font-black text-[#FF6B2C] uppercase">Actif</span>
+                    </div>
                   </div>
                 </div>
               </button>
             </div>
+            <p *ngIf="!subService.hasFeature('PREMIUM_TEMPLATES')" class="mt-2 text-[10px] font-bold text-indigo-600 bg-indigo-50 p-2 rounded-xl border border-indigo-100 flex items-center gap-2">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Certains templates sont réservés aux plans Pro & Business.
+            </p>
           </div>
         </div>
 
@@ -1494,6 +1764,7 @@ import { NotificationService } from '../services/notification.service';
 })
 export class UserPanelComponent implements OnInit, OnDestroy {
   activeTab: any = 'sites';
+  FEATURES = FEATURES;
 
 
   sites: any[] = [];
@@ -1540,7 +1811,8 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     { id: 'mansion', name: 'Elite Real Estate', categoryLabel: 'Immobilier', sector: 'Immobilier', rating: 4.8, popular: true, accent: '#7c3aed', photo: 'https://images.unsplash.com/photo-1582407947304-fd86f28f82f6?auto=format&fit=crop&w=600&q=80' },
     { id: 'sport', name: 'PowerZone Gym', categoryLabel: 'Sport', sector: 'Sport', rating: 4.9, popular: true, accent: '#ef4444', photo: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80' },
     { id: 'finance', name: 'Capital Shield', categoryLabel: 'Juridique', sector: 'Juridique', rating: 4.7, popular: false, accent: '#1e3a8a', photo: 'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?auto=format&fit=crop&w=600&q=80' },
-    { id: 'artisan', name: 'Atelier Folk', categoryLabel: 'Artisanat', sector: 'Artisanat', rating: 4.7, popular: false, accent: '#92400e', photo: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=80' }
+    { id: 'artisan', name: 'Atelier Folk', categoryLabel: 'Artisanat', sector: 'Artisanat', rating: 4.7, popular: false, accent: '#92400e', photo: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=600&q=80' },
+    { id: 'blank', name: 'Blank Page (Structure)', categoryLabel: 'Vierge', sector: 'all', rating: 5.0, popular: false, accent: '#000000', photo: 'https://images.unsplash.com/photo-1483546416297-30ed0a1949c2?auto=format&fit=crop&w=600&q=80' }
   ];
 
   get marketplaceTemplates() {
@@ -1722,11 +1994,86 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   ];
 
   brandColors = [
-    { name: 'Navy', hex: '#2B3970' }, { name: 'Orange', hex: '#FF6B2C' },
-    { name: 'Vert', hex: '#10b981' }, { name: 'Violet', hex: '#8b5cf6' },
+    { name: 'Navy', hex: '#2B3970' }, { name: 'Orange Vif', hex: '#FF6B2C' },
+    { name: 'Émeraude', hex: '#10b981' }, { name: 'Violet', hex: '#8b5cf6' },
     { name: 'Rouge', hex: '#ef4444' }, { name: 'Noir', hex: '#111827' },
     { name: 'Slate', hex: '#64748b' }, { name: 'Rose', hex: '#ec4899' },
+    { name: 'Indigo', hex: '#4f46e5' }, { name: 'Cyan', hex: '#06b6d4' },
+    { name: 'Ambre', hex: '#f59e0b' }, { name: 'Teal', hex: '#14b8a6' },
   ];
+
+  secondaryColors = [
+    { name: 'Blanc', hex: '#ffffff' }, { name: 'Crème', hex: '#fefce8' },
+    { name: 'Slate 50', hex: '#f8fafc' }, { name: 'Bleu Ciel', hex: '#e0f2fe' },
+    { name: 'Vert Pâle', hex: '#dcfce7' }, { name: 'Violet Pâle', hex: '#ede9fe' },
+    { name: 'Rose Pâle', hex: '#fce7f3' }, { name: 'Gris Foncé', hex: '#1e293b' },
+    { name: 'Noir Doux', hex: '#0f172a' }, { name: 'Marine', hex: '#1e3a5f' },
+  ];
+
+  fontPairs = [
+    {
+      id: 'outfit-inter',
+      label: 'Modern SaaS',
+      heading: 'Outfit',
+      body: 'Inter',
+      preview: 'Votre Marque',
+      desc: 'Géométrique & Lisible',
+      tag: 'Populaire',
+      url: 'https://fonts.googleapis.com/css2?family=Outfit:wght@700;900&family=Inter:wght@400;600&display=swap'
+    },
+    {
+      id: 'syne-dm',
+      label: 'Agency Bold',
+      heading: 'Syne',
+      body: 'DM Sans',
+      preview: 'Votre Marque',
+      desc: 'Expressif & Unique',
+      tag: 'Tendance',
+      url: 'https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500&display=swap'
+    },
+    {
+      id: 'playfair-source',
+      label: 'Luxe Classic',
+      heading: 'Playfair Display',
+      body: 'Source Sans 3',
+      preview: 'Votre Marque',
+      desc: 'Élégant & Premium',
+      tag: 'Luxe',
+      url: 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Sans+3:wght@400;600&display=swap'
+    },
+    {
+      id: 'space-grotesk',
+      label: 'Tech Futur',
+      heading: 'Space Grotesk',
+      body: 'Space Grotesk',
+      preview: 'Votre Marque',
+      desc: 'Tech & Moderne',
+      tag: 'Futuriste',
+      url: 'https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap'
+    },
+    {
+      id: 'montserrat-open',
+      label: 'Corporate Pro',
+      heading: 'Montserrat',
+      body: 'Open Sans',
+      preview: 'Votre Marque',
+      desc: 'Professionnel & Sûr',
+      tag: 'Corporate',
+      url: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Open+Sans:wght@400;600&display=swap'
+    },
+    {
+      id: 'lora-lato',
+      label: 'Editorial',
+      heading: 'Lora',
+      body: 'Lato',
+      preview: 'Votre Marque',
+      desc: 'Narratif & Chaleureux',
+      tag: 'Éditorial',
+      url: 'https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Lato:wght@400;700&display=swap'
+    },
+  ];
+
+  selectedFont: string = 'outfit-inter';
 
   chartData = [
     { day: 'Lun', value: 40, isToday: false },
@@ -1752,22 +2099,45 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     return filtered.length > 0 ? filtered : this.aiTemplates;
   }
 
+  getSelectedFont() {
+    return this.fontPairs.find(f => f.id === this.selectedFont) || this.fontPairs[0];
+  }
+
+  get selectedFontHeading(): string {
+    const f = this.fontPairs.find(fp => fp.id === this.selectedFont) || this.fontPairs[0];
+    return f ? f.heading + ', sans-serif' : 'Outfit, sans-serif';
+  }
+
+  get selectedFontBody(): string {
+    const f = this.fontPairs.find(fp => fp.id === this.selectedFont) || this.fontPairs[0];
+    return f ? f.body + ', sans-serif' : 'Inter, sans-serif';
+  }
+
   onCategoryChange() {
     // Reset template selection when sector changes
     this.selectedTemplate = null;
   }
 
-  constructor(private siteService: SiteService, private authService: AuthService, private notificationService: NotificationService) { }
+  constructor(
+    private authService: AuthService,
+    private siteService: SiteService,
+    public subService: SubscriptionService,
+    public router: Router,
+    private notificationService: NotificationService
+  ) { }
 
   ngOnInit() {
     this.loadSites();
+    this.subService.loadStatus().subscribe(); // Professional: Load quota status
+
     const user = JSON.parse(localStorage.getItem('user') || '{}');
     if (user?.username) this.username = user.username;
 
     this.notificationService.connect();
     this.notificationService.getNotifications().subscribe((data) => {
-      // Refresh sites whenever notification received
+      // Refresh sites and subscription status whenever notification received
       this.loadSites();
+      this.subService.loadStatus().subscribe();
     });
   }
 
@@ -1855,6 +2225,10 @@ export class UserPanelComponent implements OnInit, OnDestroy {
     return t?.heroBg || 'linear-gradient(135deg,#f0f4ff,#e8eeff)';
   }
 
+  addToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
+    this.showToast(message, type);
+  }
+
   showToast(message: string, type: 'success' | 'error' | 'info' = 'info') {
     const toast = { message, type };
     this.toasts.push(toast);
@@ -1862,13 +2236,30 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   }
 
   openCreateWizard() {
-    this.newSite = { companyName: '', category: 'Tech', description: '', subdomain: '', primaryColor: '#2B3970', email: '', phone: '', address: '' };
+    if (!this.subService.canCreateSite()) {
+      this.showToast('Limite de sites atteinte pour votre plan. Passez au niveau supérieur !', 'info');
+      this.router.navigate(['/pricing']);
+      return;
+    }
+    this.newSite = { companyName: '', category: 'Tech', description: '', subdomain: '', primaryColor: '#FF6B2C', secondaryColor: '#0f172a', fontFamily: 'outfit-inter', email: '', phone: '', address: '' };
+    this.selectedFont = 'outfit-inter';
     this.wizardStep = 1;
     this.creationMode = null;
     this.selectedTemplate = null;
     this.isGenerating = false;
     this.showCreateWizard = true;
     this.liveContent = null;
+  }
+
+  selectTemplate(templateId: string) {
+    const t = this.aiTemplates.find(x => x.id === templateId);
+    if (t?.isPremium && !this.subService.hasFeature('PREMIUM_TEMPLATES')) {
+      this.showToast('Ce template est réservé aux membres Pro.', 'info');
+      this.router.navigate(['/pricing']);
+      return;
+    }
+    this.selectedTemplate = templateId;
+    this.wizardStep = 3;
   }
 
   selectMode(mode: 'ai' | 'manual') {
@@ -1887,12 +2278,14 @@ export class UserPanelComponent implements OnInit, OnDestroy {
   progressPercent = 0;
   currentStepIndex = 0;
   generationSteps = [
-    'Configuration du modèle IA',
-    'Analyse sémantique de votre secteur',
-    'Génération de l\'identité visuelle',
-    'Rédaction des contenus SEO & Marketing',
-    'Optimisation de la structure',
-    'Finalisation & Déploiement'
+    "Analyse du secteur d'activité",
+    "Génération de l'identité visuelle",
+    "Production du Kit Assets IA (Logos, Icons)",
+    "Rédaction du contenu stratégique",
+    "Optimisation SEO & Meta-data",
+    "Configuration des Analytiques en temps réel",
+    "Assemblage du design premium",
+    "Déploiement sur le Cloud"
   ];
 
   submitCreateSite() {
@@ -1988,7 +2381,7 @@ export class UserPanelComponent implements OnInit, OnDestroy {
           this.currentStepIndex = idx;
           this.progressText = this.generationSteps[idx];
           this.progressPercent = stepPcts[idx];
-          
+
           console.log(` [WIZARD] Step ${idx}: ${this.progressText} (${this.progressPercent}%)`);
 
           // Progressive live content enrichment

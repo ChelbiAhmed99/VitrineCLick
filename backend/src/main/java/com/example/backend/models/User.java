@@ -30,6 +30,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
     
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private Subscription subscription;
+    
     // One user can have multiple sites or subscriptions in reality,
     // but we can map that back from Site/Subscription entity.
 }

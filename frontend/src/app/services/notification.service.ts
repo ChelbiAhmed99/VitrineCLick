@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Subject, Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class NotificationService {
     if (!token) return;
     
     console.log('SSE: Connecting...');
-    this.eventSource = new EventSource(`http://localhost:8080/api/notifications/stream?token=${token}`);
+    this.eventSource = new EventSource(`${environment.apiUrl}/notifications/stream?token=${token}`);
 
     this.eventSource.addEventListener('notification', (event: any) => {
       this.zone.run(() => {

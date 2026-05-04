@@ -18,7 +18,7 @@
 2026-04-23T23:03:16.023+02:00  INFO 32224 --- [           main] com.example.backend.BackendApplication   : No active profile set, falling back to 1 default profile: "default"
 2026-04-23T23:03:25.714+02:00  INFO 32224 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
 2026-04-23T23:03:26.870+02:00  INFO 32224 --- [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 888 ms. Found 5 JPA repository interfaces.
-2026-04-23T23:03:38.007+02:00  INFO 32224 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-04-23T23:03:38.007+02:00  INFO 32224 --- [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8081 (http)
 2026-04-23T23:03:38.068+02:00  INFO 32224 --- [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
 2026-04-23T23:03:38.068+02:00  INFO 32224 --- [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.36]
 2026-04-23T23:03:38.178+02:00  INFO 32224 --- [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext

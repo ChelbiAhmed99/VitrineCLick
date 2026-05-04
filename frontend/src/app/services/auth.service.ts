@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-const API_URL = 'http://localhost:8080/api/auth/';
+const API_URL = `${environment.apiUrl}/auth/`;
 
 @Injectable({
   providedIn: 'root'
@@ -30,8 +31,10 @@ export class AuthService {
     );
   }
 
-  register(userData: any): Observable<any> {
-    return this.http.post(API_URL + 'signup', userData);
+  register(userData: any, plan?: string): Observable<any> {
+    const payload = { ...userData };
+    if (plan) payload.plan = plan;
+    return this.http.post(API_URL + 'signup', payload);
   }
 
   logout() {

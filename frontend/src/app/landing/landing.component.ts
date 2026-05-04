@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { SiteService } from '../services/site.service';
 import { NotificationService } from '../services/notification.service';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-landing-panel',
@@ -42,7 +43,7 @@ export class LandingPanelComponent implements OnInit {
   errorMessage = '';
   aiLoadingText = "Analyse de l'identité de la marque...";
   generatedLogoUrl = '';
-  
+
   // Payment State
   showPaymentModal = false;
   selectedPlan: any = null;
@@ -51,16 +52,16 @@ export class LandingPanelComponent implements OnInit {
   paymentSuccess = false;
 
   isMobileMenuOpen = false;
-  notifications: {id: number, message: string, type?: string, date: Date}[] = [];
-  notificationHistory: {id: number, message: string, type?: string, date: Date}[] = [];
+  notifications: { id: number, message: string, type?: string, date: Date }[] = [];
+  notificationHistory: { id: number, message: string, type?: string, date: Date }[] = [];
   showNotificationCenter = false;
   private notificationId = 0;
 
   publicStats: any = null;
 
   constructor(
-    private authService: AuthService, 
-    private siteService: SiteService, 
+    private authService: AuthService,
+    private siteService: SiteService,
     private http: HttpClient,
     private notificationService: NotificationService,
     private router: Router
@@ -79,7 +80,7 @@ export class LandingPanelComponent implements OnInit {
         next: (user) => console.log('User synced:', user),
         error: (err) => console.error('Sync failed:', err)
       });
-      
+
       if (roles.includes('ROLE_ADMIN')) {
         this.router.navigate(['/admin']);
       } else {
@@ -89,13 +90,13 @@ export class LandingPanelComponent implements OnInit {
 
     // 2. Notifications subscription
     this.notificationService.getNotifications().subscribe(notif => {
-      const newNotif = { 
-        id: this.notificationId++, 
-        message: notif.message || notif.content || "Nouvelle notification", 
+      const newNotif = {
+        id: this.notificationId++,
+        message: notif.message || notif.content || "Nouvelle notification",
         type: notif.type || 'info',
         date: new Date()
       };
-      
+
       this.addToast(newNotif);
       this.notificationHistory.unshift(newNotif);
       if (this.notificationHistory.length > 20) this.notificationHistory.pop();
@@ -107,7 +108,7 @@ export class LandingPanelComponent implements OnInit {
   }
 
   fetchGlobalStats() {
-    this.http.get('http://localhost:8080/api/public/sites/stats').subscribe(data => {
+    this.http.get(`${environment.apiUrl}/public/sites/stats`).subscribe(data => {
       this.publicStats = data;
     });
   }
@@ -139,22 +140,77 @@ export class LandingPanelComponent implements OnInit {
     });
   }
 
+  // New Selection Method
+  selectPlan(planName: string, price: number, code: string) {
+    this.selectedPlan = { name: planName, price: price, code: code };
+    this.isLoginMode = false; // Switch to signup mode
+    this.addToast(`Plan ${planName} sélectionné. Veuillez créer votre compte.`);
+    this.scrollToLogin();
+  }
+
   signup() {
-    this.authService.register(this.signupData).subscribe({
-      next: (res) => {
-        this.addToast("Compte créé avec succès ! Veuillez vous connecter.");
-        this.isLoginMode = true;
-        this.loginData.username = this.signupData.username;
-        this.loginData.password = '';
-        this.signupData = { username: '', email: '', password: '', fullName: '' };
-      },
-      error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur lors de l\'inscription';
-      }
-    });
+    if (!this.signupData.username || !this.signupData.email || !this.signupData.password) {
+      this.errorMessage = "Veuillez remplir tous les champs d'inscription.";
+      return;
+    }
+    
+    if (!this.selectedPlan) {
+      this.errorMessage = "Veuillez d'abord sélectionner un plan d'abonnement.";
+      const el = document.getElementById('pricing');
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    // Instead of registering, we show payment modal first
+    this.showPaymentModal = true;
+    this.paymentSuccess = false;
+    this.paymentData = { cardName: this.signupData.fullName, cardNumber: '', expiry: '', cvc: '' };
+  }
+
+  processPayment() {
+    this.isProcessingPayment = true;
+    this.addToast("Vérification bancaire (Test Mode)...");
+
+    // 1. Skip simulation delay or keep a short one for UI feedback
+    setTimeout(() => {
+      // 2. Call Register with Plan
+      this.authService.register(this.signupData, this.selectedPlan.code).subscribe({
+        next: (res) => {
+          // 3. Auto-Login
+          this.authService.login({
+            username: this.signupData.username,
+            password: this.signupData.password
+          }).subscribe({
+            next: (loginRes) => {
+              this.isProcessingPayment = false;
+              this.paymentSuccess = true;
+              this.addToast(`Succès ! Bienvenue dans le Studio ${this.selectedPlan.name}.`);
+
+              setTimeout(() => {
+                this.closePaymentModal();
+                this.router.navigate(['/user']);
+              }, 2000);
+            },
+            error: (err) => {
+              this.isProcessingPayment = false;
+              this.errorMessage = "Inscription réussie mais erreur de connexion automatique.";
+              this.closePaymentModal();
+            }
+          });
+        },
+        error: (err) => {
+          this.isProcessingPayment = false;
+          this.addToast("Erreur lors de l'inscription : " + (err.error?.message || "Inconnu"));
+          this.closePaymentModal();
+        }
+      });
+    }, 2000);
   }
 
   addToast(notif: any) {
+    if (typeof notif === 'string') {
+      notif = { id: this.notificationId++, message: notif, type: 'info', date: new Date() };
+    }
     this.notifications.push(notif);
     setTimeout(() => {
       this.notifications = this.notifications.filter(n => n.id !== notif.id);
@@ -174,42 +230,10 @@ export class LandingPanelComponent implements OnInit {
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   }
 
-  // Payment UI Methods
-  openPaymentModal(planName: string, price: number, isPro: boolean = false) {
-    this.selectedPlan = { name: planName, price: price, isPro: isPro };
-    this.showPaymentModal = true;
-    this.paymentSuccess = false;
-    this.paymentData = { cardName: '', cardNumber: '', expiry: '', cvc: '' };
-  }
-
   closePaymentModal() {
     if (this.isProcessingPayment) return;
     this.showPaymentModal = false;
-    setTimeout(() => this.selectedPlan = null, 300); // Wait for transition
-  }
-
-  processPayment() {
-    if (!this.paymentData.cardNumber || !this.paymentData.expiry || !this.paymentData.cvc) {
-      this.addToast("Veuillez remplir tous les champs de paiement bancaire.");
-      return;
-    }
-    
-    this.isProcessingPayment = true;
-    
-    // Simulate secure 3D Secure / Stripe API call
-    setTimeout(() => {
-      this.isProcessingPayment = false;
-      this.paymentSuccess = true;
-      this.addToast(`Paiement de ${this.selectedPlan.price} TND accepté ! Création de votre accès Studio...`);
-      
-      // Navigate to login/studio entry after success
-      setTimeout(() => {
-        this.closePaymentModal();
-        this.scrollToLogin();
-        // Prefill login with a user account to simulate seamless transition
-        this.loginData.username = 'user';
-      }, 2500);
-    }, 2000);
+    setTimeout(() => this.selectedPlan = null, 300);
   }
 
   scrollToTop() {

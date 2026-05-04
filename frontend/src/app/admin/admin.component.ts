@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -16,8 +17,8 @@ import { NotificationService } from '../services/notification.service';
       <aside class="hidden md:flex w-72 bg-gradient-to-b from-[#111827] via-[#1f2937] to-[#374151] flex-col h-screen sticky top-0 z-20 shadow-[4px_0_40px_rgba(0,0,0,0.15)] flex-shrink-0">
         <div class="p-10 border-b border-white/10">
           <div class="flex items-center gap-4">
-            <div class="w-12 h-12 bg-[#FF6B2C] rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
-               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            <div class="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shadow-lg transform rotate-3 overflow-hidden">
+               <img src="/d.png" class="w-8 h-8 object-contain" alt="Logo">
             </div>
             <div class="flex flex-col">
               <span class="text-2xl font-black text-white tracking-tight">Admin<span class="text-[#FF6B2C]">Core</span></span>
@@ -123,8 +124,8 @@ import { NotificationService } from '../services/notification.service';
               <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-10">
                 <div>
                   <div class="flex items-center gap-4 mb-8">
-                    <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-[#FF6B2C] border border-white/10 shadow-lg">
-                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    <div class="w-12 h-12 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center border border-white/10 shadow-lg overflow-hidden">
+                      <img src="/d.png" class="w-8 h-8 object-contain" alt="Logo">
                     </div>
                     <p class="text-[11px] font-black text-white/50 uppercase tracking-[0.3em]">Sites Actifs Globaux</p>
                   </div>
@@ -215,6 +216,7 @@ import { NotificationService } from '../services/notification.service';
                       <th class="py-6 px-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Client & Identité</th>
                       <th class="py-6 px-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Date Info</th>
                       <th class="py-6 px-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Permission</th>
+                      <th class="py-6 px-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Plan</th>
                       <th class="py-6 px-8 text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Statut</th>
                       <th class="py-6 px-8 text-center text-[10px] font-black text-slate-400 uppercase tracking-[0.3em]">Gestion</th>
                     </tr>
@@ -250,6 +252,18 @@ import { NotificationService } from '../services/notification.service';
                              {{ role.name.replace('ROLE_', '') }}
                            </span>
                         </div>
+                      </td>
+                      <!-- Plan Tier -->
+                      <td class="py-6 px-8">
+                        <div *ngIf="user.subscription" class="flex flex-col gap-1">
+                          <span [class]="getPlanColor(user.subscription.planTier)" class="px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest text-center">
+                            {{ user.subscription.planTier }}
+                          </span>
+                          <span class="text-[8px] font-bold text-slate-400 uppercase tracking-widest text-center">
+                            AI: {{ user.subscription.aiUsage }} calls
+                          </span>
+                        </div>
+                        <span *ngIf="!user.subscription" class="text-[9px] font-black text-slate-300 uppercase italic">Aucun</span>
                       </td>
                       <!-- Status -->
                       <td class="py-6 px-8">
@@ -431,7 +445,15 @@ import { NotificationService } from '../services/notification.service';
 })
 export class AdminPanelComponent implements OnInit, OnDestroy {
   activeTab: 'overview' | 'users' | 'sites' | 'settings' = 'overview';
-  
+
+  getPlanColor(tier: string): string {
+    return {
+      'BASIC': 'bg-slate-100 text-slate-500 border-slate-200',
+      'PRO': 'bg-orange-100 text-orange-600 border-orange-200',
+      'BUSINESS': 'bg-purple-100 text-purple-600 border-purple-200'
+    }[tier] || 'bg-slate-50 text-slate-400';
+  }
+
   stats: any = null;
   users: any[] = [];
   sites: any[] = [];
@@ -447,7 +469,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
     storageLimitGB: 500
   };
 
-  constructor(private http: HttpClient, private authService: AuthService, private notificationService: NotificationService) {}
+  constructor(private http: HttpClient, private authService: AuthService, private notificationService: NotificationService) { }
 
   ngOnInit() {
     this.loadAllData();
@@ -468,21 +490,21 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   loadAllData() {
     this.loading = true;
     this.error = '';
-    
+
     const headers = { 'Authorization': 'Bearer ' + this.authService.getToken() };
-    
+
     // Using single requests without RxJS forkJoin to easily handle individual errors if backend isn't ready
-    this.http.get('http://localhost:8080/api/admin/stats', { headers }).subscribe({
+    this.http.get(`${environment.apiUrl}/admin/stats`, { headers }).subscribe({
       next: (res) => this.stats = res,
       error: () => this.error = "Erreur de connexion API Admin."
     });
 
-    this.http.get<any[]>('http://localhost:8080/api/admin/users', { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/admin/users`, { headers }).subscribe({
       next: (res) => this.users = res,
       error: () => null
     });
 
-    this.http.get<any[]>('http://localhost:8080/api/admin/sites', { headers }).subscribe({
+    this.http.get<any[]>(`${environment.apiUrl}/admin/sites`, { headers }).subscribe({
       next: (res) => {
         this.sites = res;
         this.loading = false;
@@ -498,14 +520,14 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
       this.showToast('Compte utilisateur suspendu avec succès.', 'success');
       // Simulated frontend suspension
       const u = this.users.find(x => x.id === userId);
-      if(u) u.suspended = !u.suspended;
+      if (u) u.suspended = !u.suspended;
     }
   }
 
   deleteUser(userId: number) {
     if (confirm('Supprimer définitivement cet utilisateur ? (Action irréversible)')) {
       const headers = { 'Authorization': 'Bearer ' + this.authService.getToken() };
-      this.http.delete(`http://localhost:8080/api/admin/users/${userId}`, { headers }).subscribe({
+      this.http.delete(`${environment.apiUrl}/admin/users/${userId}`, { headers }).subscribe({
         next: () => { this.loadAllData(); this.showToast('Utilisateur supprimé.', 'success'); },
         error: () => this.showToast('Erreur lors de la suppression.', 'error')
       });
@@ -515,7 +537,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
   deleteSite(siteId: number) {
     if (confirm('Supprimer ce site ?')) {
       const headers = { 'Authorization': 'Bearer ' + this.authService.getToken() };
-      this.http.delete(`http://localhost:8080/api/admin/sites/${siteId}`, { headers }).subscribe({
+      this.http.delete(`${environment.apiUrl}/admin/sites/${siteId}`, { headers }).subscribe({
         next: () => { this.loadAllData(); this.showToast('Site supprimé.', 'success'); },
         error: () => this.showToast('Erreur lors de la suppression.', 'error')
       });
@@ -524,7 +546,7 @@ export class AdminPanelComponent implements OnInit, OnDestroy {
 
   toggleSitePublish(siteId: number) {
     const headers = { 'Authorization': 'Bearer ' + this.authService.getToken() };
-    this.http.put(`http://localhost:8080/api/admin/sites/${siteId}/toggle-publish`, {}, { headers }).subscribe({
+    this.http.put(`${environment.apiUrl}/admin/sites/${siteId}/toggle-publish`, {}, { headers }).subscribe({
       next: () => { this.loadAllData(); this.showToast('Statut du site mis à jour.', 'success'); },
       error: () => this.showToast('Erreur lors de la mise à jour.', 'error')
     });

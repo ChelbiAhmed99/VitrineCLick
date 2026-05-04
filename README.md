@@ -73,7 +73,7 @@ Navigate to the `backend` folder.
    ```bash
    ./gradlew bootRun
    ```
-   *The API runs on Port 8080.*
+   *The API runs on Port 8081.*
 
 ### Step 5: Launch the Frontend
 Navigate to the `frontend` folder.

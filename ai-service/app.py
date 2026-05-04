@@ -1,6 +1,7 @@
 import os
 import uuid
 from flask import Flask, render_template, request, jsonify, send_from_directory
+from flask_cors import CORS
 from logo_gen import generate_logo_hf
 from content_gen import generate_site_content_pro
 from dotenv import load_dotenv
@@ -11,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 # Ensure static directories exist
 os.makedirs('static/generated', exist_ok=True)

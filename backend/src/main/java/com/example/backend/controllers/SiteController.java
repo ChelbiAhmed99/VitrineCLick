@@ -12,7 +12,9 @@ import com.example.backend.security.UserDetailsImpl;
 import com.example.backend.services.AiIntegrationService;
 import com.example.backend.services.AsyncSiteService;
 import com.example.backend.services.NotificationService;
+import com.example.backend.services.PlanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -45,6 +47,9 @@ public class SiteController {
     @Autowired
     AsyncSiteService asyncSiteService;
 
+    @Autowired
+    PlanService planService;
+
     @GetMapping
     public ResponseEntity<List<Site>> getUserSites() {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -57,8 +62,24 @@ public class SiteController {
         UserDetailsImpl userDetails = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         User currentUser = userRepository.findById(userDetails.getId()).orElseThrow();
 
-        if (request.getSubdomain() != null && siteRepository.findBySubdomain(request.getSubdomain()).isPresent()) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Subdomain is already taken!"));
+        // ── Plan limit: max sites ─────────────────────────────────────────
+        long siteCount = siteRepository.findByOwnerId(userDetails.getId()).size();
+        if (!planService.canCreateSite(userDetails.getId(), siteCount)) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(Map.of(
+                "error", "PLAN_LIMIT_REACHED",
+                "feature", PlanService.F_MULTI_SITES,
+                "message", "Votre plan Basic est limité à 1 vitrine. Passez au plan Pro pour en créer plus."
+            ));
+        }
+
+        // ── Plan limit: premium templates ─────────────────────────────────
+        if (request.getTemplateId() != null && request.getTemplateId() > 2
+                && !planService.hasFeature(userDetails.getId(), PlanService.F_PREMIUM_TEMPLATES)) {
+            return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(Map.of(
+                "error", "PLAN_LIMIT_REACHED",
+                "feature", PlanService.F_PREMIUM_TEMPLATES,
+                "message", "Les templates premium sont réservés aux plans Pro et Business."
+            ));
         }
 
         Site site = new Site();
@@ -104,12 +125,27 @@ public class SiteController {
         // Save initially to get an ID and allow frontend to see it
         Site savedSite = siteRepository.save(site);
         
-        // Trigger AI generation asynchronously if needed
+        // ── AI generation ─────────────────────────────────────────────────
         if (request.isAiMode()) {
+            if (!planService.hasFeature(userDetails.getId(), PlanService.F_AI_BASIC)) {
+                return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(Map.of(
+                    "error", "PLAN_LIMIT_REACHED",
+                    "feature", PlanService.F_AI_BASIC,
+                    "message", "La génération IA n'est pas disponible sur votre plan."
+                ));
+            }
+            if (!planService.canUseAi(userDetails.getId())) {
+                return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED).body(Map.of(
+                    "error", "AI_QUOTA_EXCEEDED",
+                    "feature", PlanService.F_AI_ADVANCED,
+                    "message", "Quota IA atteint. Passez au plan Pro pour 100 générations/mois."
+                ));
+            }
+            planService.incrementAiUsage(userDetails.getId());
             asyncSiteService.generateAiContent(
-                savedSite.getId(), 
-                request.getPrimaryColor(), 
-                request.getFont(), 
+                savedSite.getId(),
+                request.getPrimaryColor(),
+                request.getFont(),
                 request.getStyle()
             );
         } else {

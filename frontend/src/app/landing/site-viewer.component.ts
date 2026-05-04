@@ -1,4 +1,5 @@
 import { Component, OnInit, HostListener } from '@angular/core';
+import { environment } from '../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterModule } from '@angular/router';
@@ -612,11 +613,11 @@ export class SiteViewerComponent implements OnInit {
   contactForm = { name: '', email: '', subject: '', message: '' };
 
   constructor(
-    private route: ActivatedRoute, 
+    private route: ActivatedRoute,
     private http: HttpClient,
     private titleService: Title,
     private metaService: Meta
-  ) {}
+  ) { }
 
   @HostListener('window:scroll')
   onScroll() { this.scrolled = window.scrollY > 60; }
@@ -635,7 +636,7 @@ export class SiteViewerComponent implements OnInit {
   get contactContent(): any { return this.fullAiContent?.pages?.contact; }
 
   get cartTotal(): number {
-    return this.cart.reduce((s, p) => s + (parseFloat((p.price || '').replace(/[^\d.]/g,'')) || 0), 0);
+    return this.cart.reduce((s, p) => s + (parseFloat((p.price || '').replace(/[^\d.]/g, '')) || 0), 0);
   }
 
   ngOnInit() {
@@ -648,7 +649,7 @@ export class SiteViewerComponent implements OnInit {
 
   loadSite() {
     this.loading = true;
-    this.http.get(`http://localhost:8080/api/public/sites/subdomain/${this.subdomain}`).subscribe({
+    this.http.get(`${environment.apiUrl}/public/sites/subdomain/${this.subdomain}`).subscribe({
       next: (data: any) => {
         this.site = data;
         const title = this.site.metaTitle || (this.site.companyName + " | Site Officiel");
@@ -656,15 +657,15 @@ export class SiteViewerComponent implements OnInit {
         if (this.site.metaDescription) this.metaService.updateTag({ name: 'description', content: this.site.metaDescription });
 
         if (this.site.generatedVisuals) {
-          try { this.fullAiContent = JSON.parse(this.site.generatedVisuals); } catch(e) {}
+          try { this.fullAiContent = JSON.parse(this.site.generatedVisuals); } catch (e) { }
         }
         if (this.site.templateConfig) {
-          try { this.templateConfig = JSON.parse(this.site.templateConfig); } catch(e) {}
+          try { this.templateConfig = JSON.parse(this.site.templateConfig); } catch (e) { }
         }
         // Override accent with stored theme if available
         if (this.fullAiContent?.theme?.primary) this.site.primaryColor = this.fullAiContent.theme.primary;
 
-        this.http.post(`http://localhost:8080/api/sites/${this.site.id}/visit`, { retention: 0 }).subscribe();
+        this.http.post(`${environment.apiUrl}/sites/${this.site.id}/visit`, { retention: 0 }).subscribe();
         this.loading = false;
       },
       error: (err) => {

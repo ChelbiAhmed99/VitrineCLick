@@ -1,5 +1,6 @@
 package com.example.backend.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,12 +15,22 @@ public class Subscription {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
-    
-    private String plan; // MONTHLY, ANNUAL
-    private String status; // ACTIVE, CANCELLED, EXPIRED
+
+    /** Billing cycle: MONTHLY or ANNUAL */
+    private String plan;
+
+    /** Plan tier: BASIC, PRO, BUSINESS */
+    private String planTier;
+
+    /** Status: ACTIVE, CANCELLED, EXPIRED */
+    private String status;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    /** AI generation usage counter */
+    private Integer aiUsage = 0;
 }

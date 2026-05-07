@@ -55,7 +55,7 @@ public class AiIntegrationService {
         return null;
     }
 
-    public String generateSiteContent(String companyName, String description, String category, String primaryColor, String font, String style) {
+    public String generateSiteContent(String companyName, String description, String category, String primaryColor, String font, String style, String address, String phone, String email) {
         String url = aiServiceUrl + "/generate-copy";
 
         HttpHeaders headers = new HttpHeaders();
@@ -68,6 +68,9 @@ public class AiIntegrationService {
         requestBody.put("primaryColor", primaryColor != null ? primaryColor : "#2B3970");
         requestBody.put("font", font != null ? font : "Inter");
         requestBody.put("style", style != null ? style : "premium");
+        requestBody.put("address", address);
+        requestBody.put("phone", phone);
+        requestBody.put("email", email);
         requestBody.put("simulate", false); // Production mode
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);

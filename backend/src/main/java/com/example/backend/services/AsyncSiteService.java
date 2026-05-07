@@ -68,7 +68,10 @@ public class AsyncSiteService {
                 site.getCategory(),
                 primaryColor,
                 font,
-                style
+                style,
+                site.getAddress(),
+                site.getPhone(),
+                site.getEmail()
             );
 
             if (jsonContent != null) {

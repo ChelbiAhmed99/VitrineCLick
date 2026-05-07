@@ -11,6 +11,9 @@ import { Title, Meta } from '@angular/platform-browser';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   template: `
+    <!-- Scroll Progress -->
+    <div class="scroll-progress" [style.background]="accentColor" [style.width.%]="scrollProgress"></div>
+
     <!-- Loading State -->
     <div *ngIf="loading" class="min-h-screen flex items-center justify-center" [style.background]="'#0f172a'">
       <div class="text-center">
@@ -147,6 +150,30 @@ import { Title, Meta } from '@angular/platform-browser';
           </div>
         </section>
 
+        <!-- Testimonials Section -->
+        <section class="testimonials-section" *ngIf="homeContent?.testimonials?.length">
+          <div class="section-inner">
+            <div class="section-header">
+              <span class="section-tag" [style.color]="accentColor">Témoignages</span>
+              <h2 class="section-title">Ce que disent nos clients</h2>
+            </div>
+            <div class="testimonials-grid">
+              <div *ngFor="let t of homeContent.testimonials" class="testimonial-card" [style.border-left-color]="accentColor">
+                <p class="testimonial-content">"{{t.content}}"</p>
+                <div class="testimonial-author">
+                  <div class="testimonial-avatar" [style.background]="accentColor + '15'" [style.color]="accentColor">
+                    {{t.name?.charAt(0)}}
+                  </div>
+                  <div class="testimonial-info">
+                    <p class="testimonial-name">{{t.name}}</p>
+                    <p class="testimonial-role">{{t.role}}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <!-- CTA Section -->
         <section class="cta-section" [style.background]="accentColor">
           <div class="section-inner cta-inner">
@@ -265,6 +292,22 @@ import { Title, Meta } from '@angular/platform-browser';
             </div>
           </form>
         </div>
+
+        <!-- FAQ Section -->
+        <section class="faq-section" *ngIf="contactContent?.faq?.length" [style.background]="'#f8fafc'">
+          <div class="section-inner">
+            <div class="section-header">
+              <span class="section-tag" [style.color]="accentColor">FAQ</span>
+              <h2 class="section-title">Questions Fréquentes</h2>
+            </div>
+            <div class="faq-grid">
+              <div *ngFor="let f of contactContent.faq" class="faq-card">
+                <h4 class="faq-q">{{f.q}}</h4>
+                <p class="faq-a">{{f.a}}</p>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
 
       <!-- ===== FOOTER ===== -->
@@ -333,6 +376,11 @@ import { Title, Meta } from '@angular/platform-browser';
       --accent: #FF6B2C;
       font-family: var(--font, 'Inter', sans-serif);
       min-height: 100vh;
+    }
+
+    .scroll-progress {
+      position: fixed; top: 0; left: 0; height: 3px; z-index: 1000;
+      transition: width 0.1s ease-out;
     }
 
     /* ====== Navbar ====== */
@@ -592,6 +640,27 @@ import { Title, Meta } from '@angular/platform-browser';
     .cart-total { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 16px; }
     .cart-checkout { width: 100%; padding: 16px; border-radius: 14px; color: white; font-weight: 900; font-size: 0.9rem; cursor: pointer; }
 
+    /* ====== Testimonials ====== */
+    .testimonials-section { padding: 100px 32px; background: white; }
+    .testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 32px; }
+    .testimonial-card {
+      padding: 40px; border-radius: 24px; background: #f8fafc;
+      border-left: 4px solid; transition: all 0.3s;
+    }
+    .testimonial-content { font-size: 1.1rem; font-style: italic; color: #475569; line-height: 1.7; margin-bottom: 24px; }
+    .testimonial-author { display: flex; align-items: center; gap: 16px; }
+    .testimonial-avatar { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
+    .testimonial-name { font-weight: 900; color: #0f172a; font-size: 1rem; }
+    .testimonial-role { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    /* ====== FAQ ====== */
+    .faq-section { padding: 100px 32px; }
+    .faq-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 32px; }
+    @media (max-width: 640px) { .faq-grid { grid-template-columns: 1fr; } }
+    .faq-card { padding: 32px; border-radius: 24px; background: white; box-shadow: 0 10px 30px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; }
+    .faq-q { font-size: 1.1rem; font-weight: 900; color: #0f172a; margin-bottom: 12px; }
+    .faq-a { color: #64748b; font-size: 0.95rem; line-height: 1.6; }
+
     /* ====== Animations ====== */
     @keyframes fade-in { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
     .site-root { animation: fade-in 0.5s ease-out forwards; }
@@ -610,6 +679,7 @@ export class SiteViewerComponent implements OnInit {
   cart: any[] = [];
   cartOpen: boolean = false;
   messageSent: boolean = false;
+  scrollProgress: number = 0;
   contactForm = { name: '', email: '', subject: '', message: '' };
 
   constructor(
@@ -620,7 +690,12 @@ export class SiteViewerComponent implements OnInit {
   ) { }
 
   @HostListener('window:scroll')
-  onScroll() { this.scrolled = window.scrollY > 60; }
+  onScroll() { 
+    this.scrolled = window.scrollY > 60; 
+    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    this.scrollProgress = (winScroll / height) * 100;
+  }
 
   get accentColor(): string {
     return this.site?.primaryColor || this.templateConfig?.accent || '#FF6B2C';
@@ -652,8 +727,8 @@ export class SiteViewerComponent implements OnInit {
     this.http.get(`${environment.apiUrl}/public/sites/subdomain/${this.subdomain}`).subscribe({
       next: (data: any) => {
         this.site = data;
-        const title = this.site.metaTitle || (this.site.companyName + " | Site Officiel");
-        this.titleService.setTitle(title);
+        const initialTitle = this.site.metaTitle || (this.site.companyName + " | Site Officiel");
+        this.titleService.setTitle(initialTitle);
         if (this.site.metaDescription) this.metaService.updateTag({ name: 'description', content: this.site.metaDescription });
 
         if (this.site.generatedVisuals) {
@@ -662,6 +737,13 @@ export class SiteViewerComponent implements OnInit {
         if (this.site.templateConfig) {
           try { this.templateConfig = JSON.parse(this.site.templateConfig); } catch (e) { }
         }
+
+        // SEO Fallback
+        const seoTitle = this.site.metaTitle || this.fullAiContent?.seo?.title || (this.site.companyName + " | Site Officiel");
+        this.titleService.setTitle(seoTitle);
+        const metaDesc = this.site.metaDescription || this.fullAiContent?.seo?.description;
+        if (metaDesc) this.metaService.updateTag({ name: 'description', content: metaDesc });
+
         // Override accent with stored theme if available
         if (this.fullAiContent?.theme?.primary) this.site.primaryColor = this.fullAiContent.theme.primary;
 

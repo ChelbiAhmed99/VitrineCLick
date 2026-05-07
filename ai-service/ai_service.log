@@ -1,0 +1,22 @@
+ [OK] HF_TOKEN loaded (hf_CR...)
+ [OK] HF_TOKEN loaded (hf_CR...)
+ * Serving Flask app 'app'
+ * Debug mode: on
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[33mPress CTRL+C to quit[0m
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 648-501-033
+ * Detected change in '/home/choubi/Desktop/vitrineclick/ai-service/app.py', reloading
+ [OK] HF_TOKEN loaded (hf_CR...)
+ [OK] HF_TOKEN loaded (hf_CR...)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 648-501-033
+127.0.0.1 - - [05/May/2026 15:43:58] "POST /generate HTTP/1.1" 200 -
+127.0.0.1 - - [05/May/2026 15:43:59] "POST /generate-copy HTTP/1.1" 200 -
+127.0.0.1 - - [05/May/2026 15:44:52] "[33mGET /static/generated/ae08ea969e164fbfb1a9336d81643e2a.png HTTP/1.1[0m" 404 -
+127.0.0.1 - - [05/May/2026 15:45:12] "[33mGET /static/generated/ae08ea969e164fbfb1a9336d81643e2a.png HTTP/1.1[0m" 404 -
+127.0.0.1 - - [05/May/2026 15:45:38] "[33mGET /static/generated/ae08ea969e164fbfb1a9336d81643e2a.png HTTP/1.1[0m" 404 -
+127.0.0.1 - - [05/May/2026 15:46:46] "[33mGET /static/generated/ae08ea969e164fbfb1a9336d81643e2a.png HTTP/1.1[0m" 404 -

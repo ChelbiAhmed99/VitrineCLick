@@ -73,8 +73,11 @@ def generate_copy():
         primary_color = data.get('primaryColor', '#2B3970')
         font = data.get('font', 'Inter')
         style = data.get('style', 'premium')
+        address = data.get('address', '')
+        phone = data.get('phone', '')
+        email = data.get('email', '')
         
-        content_json = generate_site_content_pro(company_name, description, category, primary_color, font, style)
+        content_json = generate_site_content_pro(company_name, description, category, primary_color, font, style, address, phone, email)
         return jsonify({
             "success": True,
             "content": content_json

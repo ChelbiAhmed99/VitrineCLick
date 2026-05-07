@@ -5,9 +5,7 @@ import time
 from dotenv import load_dotenv
 from huggingface_hub import InferenceClient
 
-app = Flask(__name__)
-CORS(app)
-# Robust .env loading
+# Configuration
 env_path = os.path.join(os.path.dirname(__file__), '.env')
 load_dotenv(env_path)
 
